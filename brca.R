@@ -1,5 +1,15 @@
 library(tidyverse)
-library(mosaic)
+library(dummies)
+library(margins)
+library(dplyr)
+library(kableExtra)
+library(sjPlot)
+
+#library(pander)
+#library(knitr)
+#library(sjmisc)
+#library(mosaic)
+
 
 brca = read.csv(url("https://raw.githubusercontent.com/bmagalhaes/ECO395M-HW2/master/brca.csv"))
 
@@ -28,14 +38,78 @@ radiologist_long = radiologist %>%
   gather("Stat", "Value", -radiologist, -n)
 radiologist_long = mutate(radiologist_long, Value = Value*100)
 
+radiologist_89 = radiologist_long[which(radiologist_long$n==1), ]
+
 ggplot(data = radiologist_long) + 
   geom_bar(mapping = aes(x=reorder(radiologist, -n), y=Value),
            stat='identity', position ='dodge', fill="lightgray", color="black", alpha=.6, width=.5) + 
   facet_wrap(~Stat) + 
   coord_flip() +
   labs(title="Practice", y="Observed rate (in percentage)", x = "") +
+  geom_hline(data= radiologist_89, aes(yintercept=Value), color="red" , linetype = "dashed") +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) 
 
-model_recall = glm(recall ~ (. - cancer)^2, data=brca, family=binomial)
-coef(model_recall)
+brca$radiologist = str_replace(brca$radiologist, "radiologist","")
+brca$age = str_replace(brca$age, "age","")
+brca$menopause = str_replace(brca$menopause, "meno","")
+brca$density = str_replace(brca$density, "density","")
+
+brca_new = dummy.data.frame(brca, names = c("radiologist", "age","menopause", "density") , sep = ".")
+brca_new = subset(brca_new, select = -c(radiologist.13, age.4049,menopause.postHT, density.1))
+
+model_1 = glm(recall ~ . - cancer, data=brca_new, family=binomial)
+ame_11 = summary(margins(model_1, variables = list("radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95")))
+ame_12 = summary(margins(model_1, at = list(history = 0, symptoms = 0, age.5059 = 0, age.6069 = 0,age.70plus = 0,
+                           menopause.pre = 0,menopause.postunknown = 0,menopause.postNoHT = 0,
+                           density.2 = 1), variables = list("radiologist.34", "radiologist.66",
+                                                            "radiologist.89", "radiologist.95")))
+
+model_2 = glm(recall ~ (. - cancer)^2, data=brca_new, family=binomial)
+ame_21 = summary(margins(model_2, variables = list("radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95"), vce = "bootstrap"))
+ame_22 = summary(margins(model_2, at = list(history = 0, symptoms = 0, age.5059 = 0, age.6069 = 0,age.70plus = 0,
+                           menopause.pre = 0,menopause.postunknown = 0,menopause.postNoHT = 0,
+                           density.2 = 1), variables = list("radiologist.34", "radiologist.66",
+                                                            "radiologist.89", "radiologist.95"), vce = "bootstrap"))
+
+ame_11 = select(ame_11,-c(4:7))
+ame_12 = select(ame_12,-c(2:10,13:16))
+ame_21 = select(ame_21,-c(4:7))
+ame_22 = select(ame_22,-c(2:10,13:16))
+
+ame = left_join(ame_11, ame_12, by = "factor")
+ame = left_join(ame, ame_21, by = "factor")
+ame = left_join(ame, ame_22, by = "factor")
+colnames(ame) <- c("","AME","se","AME","se","AME","se","AME","se")
+
+kable(ame) %>%
+  kable_styling("striped") %>%
+  add_header_above(c(" " = 1, "AME" = 2, "AME at x" = 2, "AME" = 2, "AME at x" = 2)) %>%
+  add_header_above(c(" ", "Model 1" = 4, "Model 2" = 4))
+
+model_cancer = glm(cancer ~ recall, data=brca, family=binomial)
+coef(model_cancer)
+yhat = predict(model_cancer, brca, type="response")
+model_cancer2 = glm(cancer ~ recall + history, data=brca, family=binomial)
+coef(model_cancer2)
+yhat_2 = predict(model_cancer2, brca, type="response")
+model_cancer3 = glm(cancer ~ recall + age, data=brca, family=binomial)
+coef(model_cancer3)
+yhat_3 = predict(model_cancer3, brca, type="response")
+model_cancer4 = glm(cancer ~ recall + symptoms, data=brca, family=binomial)
+coef(model_cancer4)
+yhat_4 = predict(model_cancer4, brca, type="response")
+model_cancer5 = glm(cancer ~ recall + menopause, data=brca, family=binomial)
+coef(model_cancer5)
+yhat_5 = predict(model_cancer5, brca, type="response")
+model_cancer6 = glm(cancer ~ recall + density, data=brca, family=binomial)
+coef(model_cancer6)
+yhat_6 = predict(model_cancer6, brca, type="response")
+
+rmse = function(y, yhat) {
+  sqrt( mean( (y - yhat)^2 ) )
+}
+
+rmse(brca$cancer, yhat)
+
+xtabs(~recall + age, data=brca)
