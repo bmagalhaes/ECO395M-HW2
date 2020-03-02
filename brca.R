@@ -50,13 +50,15 @@ ggplot(data = radiologist_long) +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) 
 
-brca$radiologist = str_replace(brca$radiologist, "radiologist","")
-brca$age = str_replace(brca$age, "age","")
-brca$menopause = str_replace(brca$menopause, "meno","")
-brca$density = str_replace(brca$density, "density","")
+brca2 = brca
+brca2$radiologist = str_replace(brca2$radiologist, "radiologist","")
+brca2$age = str_replace(brca2$age, "age","")
+brca2$menopause = str_replace(brca2$menopause, "meno","")
+brca2$density = str_replace(brca2$density, "density","")
 
-brca_new = dummy.data.frame(brca, names = c("radiologist", "age","menopause", "density") , sep = ".")
+brca_new = dummy.data.frame(brca2, names = c("radiologist", "age","menopause", "density") , sep = ".")
 brca_new = subset(brca_new, select = -c(radiologist.13, age.4049,menopause.postHT, density.1))
+
 
 model_1 = glm(recall ~ . - cancer, data=brca_new, family=binomial)
 ame_11 = summary(margins(model_1, variables = list("radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95")))
@@ -84,32 +86,59 @@ colnames(ame) <- c("","AME","se","AME","se","AME","se","AME","se")
 
 kable(ame) %>%
   kable_styling("striped") %>%
-  add_header_above(c(" " = 1, "AME" = 2, "AME at x" = 2, "AME" = 2, "AME at x" = 2)) %>%
+  add_header_above(c(" " = 1, "AME" = 2, "AME at x*" = 2, "AME" = 2, "AME at x*" = 2)) %>%
   add_header_above(c(" ", "Model 1" = 4, "Model 2" = 4))
+
+###
+prob_cancer = sum(brca$cancer == 1)/nrow(brca)
 
 model_cancer = glm(cancer ~ recall, data=brca, family=binomial)
 coef(model_cancer)
 yhat = predict(model_cancer, brca, type="response")
+yhat_test = ifelse(yhat >= prob_cancer, 1, 0)
+table(y=brca$cancer, yhat=yhat_test)
+
 model_cancer2 = glm(cancer ~ recall + history, data=brca, family=binomial)
 coef(model_cancer2)
 yhat_2 = predict(model_cancer2, brca, type="response")
+yhat_test2 = ifelse(yhat_2 >= prob_cancer, 1, 0)
+table(y=brca$cancer, yhat=yhat_test2)
+
 model_cancer3 = glm(cancer ~ recall + age, data=brca, family=binomial)
 coef(model_cancer3)
 yhat_3 = predict(model_cancer3, brca, type="response")
+yhat_test3 = ifelse(yhat_3 >= prob_cancer, 1, 0)
+table(y=brca$cancer, yhat=yhat_test3)
+
 model_cancer4 = glm(cancer ~ recall + symptoms, data=brca, family=binomial)
 coef(model_cancer4)
 yhat_4 = predict(model_cancer4, brca, type="response")
+yhat_test4 = ifelse(yhat_4 >= prob_cancer, 1, 0)
+table(y=brca$cancer, yhat=yhat_test4)
+
 model_cancer5 = glm(cancer ~ recall + menopause, data=brca, family=binomial)
 coef(model_cancer5)
 yhat_5 = predict(model_cancer5, brca, type="response")
+yhat_test5 = ifelse(yhat_5 >= prob_cancer, 1, 0)
+table(y=brca$cancer, yhat=yhat_test5)
+
 model_cancer6 = glm(cancer ~ recall + density, data=brca, family=binomial)
 coef(model_cancer6)
 yhat_6 = predict(model_cancer6, brca, type="response")
+yhat_test6 = ifelse(yhat_6 >= prob_cancer, 1, 0)
+table(y=brca$cancer, yhat=yhat_test6)
 
-rmse = function(y, yhat) {
-  sqrt( mean( (y - yhat)^2 ) )
-}
+model_cancer7 = glm(cancer ~ recall + age + density, data=brca, family=binomial)
+coef(model_cancer7)
+yhat_7 = predict(model_cancer7, brca, type="response")
+yhat_test7 = ifelse(yhat_7 >= 0.04, 1, 0)
+table(y=brca$cancer, yhat=yhat_test7)
+
+tab_model(model_cancer, model_cancer2, model_cancer3, model_cancer4, model_cancer5,
+          model_cancer6, show.ci = FALSE, show.p = TRUE,
+          dv.labels = c("Baseline Model", "+ History", "+ Age", "+Symptoms",
+                        "+Menopause", "+ Density"))
 
 rmse(brca$cancer, yhat)
 
-xtabs(~recall + age, data=brca)
+xtabs(~cancer + recall, data=brca)
