@@ -89,13 +89,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0386536
+0.0433757
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.2603442
+0.2488449
 </td>
 </tr>
 <tr>
@@ -106,13 +106,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0313203
+0.0356750
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1497584
+0.0988564
 </td>
 </tr>
 <tr>
@@ -123,13 +123,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0316705
+0.0360015
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1358427
+0.1672303
 </td>
 </tr>
 <tr>
@@ -140,17 +140,18 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0336820
+0.0308257
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.1665519
+0.1513942
 </td>
 </tr>
 </tbody>
 </table>
+
 Finally, in order to estimate how each radiologist would perform when
 facing the same set of patients, we used a bootstrap to randomly split
 the original dataset in a training dataset containing 80% of the
@@ -194,10 +195,10 @@ Model\_2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1472902
+0.1442084
 </td>
 <td style="text-align:right;">
-0.1500942
+0.1443038
 </td>
 </tr>
 <tr>
@@ -205,10 +206,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0877100
+0.0840223
 </td>
 <td style="text-align:right;">
-0.0878284
+0.0852450
 </td>
 </tr>
 <tr>
@@ -216,10 +217,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1864655
+0.1859712
 </td>
 <td style="text-align:right;">
-0.1909251
+0.1889655
 </td>
 </tr>
 <tr>
@@ -227,10 +228,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.1892262
+0.1934406
 </td>
 <td style="text-align:right;">
-0.1875767
+0.1917772
 </td>
 </tr>
 <tr>
@@ -238,10 +239,10 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1363538
+0.1365104
 </td>
 <td style="text-align:right;">
-0.1340330
+0.1398158
 </td>
 </tr>
 </tbody>
