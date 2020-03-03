@@ -19,8 +19,7 @@ in class.
     model4= price~ lotSize + age +pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir
     model5= price~ lotSize + age + age2 + pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir
 
-    model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + 
-                     fireplaces + bathrooms + rooms + heating + fuel + centralAir
+    model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + centralAir
 
 Here are the main features of our models.
 
@@ -36,116 +35,5 @@ training-test split(train 80%, test 20%) for 100 times and calcaulate
 the average values of out-of-sample RMSE for each model. And the best
 model turned out to be model 1 with the least out-of-sample RMSE value.
 
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
-    ## Warning in predict.lm(model3, saratoga_test): prediction from a rank-deficient
-    ## fit may be misleading
-
     ##      model1   model2   model3   model4   model5 model_medium
-    ## V1 58432.46 59858.58 64764.01 59873.48 59912.65     65880.65
+    ## V1 58422.95 59905.73 63917.33 59746.41 59803.74     66141.06
