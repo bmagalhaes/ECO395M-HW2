@@ -51,6 +51,7 @@ Model 3: add all the interactions on model 2
 Model 4: allow only some interactions on model 2
 Model 5: a polynomial model by adding age^2 on model 4
 Model_medium: baseline model with 11 main effects
+
              
 ```{r 2.1.2, echo=FALSE}
 # make a new variable age2=(age)^2
@@ -60,8 +61,9 @@ rmse = function(y, yhat) {
   sqrt( mean( (y - yhat)^2 ) )
 }
 ```
-In order to measure performances of each model, we run the Monte Carlo training-test split(train 80%, test 20%) for 100 times and calcaulate the average values of out-of-sample RMSE for each model.
-And the best model turned out to be model 1 with the least out-of-sample RMSE value.
+
+In order to measure performances of each model, we run Monte Carlo training-test split(train 80%, test 20%) for 100 times and calcaulate the average values of out-of-sample RMSE for each model.
+
 
 ```{r 2.1.3, echo=FALSE, warning=FALSE}
 rmse_check = do(100)*{# Split into training and testing sets
@@ -108,16 +110,27 @@ yhat_test_medium = predict(model_medium, saratoga_test)
 
 c(rmse(saratoga_test$price, yhat_test1), rmse(saratoga_test$price, yhat_test2), rmse(saratoga_test$price, yhat_test3), rmse(saratoga_test$price, yhat_test4), rmse(saratoga_test$price, yhat_test5), rmse(saratoga_test$price, yhat_test_medium))}
 
-rmse_result= data.frame('model 1'= colMeans(rmse_check[1]), 'model 2'=colMeans(rmse_check[2]), 'model 3'=colMeans(rmse_check[3]), 'model 4'=colMeans(rmse_check[4]), 'model 5'=colMeans(rmse_check[5]), 'model_medium'=colMeans(rmse_check[6]), row.names="AVG RMSE")
+rmse_result= data.frame("model1"= colMeans(rmse_check[1]), "model2"=colMeans(rmse_check[2]), "model3"=colMeans(rmse_check[3]), "model4"=colMeans(rmse_check[4]), "model5"=colMeans(rmse_check[5]), "model_medium"=colMeans(rmse_check[6]), row.names="AVG_RMSE")
 
 kable(rmse_result) %>% kable_styling("striped")
 
 ```
 
-We can find the variable which is the strongest driver of house prices by assessing how much it improves the out-of-sample RMSE when it is included in the model.
-So we test how much the out-of-sample increases when we exclude a certain variable from our model 1, and get the average RMSE by doing the Monte Carlo simulation on different training-test sets(80%-20%) for 100 times.
 
-```{r 2.1.4, echo=FALSE, warning=FALSE}
+The best model turned out to be model 1 with the least out-of-sample RMSE value. Here is the summary of model 1.
+
+```{r 2.1.4, echo=TRUE}
+summary(model1)
+
+```
+
+And we can find the variable which is the strongest driver of house prices by assessing how much it improves the out-of-sample RMSE when it is included in the model.
+So we test how much the out-of-sample increases when we exclude a certain variable from our model 1, and get the average RMSE by doing Monte Carlo simulation on different training-test sets(80%-20%) for 100 times.
+
+As the table below shows, "landValue" variable seems to be the storngest drive of house prices. This result might be caused because land values are already included in house prices(House price = Land value + Pure house value), so they are strongly related to each other.
+
+
+```{r 2.1.5, echo=FALSE, warning=FALSE}
 rmse_check2 = do(100)*{# Split into training and testing sets
 train_cases2 = sample.int(n, n_train, replace=FALSE)
 test_cases2 = setdiff(1:n, train_cases)
@@ -186,11 +199,89 @@ yhat_test_centralAir = predict(model1_wo_centralAir, saratoga_test2)
 
 c(rmse(saratoga_test2$price, yhat_test_lotSize), rmse(saratoga_test2$price, yhat_test_age), rmse(saratoga_test2$price, yhat_test_landValue), rmse(saratoga_test2$price, yhat_test_livingArea), rmse(saratoga_test2$price, yhat_test_pctCollege), rmse(saratoga_test2$price, yhat_test_bedrooms), rmse(saratoga_test2$price, yhat_test_fireplaces), rmse(saratoga_test2$price, yhat_test_bathrooms), rmse(saratoga_test2$price, yhat_test_heating), rmse(saratoga_test2$price, yhat_test_fuel), rmse(saratoga_test2$price, yhat_test_sewer), rmse(saratoga_test2$price, yhat_test_waterfront), rmse(saratoga_test2$price, yhat_test_newConstruction), rmse(saratoga_test2$price, yhat_test_centralAir))}
 
-rmse_result2= data.frame('model_wo_lotSize'= colMeans(rmse_check2[1]), 'model_wo_age'=colMeans(rmse_check2[2]), 'model_wo_landValue'=colMeans(rmse_check2[3]), 'model_wo_livingArea'=colMeans(rmse_check2[4]), 'model_wo_pctCollege'=colMeans(rmse_check2[5]), 'model_wo_bedrooms'=colMeans(rmse_check2[6]), 'model_wo_fireplaces'= colMeans(rmse_check2[7]), 'model_wo_bathrooms'=colMeans(rmse_check2[8]), 'model_wo_heating'=colMeans(rmse_check2[9]), 'model_wo_fuel'=colMeans(rmse_check2[10]), 'model_wo_sewer'=colMeans(rmse_check2[11]), 'model_wo_waterfront'=colMeans(rmse_check2[12]), 'model_wo_newConstruction'=colMeans(rmse_check2[13]), 'model_wo_centralAir'=colMeans(rmse_check2[14]), row.names="AVG RMSE")
+rmse_result2= data.frame("model_wo_lotSize"= colMeans(rmse_check2[1]), "model_wo_age"=colMeans(rmse_check2[2]), "model_wo_landValue"=colMeans(rmse_check2[3]), "model_wo_livingArea"=colMeans(rmse_check2[4]), "model_wo_pctCollege"=colMeans(rmse_check2[5]), "model_wo_bedrooms"=colMeans(rmse_check2[6]), "model_wo_fireplaces"= colMeans(rmse_check2[7]), "model_wo_bathrooms"=colMeans(rmse_check2[8]), "model_wo_heating"=colMeans(rmse_check2[9]), "model_wo_fuel"=colMeans(rmse_check2[10]), "model_wo_sewer"=colMeans(rmse_check2[11]), "model_wo_waterfront"=colMeans(rmse_check2[12]), "model_wo_newConstruction"=colMeans(rmse_check2[13]), "model_wo_centralAir"=colMeans(rmse_check2[14]), row.names="AVG RMSE")
 
 rmse_result2_t = t(rmse_result2)
 
 kable(rmse_result2_t) %>% kable_styling("striped")
 ```
 
+Now, we build a nonparametic KNN model to compare it with our linear model and figure out which one performs better.
+By using the same train and test sets that we used in our linear regression, the result shows that whatever value K may have, the knn model is unlikely to perfrom better than our linear model.
+In the graph below, the horizontal red line shows the out-of-sample RMSE of our linear model. We can see that all the RMSEs of the knn model in accordance with k values are plotted above the red line. 
+And the table below suggests the fact that the minimum RMSE value of knn model is still bigger than our best-fit linear model. 
+
+
+```{r 2.1.6, echo=FALSE}
+# construct the training and test-set feature matrices
+Xtrain= model.matrix(~ .-(price + rooms + age2)-1, data=saratoga_train)
+Xtest = model.matrix(~ .-(price + rooms + age2)-1, data= saratoga_test)
+
+# training and testing set responses 
+ytrain = saratoga_train$price
+ytest = saratoga_test$price
+
+# rescale
+scale_train = apply(Xtrain, 2, sd)
+Xtilde_train = scale(Xtrain, scale = scale_train)
+Xtilde_test = scale(Xtest, scale= scale_train)
+K= 10
+
+# fit the model
+knn_model = knn.reg(Xtilde_train, Xtilde_test, ytrain, k=K)
+
+k_grid = seq(1,50, by=1)
+rmse_grid = foreach(K= k_grid, .combine='c') %do% {
+knn_model = knn.reg(Xtilde_train, Xtilde_test, ytrain, k=K)
+rmse(ytest, knn_model$pred)
+}
+plot(k_grid, rmse_grid, ylim=c(55000,80000))
+abline(h=rmse(ytest, yhat_test1), col='red')
+
+K= which.min(rmse_grid)
+modelcompare = data.frame('Kmin'=K, 'knn model RMSE' = rmse(ytest, knn_model$pred), 'linear model RMSE' = rmse(ytest, yhat_test1))
+kable(modelcompare) %>% kable_styling("striped", full_width=F)
+```
+
+But there is random variation due to the particular choice of data points that end up in your train/test split. So we run Monte-Carlo simulation again using random train/test split for 100 times, and compare the minimim RMSE of knn model with RMSE of our linear model.
+As a result, we can see that our linear model outperforms the knn model.
+
+
+```{r 2.1.7, echo=FALSE}
+rmse_check3 = do(100)*{# Split into training and testing sets
+train_cases3 = sample.int(n, n_train, replace=FALSE)
+test_cases3 = setdiff(1:n, train_cases3)
+saratoga_train3 = SaratogaHouses[train_cases3,]
+saratoga_test3 = SaratogaHouses[test_cases3,]
+
+# construct the training and test-set feature matrices
+Xtrain3= model.matrix(~ .-(price + rooms + age2)-1, data=saratoga_train3)
+Xtest3 = model.matrix(~ .-(price + rooms + age2)-1, data= saratoga_test3)
+
+# training and testing set responses 
+ytrain3 = saratoga_train3$price
+ytest3 = saratoga_test3$price
+
+# rescale
+scale_train3 = apply(Xtrain3, 2, sd)
+Xtilde_train3 = scale(Xtrain3, scale = scale_train3)
+Xtilde_test3 = scale(Xtest3, scale= scale_train3)
+K3=10
+
+# fit the model
+knn_model3 = knn.reg(Xtilde_train3, Xtilde_test3, ytrain3, k=K3)
+
+
+k_grid3 = seq(1,50, by=1)
+rmse_grid3 = foreach(K3= k_grid3, .combine='c') %do% {
+knn_model3 = knn.reg(Xtilde_train3, Xtilde_test3, ytrain3, k=K3)
+rmse(ytest3, knn_model3$pred)}
+min(rmse_grid3)
+}
+
+
+modelcompare2 = data.frame("knn_model"= colMeans(rmse_check3), "linear_model"= colMeans(rmse_check[1]), row.names="Average_RMSE")
+kable(modelcompare2) %>% kable_styling("striped")
+
+```
 
