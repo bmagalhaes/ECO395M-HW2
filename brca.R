@@ -185,12 +185,6 @@ yhat_6 = predict(model_cancer6, brca, type="response")
 yhat_test6 = ifelse(yhat_6 >= prob_cancer, 1, 0)
 table(y=brca$cancer, yhat=yhat_test6)
 
-model_cancer7 = glm(cancer ~ recall + age + density, data=brca, family=binomial)
-coef(model_cancer7)
-yhat_7 = predict(model_cancer7, brca, type="response")
-yhat_test7 = ifelse(yhat_7 >= 0.04, 1, 0)
-table(y=brca$cancer, yhat=yhat_test7)
-
 tab_model(model_cancer, model_cancer2, model_cancer3, model_cancer4, model_cancer5,
           model_cancer6, show.ci = FALSE, show.p = TRUE,
           dv.labels = c("Baseline Model", "+ History", "+ Age", "+Symptoms",
@@ -198,4 +192,11 @@ tab_model(model_cancer, model_cancer2, model_cancer3, model_cancer4, model_cance
 
 rmse(brca$cancer, yhat)
 
+model_cancer7 = glm(cancer ~ recall + age.70plus + menopause.postunknown + density.4, data=brca_new, family=binomial)
+yhat_7 = predict(model_cancer7, brca_new, type="response")
+prob_cancer = sum(brca_new$cancer == 1)/nrow(brca_new)
+yhat_test7 = ifelse(yhat_7 >= prob_cancer, 1, 0)
+table(y=brca_new$cancer, yhat=yhat_test7)
+
 xtabs(~cancer + recall, data=brca)
+22/(22+12)

@@ -189,3 +189,65 @@ kable(a) %>%
   kable_styling("striped") %>%
   add_header_above(c(" " = 1, "(Out of sample) Average recall probability" = 2))
 ```
+
+After that, we analyzed if the data suggest that radiologists at this hospital should be weighting some clinical risk factors more heavily than they currently are when interpreting mammograms in order to make a decision on whether to recall a patient or not.
+
+We started by stablishing the following baseline model.
+
+```{r 2.2.5, echo=TRUE}
+baseline_model = cancer ~ recall
+```
+
+Then, we built multiple models adding each of the clinical risk factors to the baseline model.
+
+```{r 2.2.6, echo=TRUE}
+baseline_history_model = cancer ~ recall + history
+baseline_age_model = cancer ~ recall + age
+baseline_symptoms_model = cancer ~ recall + symptoms
+baseline_menopause_model = cancer ~ recall + menopause
+baseline_density_model = cancer ~ recall + density
+```
+
+If the radiologists were appropriately accounting for the clinical risk factors when deciding whether to recall a patient for further examination, we would expect the coefficient associated with the recall variable to capture this effect, and the coefficient of the control variable to be close to zero (so the odds ratio to be close to one). Hence, including this variables in the model shouldn't considerably affect the cancer predictions.
+
+The table below summarizes the estimates from the 6 models. Here, we observe that age 70 or plus, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status are some factors that are increasing the odds of having a cancer, even after medical analysis! Thus there's extra information in the risk factors that the doctors should be weighting more heavily to recall patients than they currently are.
+
+```{r 2.2.7, echo=FALSE, warning = FALSE}
+model_cancer = glm(cancer ~ recall, data=brca, family=binomial)
+model_cancer2 = glm(cancer ~ recall + history, data=brca, family=binomial)
+model_cancer3 = glm(cancer ~ recall + age, data=brca, family=binomial)
+model_cancer4 = glm(cancer ~ recall + symptoms, data=brca, family=binomial)
+model_cancer5 = glm(cancer ~ recall + menopause, data=brca, family=binomial)
+model_cancer6 = glm(cancer ~ recall + density, data=brca, family=binomial)
+
+tab_model(model_cancer, model_cancer2, model_cancer3, model_cancer4, model_cancer5,
+          model_cancer6, show.ci = FALSE, show.p = TRUE,
+          dv.labels = c("Baseline Model", "+ History", "+ Age", "+Symptoms",
+                        "+Menopause", "+ Density"))
+```
+
+Considering the results above, we built a new model including those 3 risk factors.
+
+```{r 2.2.8, echo=TRUE}
+proposed_model = cancer ~ recall + age.70plus + postmenounknown + density.4
+```
+
+In order to assess how well this model performs when predicting cancer status, we need to compare its predictions with the predictions from the baseline model.
+
+The confusion matrix for the baseline model below shows that the doctors are currently predicting cancer with a 59.46% sensitivity (22/(22+15)) and a accuracy rate of 85.71%.
+
+```{r 2.2.9, echo=FALSE, warning = FALSE}
+xtabs(~cancer + recall, data=brca)
+```
+
+Considering the in-sample probability of cancer as a threshold for the fitted values of the proposed model to predict cancer or not, we computed the following confusion matrix. This matrix show that, when including age.70plus, postmenounknown and density.4 in the model, the sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate slightly decreased to 84.60%.
+
+```{r 2.2.10, echo=FALSE, warning = FALSE}
+model_cancer7 = glm(cancer ~ recall + age.70plus + menopause.postunknown + density.4, data=brca_new, family=binomial)
+yhat_7 = predict(model_cancer7, brca_new, type="response")
+prob_cancer = sum(brca_new$cancer == 1)/nrow(brca_new)
+yhat_test7 = ifelse(yhat_7 >= prob_cancer, 1, 0)
+table(y=brca_new$cancer, yhat=yhat_test7)
+```
+
+Since a cancer that is diagnosed at an early stage is more likely to be treated successfully, it is reasonable to argue that the increase in sensitivity overcomes the decrease in the accuracy rates caused by a higher amount of false positive predictions. Hence, our best judgement is that the radiologists should be weighting more heavily patients with 70 years old and above, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status when deciding whether to recall patients.
