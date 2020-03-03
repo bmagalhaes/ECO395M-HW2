@@ -6,12 +6,6 @@ library(kableExtra)
 library(sjPlot)
 library(mosaic)
 
-
-#library(pander)
-#library(knitr)
-#library(sjmisc)
-
-
 brca = read.csv(url("https://raw.githubusercontent.com/bmagalhaes/ECO395M-HW2/master/brca.csv"))
 
 recall_rate = brca %>%
@@ -91,7 +85,6 @@ boot1 = do(100)*{
   train_cases = sample.int(n, n_train, replace=FALSE)
   test_cases = setdiff(1:n, train_cases)
   brca_train = brca_new[train_cases,]
-  recall_prob = sum(brca_train$recall == 1)/nrow(brca_train)
   brca_test = brca_new[test_cases,]
   brca_test = brca_test[rep(seq_len(nrow(brca_test)), 5),]
   brca_test =  brca_test %>%
@@ -106,10 +99,10 @@ boot1 = do(100)*{
     mutate(radiologist.89 = 0) %>%
     mutate(radiologist.95 = 0)
   brca_test = brca_test %>%
-    mutate(radiologist.34 = ifelse(n >= 198 & 394 >= n, 1, 0)) %>%
-    mutate(radiologist.66 = ifelse(n >= 395 & 591 >= n, 1, 0)) %>%
-    mutate(radiologist.89 = ifelse(n >= 592 & 788 >= n, 1, 0)) %>%
-    mutate(radiologist.95 = ifelse(n >= 789 & 985 >= n, 1, 0))
+    mutate(radiologist.34 = ifelse(radiologist_raw == "radiologist34", 1, 0)) %>%
+    mutate(radiologist.66 = ifelse(radiologist_raw == "radiologist66", 1, 0)) %>%
+    mutate(radiologist.89 = ifelse(radiologist_raw == "radiologist89", 1, 0)) %>%
+    mutate(radiologist.95 = ifelse(radiologist_raw == "radiologist95", 1, 0))
   
   # fit to this training set
   glm_1 = glm(recall ~ . - cancer, data=brca_train, family=binomial)
@@ -132,12 +125,25 @@ boot1 = do(100)*{
   recalls_t = rbind(recalls_1, recalls_2)
   recalls = as.data.frame(t(recalls_t))
   recalls = recalls[-1, ]
-  colnames(recalls) <- c("1_radiologist13", "1_radiologist.34", "1_radiologist.66", 
-                         "1_radiologist.89", "1_radiologist.95", "2_radiologist13",
-                         "2_radiologist.34", "2_radiologist.66", 
-                         "2_radiologist.89", "2_radiologist.95")
+  colnames(recalls) <- c("M1_radiologist.13", "M1_radiologist.34", "M1_radiologist.66", 
+                         "M1_radiologist.89", "M1_radiologist.95", "M2_radiologist.13",
+                         "M2_radiologist.34", "M2_radiologist.66", 
+                         "M2_radiologist.89", "M2_radiologist.95")
   recalls
   }
+
+boot1[, c(1:10)] = sapply(boot1[, c(1:10)], as.numeric)
+
+radiologist = c("radiologist.13", "radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95")
+Model_1 = c(mean(boot1$M1_radiologist.13), mean(boot1$M1_radiologist.34), mean(boot1$M1_radiologist.66),
+       mean(boot1$M1_radiologist.89), mean(boot1$M1_radiologist.95))
+Model_2 = c(mean(boot1$M2_radiologist.13), mean(boot1$M2_radiologist.34), mean(boot1$M2_radiologist.66),
+       mean(boot1$M2_radiologist.89), mean(boot1$M2_radiologist.95))
+a = data.frame(radiologist, Model_1,Model_2)
+
+kable(a) %>%
+  kable_styling("striped") %>%
+  add_header_above(c(" " = 1, "(Out of sample) Average recall probability" = 2))
 
 ###
 

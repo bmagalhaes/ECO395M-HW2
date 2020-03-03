@@ -2,6 +2,7 @@
 title: "homework1"
 author: "Bernardo Magalhaes, Adhish Luitel, Ji Heon Shim"
 date: "`r format(Sys.Date())`" 
+always_allow_html: true
 output:
     md_document:
     variant: markdown_github
@@ -23,12 +24,13 @@ library(margins)
 library(dplyr)
 library(kableExtra)
 library(sjPlot)
+library(mosaic)
 
 brca = read.csv(url("https://raw.githubusercontent.com/bmagalhaes/ECO395M-HW2/master/brca.csv"))
 ```
 This exercise is based on a dataset consisted of 987 screening mammograms administered at a hospital in Seattle, Washington. The goal of the analysis is to evaluate the performance of five different radiologists considering several risk factors.
 
-First, we analyzed the raw data to verify whether each radiologist has a different recall rate or not, and compare precision and error rates. We can observe that, even thought radiologist89 has a higher probability of recalling patients, his Type II error rate (not recalling patients that actually have cancer) doesn't substantially differ from radiologist95 and radiologist34, who have the lowest recall rates.
+First, we analyzed the raw data to verify whether each radiologist has a different recall rate or not, and compare precision and error rates. We can observe that, even though radiologist89 has a higher probability of recalling patients, his Type II error rate (not recalling patients that actually have cancer) doesn't substantially differ from radiologist95 and radiologist34, who have the lowest recall rates.
 
 ```{r 2.2.1, echo=FALSE}
 recall_rate = brca %>%
@@ -63,29 +65,28 @@ ggplot(data = radiologist_long) +
            stat='identity', position ='dodge', fill="lightgray", color="black", alpha=.6, width=.5) + 
   facet_wrap(~Stat) + 
   coord_flip() +
-  labs(title="Practice", y="Observed rate (in percentage)", x = "") +
+  labs(y="Observed rate (in percentage)", x = "") +
   geom_hline(data= radiologist_89, aes(yintercept=Value), color="red" , linetype = "dashed") +
   theme_bw() +
   theme(plot.title = element_text(hjust = 0.5), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) 
 ```
 
-However, since each radiologist read the mammograms of a different set of patients, this difference could be explained by the fact that some radiologists might have seen patients whose clinical situation required the patient to be recalled for further exams.
+However, since each radiologist read the mammograms of a different set of patients, this difference could be explained by the fact that some radiologists might have seen patients whose clinical situation required the patient to be recalled for further examination.
 
 In order to analyse if, holding patient risk factors equal, some radiologists are more clinically conservative than others in recalling patients, we built two classification models:
 
 ```{r 2.2.2, echo=TRUE}
 model1 = recall ~ radiologist + age + history + symptoms + menopause + density
-model2 = recall ~ (radiologist + age + history + symptoms + menopause + density)^2
+model2 = recall ~ (age + history + symptoms + menopause + density) * radiologist
 ```
 
-The table below shows the Average Marginal Effect (AME) and Average Marginal Effect at xstar (AME at xstar) for each radiologist in the two models. We can see that, for Model 1, radiologist89 is the most conservative - holding patient risk factors equal to a typical patient, the probability of being recalled increases by 7.96 percentage points when radiologist89 is the one reading the mammogram.
+The table below shows the Average Marginal Effect (AME) for each radiologist in the two models. We can see that, when using Model 1, radiologist89 is the most conservative - holding patient risk factors equal, the probability of being recalled increases by 5.71 percentage points when radiologist89 is the one reading the mammogram compared to the baseline radiologist13.
 
-(xstar denotes referent values for a typical patient: age 40 to 49,  no history of breast cancer, no symptoms, post-menopausal & hormone-therapy and scattered fibroglandular tissue)
-(for Model 1, the standard errors were computed using the Delta method. For Model 2, using bootstrap)
-
+When allowing for interactions between radiologist and each control variable as in Model 2, radiologist89 is still the most conservative - holding patient risk factors equal, the probability of being recalled increases by 17.48 percentage points when radiologist89 is the one reading the mammogram compared to the baseline radiologist13.
 
 ```{r 2.2.3, echo=FALSE}
 brca2 = brca
+brca2$radiologist_raw = brca2$radiologist
 brca2$radiologist = str_replace(brca2$radiologist, "radiologist","")
 brca2$age = str_replace(brca2$age, "age","")
 brca2$menopause = str_replace(brca2$menopause, "meno","")
@@ -94,34 +95,97 @@ brca2$density = str_replace(brca2$density, "density","")
 brca_new = dummy.data.frame(brca2, names = c("radiologist", "age","menopause", "density") , sep = ".")
 brca_new = subset(brca_new, select = -c(radiologist.13, age.4049,menopause.postHT, density.1))
 
-
 model_1 = glm(recall ~ . - cancer, data=brca_new, family=binomial)
-ame_11 = summary(margins(model_1, variables = list("radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95")))
-ame_12 = summary(margins(model_1, at = list(history = 0, symptoms = 0, age.5059 = 0, age.6069 = 0,age.70plus = 0,
-                           menopause.pre = 0,menopause.postunknown = 0,menopause.postNoHT = 0,
-                           density.2 = 1), variables = list("radiologist.34", "radiologist.66",
-                                                            "radiologist.89", "radiologist.95")))
+ame_11 = summary(margins(model_1, variables = list("radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95"), vce = "bootstrap"))
 
-model_2 = glm(recall ~ (. - cancer)^2, data=brca_new, family=binomial)
+model_2 = glm(recall ~ (history + symptoms + age.5059 + age.6069 + age.70plus + menopause.postNoHT
+              + menopause.postunknown + menopause.pre + density.2 + density.3 + density.4)*(radiologist.34
+              + radiologist.66 + radiologist.89 + radiologist.95), data=brca_new, family=binomial)
 ame_21 = summary(margins(model_2, variables = list("radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95"), vce = "bootstrap"))
-ame_22 = summary(margins(model_2, at = list(history = 0, symptoms = 0, age.5059 = 0, age.6069 = 0,age.70plus = 0,
-                           menopause.pre = 0,menopause.postunknown = 0,menopause.postNoHT = 0,
-                           density.2 = 1), variables = list("radiologist.34", "radiologist.66",
-                                                            "radiologist.89", "radiologist.95"), vce = "bootstrap"))
 
 ame_11 = select(ame_11,-c(4:7))
-ame_12 = select(ame_12,-c(2:10,13:16))
 ame_21 = select(ame_21,-c(4:7))
-ame_22 = select(ame_22,-c(2:10,13:16))
 
-ame = left_join(ame_11, ame_12, by = "factor")
-ame = left_join(ame, ame_21, by = "factor")
-ame = left_join(ame, ame_22, by = "factor")
-colnames(ame) <- c("","AME","se","AME","se","AME","se","AME","se")
+ame = left_join(ame_11, ame_21, by = "factor")
+colnames(ame) <- c("","AME","se","AME","se")
 
 kable(ame) %>%
   kable_styling("striped") %>%
-  add_header_above(c(" " = 1, "AME" = 2, "AME at x*" = 2, "AME" = 2, "AME at x*" = 2)) %>%
-  add_header_above(c(" ", "Model 1" = 4, "Model 2" = 4))
+  add_header_above(c(" " = 1, "Model 1" = 2, "Model 2" = 2))
 ```
 
+Finally, in order to estimate how each radiologist would perform when facing the same set of patients, we used a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing 20% of the observations, repeating the proccess 100 times. In each repetition, we fitted both models using the train dataset, and compared each model's predictions when all radiologists, in a hypothetical scenario, analyze the entire test dataset. 
+
+We computed average probability of recall per repetition, and calculated the average of the 100 samples to mitigate the effect of randomization. For both models, radiologist89 has the highest probability of recall, followed by radiologist66, radiologist13, radiologist95 and radiologist 34.
+
+```{r 2.2.4, echo=FALSE}
+n = nrow(brca_new)
+
+boot1 = do(100)*{
+  
+  # re-split into train and test cases
+  n_train = round(0.8*n)  # round to nearest integer
+  n_test = n - n_train
+  train_cases = sample.int(n, n_train, replace=FALSE)
+  test_cases = setdiff(1:n, train_cases)
+  brca_train = brca_new[train_cases,]
+  brca_test = brca_new[test_cases,]
+  brca_test = brca_test[rep(seq_len(nrow(brca_test)), 5),]
+  brca_test =  brca_test %>%
+    mutate(n = row_number()) %>%
+    mutate(radiologist.34 = 0) %>%
+    mutate(radiologist.66 = 0) %>%
+    mutate(radiologist.89 = 0) %>%
+    mutate(radiologist.95 = 0)
+  brca_test =  brca_test %>%
+    mutate(radiologist.34 = 0) %>%
+    mutate(radiologist.66 = 0) %>%
+    mutate(radiologist.89 = 0) %>%
+    mutate(radiologist.95 = 0)
+  brca_test = brca_test %>%
+    mutate(radiologist.34 = ifelse(radiologist_raw == "radiologist34", 1, 0)) %>%
+    mutate(radiologist.66 = ifelse(radiologist_raw == "radiologist66", 1, 0)) %>%
+    mutate(radiologist.89 = ifelse(radiologist_raw == "radiologist89", 1, 0)) %>%
+    mutate(radiologist.95 = ifelse(radiologist_raw == "radiologist95", 1, 0))
+  
+  # fit to this training set
+  glm_1 = glm(recall ~ . - cancer, data=brca_train, family=binomial)
+  glm_2 = glm(recall ~ (history + symptoms + age.5059 + age.6069 + age.70plus + menopause.postNoHT
+                        + menopause.postunknown + menopause.pre + density.2 + density.3 + density.4)*(radiologist.34
+                        + radiologist.66 + radiologist.89 + radiologist.95), data=brca_train, family=binomial)
+  
+  # predict on this testing set
+  yhat_test1 = predict(glm_1, brca_test, type="response")
+  yhat_test2 = predict(glm_2, brca_test, type="response")
+
+  brca_test$pred1 = yhat_test1
+  brca_test$pred2 = yhat_test2
+  recalls_1 = brca_test %>%
+    group_by(radiologist_raw)  %>%
+    summarize(recalls = mean(pred1))
+  recalls_2 = brca_test %>%
+    group_by(radiologist_raw)  %>%
+    summarize(recalls = mean(pred2))
+  recalls_t = rbind(recalls_1, recalls_2)
+  recalls = as.data.frame(t(recalls_t))
+  recalls = recalls[-1, ]
+  colnames(recalls) <- c("M1_radiologist.13", "M1_radiologist.34", "M1_radiologist.66", 
+                         "M1_radiologist.89", "M1_radiologist.95", "M2_radiologist.13",
+                         "M2_radiologist.34", "M2_radiologist.66", 
+                         "M2_radiologist.89", "M2_radiologist.95")
+  recalls
+  }
+
+boot1[, c(1:10)] = sapply(boot1[, c(1:10)], as.numeric)
+
+radiologist = c("radiologist.13", "radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95")
+Model_1 = c(mean(boot1$M1_radiologist.13), mean(boot1$M1_radiologist.34), mean(boot1$M1_radiologist.66),
+       mean(boot1$M1_radiologist.89), mean(boot1$M1_radiologist.95))
+Model_2 = c(mean(boot1$M2_radiologist.13), mean(boot1$M2_radiologist.34), mean(boot1$M2_radiologist.66),
+       mean(boot1$M2_radiologist.89), mean(boot1$M2_radiologist.95))
+a = data.frame(radiologist, Model_1,Model_2)
+
+kable(a) %>%
+  kable_styling("striped") %>%
+  add_header_above(c(" " = 1, "(Out of sample) Average recall probability" = 2))
+```
