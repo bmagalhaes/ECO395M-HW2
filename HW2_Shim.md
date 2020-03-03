@@ -55,32 +55,32 @@ model4
 model5
 </th>
 <th style="text-align:right;">
-model\_medium
+model.medium
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-AVG\_RMSE
+AVG RMSE
 </td>
 <td style="text-align:right;">
-58240.41
+59355.21
 </td>
 <td style="text-align:right;">
-59924.11
+60787.06
 </td>
 <td style="text-align:right;">
-63207.77
+64215.12
 </td>
 <td style="text-align:right;">
-59800.62
+60529.83
 </td>
 <td style="text-align:right;">
-59805.86
+60561.7
 </td>
 <td style="text-align:right;">
-65822.75
+66897.86
 </td>
 </tr>
 </tbody>
@@ -97,34 +97,34 @@ RMSE value. Here is the summary of model 1.
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -223652  -35696   -6131   27799  400603 
+    ## -228997  -34913   -4446   26018  466253 
     ## 
     ## Coefficients:
     ##                          Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)             9.872e+04  2.256e+04   4.376 1.30e-05 ***
-    ## lotSize                 5.703e+03  2.787e+03   2.046  0.04091 *  
-    ## age                    -1.328e+02  6.522e+01  -2.036  0.04195 *  
-    ## landValue               9.664e-01  5.313e-02  18.190  < 2e-16 ***
-    ## livingArea              7.439e+01  4.733e+00  15.718  < 2e-16 ***
-    ## pctCollege             -1.975e+02  1.694e+02  -1.166  0.24384    
-    ## bedrooms               -4.870e+03  2.698e+03  -1.805  0.07135 .  
-    ## fireplaces              4.175e+03  3.340e+03   1.250  0.21144    
-    ## bathrooms               2.385e+04  3.736e+03   6.385 2.35e-10 ***
-    ## heatinghot water/steam -1.129e+04  4.760e+03  -2.373  0.01779 *  
-    ## heatingelectric         1.240e+04  1.510e+04   0.821  0.41152    
-    ## fuelelectric           -2.077e+04  1.481e+04  -1.402  0.16109    
-    ## fueloil                -3.268e+03  5.642e+03  -0.579  0.56251    
-    ## sewerpublic/commercial  6.575e+02  4.090e+03   0.161  0.87231    
-    ## sewernone              -6.005e+02  1.797e+04  -0.033  0.97335    
-    ## waterfrontNo           -1.073e+05  1.749e+04  -6.134 1.12e-09 ***
-    ## newConstructionNo       4.873e+04  8.293e+03   5.876 5.28e-09 ***
-    ## centralAirNo           -1.188e+04  3.949e+03  -3.008  0.00268 ** 
+    ## (Intercept)             9.833e+04  2.251e+04   4.368 1.35e-05 ***
+    ## lotSize                 8.096e+03  2.354e+03   3.440  0.00060 ***
+    ## age                    -1.172e+02  6.549e+01  -1.789  0.07384 .  
+    ## landValue               9.135e-01  5.568e-02  16.408  < 2e-16 ***
+    ## livingArea              7.503e+01  4.635e+00  16.187  < 2e-16 ***
+    ## pctCollege             -1.938e+02  1.710e+02  -1.133  0.25724    
+    ## bedrooms               -4.290e+03  2.694e+03  -1.593  0.11142    
+    ## fireplaces             -2.442e+02  3.297e+03  -0.074  0.94096    
+    ## bathrooms               2.401e+04  3.707e+03   6.476 1.31e-10 ***
+    ## heatinghot water/steam -8.690e+03  4.630e+03  -1.877  0.06076 .  
+    ## heatingelectric         7.003e+03  1.349e+04   0.519  0.60374    
+    ## fuelelectric           -1.641e+04  1.325e+04  -1.238  0.21584    
+    ## fueloil                -3.787e+03  5.649e+03  -0.670  0.50270    
+    ## sewerpublic/commercial -3.316e+03  4.081e+03  -0.813  0.41662    
+    ## sewernone              -1.048e+03  2.090e+04  -0.050  0.96002    
+    ## waterfrontNo           -1.005e+05  1.803e+04  -5.570 3.06e-08 ***
+    ## newConstructionNo       4.261e+04  8.106e+03   5.257 1.70e-07 ***
+    ## centralAirNo           -1.155e+04  3.908e+03  -2.956  0.00317 ** 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 58470 on 1364 degrees of freedom
-    ## Multiple R-squared:  0.6509, Adjusted R-squared:  0.6465 
-    ## F-statistic: 149.6 on 17 and 1364 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 57980 on 1364 degrees of freedom
+    ## Multiple R-squared:  0.6489, Adjusted R-squared:  0.6445 
+    ## F-statistic: 148.3 on 17 and 1364 DF,  p-value: < 2.2e-16
 
 And we can find the variable which is the strongest driver of house
 prices by assessing how much it improves the out-of-sample RMSE when it
@@ -154,47 +154,47 @@ AVG RMSE
 model\_wo\_lotSize
 </td>
 <td style="text-align:right;">
-58538.94
+59956.81
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_age
+model.w.o.age
 </td>
 <td style="text-align:right;">
-57924.38
+60086.59
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_landValue
+model.w.o.landValue
 </td>
 <td style="text-align:right;">
-61790.80
+68203.79
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_livingArea
+model.w.o.livingArea
 </td>
 <td style="text-align:right;">
-63693.41
+64860.41
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_pctCollege
+model.w.o.pctCollege
 </td>
 <td style="text-align:right;">
-57809.96
+59894.60
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_bedrooms
+model.w.o.bedrooms
 </td>
 <td style="text-align:right;">
-57920.00
+60088.88
 </td>
 </tr>
 <tr>
@@ -202,63 +202,63 @@ model\_wo\_bedrooms
 model\_wo\_fireplaces
 </td>
 <td style="text-align:right;">
-57818.34
+59931.60
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_bathrooms
+model.w.o.bathrooms
 </td>
 <td style="text-align:right;">
-58381.75
+60321.15
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_heating
+model.w.o.heating
 </td>
 <td style="text-align:right;">
-57922.66
+60170.17
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_fuel
+model.w.o.fuel
 </td>
 <td style="text-align:right;">
-57820.87
+59911.32
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_sewer
+model.w.o.sewer
 </td>
 <td style="text-align:right;">
-57894.34
+59898.43
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_waterfront
+model.w.o.waterfront
 </td>
 <td style="text-align:right;">
-59555.30
+62189.50
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_newConstruction
+model.w.o.newConstruction
 </td>
 <td style="text-align:right;">
-58234.72
+60823.49
 </td>
 </tr>
 <tr>
 <td style="text-align:left;">
-model\_wo\_centralAir
+model.w.o.centralAir
 </td>
 <td style="text-align:right;">
-57771.45
+59889.17
 </td>
 </tr>
 </tbody>
@@ -293,13 +293,13 @@ linear.model.RMSE
 <tbody>
 <tr>
 <td style="text-align:right;">
-14
+12
 </td>
 <td style="text-align:right;">
-68783.07
+72208.42
 </td>
 <td style="text-align:right;">
-58733.91
+60391.35
 </td>
 </tr>
 </tbody>
@@ -317,23 +317,23 @@ a result, we can see that our linear model outperforms the knn model.
 <th style="text-align:left;">
 </th>
 <th style="text-align:right;">
-knn\_model
+knn.model
 </th>
 <th style="text-align:right;">
-linear\_model
+linear.model
 </th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td style="text-align:left;">
-Average\_RMSE
+Average RMSE
 </td>
 <td style="text-align:right;">
-61840.61
+62129.26
 </td>
 <td style="text-align:right;">
-58240.41
+59355.21
 </td>
 </tr>
 </tbody>
