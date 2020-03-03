@@ -111,13 +111,21 @@ err_vals = do(250)*{
   yhat_test1 = predict(lm1, news_articles_test)
   yhat_test2 = predict(lm2, news_articles_test)
   yhat_test3 = predict(lm3, news_articles_test)
-  
-  # confusion rate
+```
+The confusion rate here clearly shows that the linear model 1 is better than linear model 2, followed by 3. 
+
+```{r 1.2.5, echo=FALSE}
+# confusion rate
+conf_rate = function(y, yhat) {
+    y_test = ifelse(y>log(1400), 1, 0)
+    yh_t = ifelse(yhat>log(1400), 1, 0)
+    sum(yh_t != y_test)/length(y)
+  }  
+
   c(conf_rate(news_articles_test$logshares, yhat_test1), conf_rate(news_test$logshares, yhat_test2),
     conf_rate(news_articles_test$logshares, yhat_test3)) %>% round(3)
   
 }
-colMeans(err_vals)
 ```
 We might take an optional book-keeping step and arrange the test data.
 ```{r 1.2.6, echo=FALSE}
