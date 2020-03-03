@@ -46,7 +46,6 @@ ggplot(data = radiologist_long) +
   theme(plot.title = element_text(hjust = 0.5), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) 
 
 brca2 = brca
-brca2$radiologist_raw = brca2$radiologist
 brca2$radiologist = str_replace(brca2$radiologist, "radiologist","")
 brca2$age = str_replace(brca2$age, "age","")
 brca2$menopause = str_replace(brca2$menopause, "meno","")
@@ -93,17 +92,12 @@ boot1 = do(100)*{
     mutate(radiologist.66 = 0) %>%
     mutate(radiologist.89 = 0) %>%
     mutate(radiologist.95 = 0)
-  brca_test =  brca_test %>%
-    mutate(radiologist.34 = 0) %>%
-    mutate(radiologist.66 = 0) %>%
-    mutate(radiologist.89 = 0) %>%
-    mutate(radiologist.95 = 0)
   brca_test = brca_test %>%
-    mutate(radiologist.34 = ifelse(radiologist_raw == "radiologist34", 1, 0)) %>%
-    mutate(radiologist.66 = ifelse(radiologist_raw == "radiologist66", 1, 0)) %>%
-    mutate(radiologist.89 = ifelse(radiologist_raw == "radiologist89", 1, 0)) %>%
-    mutate(radiologist.95 = ifelse(radiologist_raw == "radiologist95", 1, 0))
-  
+    mutate(radiologist.34 = ifelse(n > nrow(brca_test)/5 & nrow(brca_test)*2/5 >= n, 1, 0)) %>%
+    mutate(radiologist.66 = ifelse(n > nrow(brca_test)*2/5 & nrow(brca_test)*3/5 >= n, 1, 0)) %>%
+    mutate(radiologist.89 = ifelse(n > nrow(brca_test)*3/5 & nrow(brca_test)*4/5 >= n, 1, 0)) %>%
+    mutate(radiologist.95 = ifelse(n > nrow(brca_test)*4/5 & nrow(brca_test) >= n, 1, 0))
+ 
   # fit to this training set
   glm_1 = glm(recall ~ . - cancer, data=brca_train, family=binomial)
   glm_2 = glm(recall ~ (history + symptoms + age.5059 + age.6069 + age.70plus + menopause.postNoHT
@@ -113,14 +107,19 @@ boot1 = do(100)*{
   # predict on this testing set
   yhat_test1 = predict(glm_1, brca_test, type="response")
   yhat_test2 = predict(glm_2, brca_test, type="response")
-
+  brca_test = brca_test %>%
+    mutate(radiologist = ifelse(radiologist.34 == 1, "radiologist.34",
+                         ifelse(radiologist.66 == 1, "radiologist.66",
+                         ifelse(radiologist.89 == 1, "radiologist.89",
+                         ifelse(radiologist.95 == 1, "radiologist.95", "radiologist.13")))))
+  
   brca_test$pred1 = yhat_test1
   brca_test$pred2 = yhat_test2
   recalls_1 = brca_test %>%
-    group_by(radiologist_raw)  %>%
+    group_by(radiologist)  %>%
     summarize(recalls = mean(pred1))
   recalls_2 = brca_test %>%
-    group_by(radiologist_raw)  %>%
+    group_by(radiologist)  %>%
     summarize(recalls = mean(pred2))
   recalls_t = rbind(recalls_1, recalls_2)
   recalls = as.data.frame(t(recalls_t))
@@ -140,6 +139,7 @@ Model_1 = c(mean(boot1$M1_radiologist.13), mean(boot1$M1_radiologist.34), mean(b
 Model_2 = c(mean(boot1$M2_radiologist.13), mean(boot1$M2_radiologist.34), mean(boot1$M2_radiologist.66),
        mean(boot1$M2_radiologist.89), mean(boot1$M2_radiologist.95))
 a = data.frame(radiologist, Model_1,Model_2)
+a
 
 kable(a) %>%
   kable_styling("striped") %>%

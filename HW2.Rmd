@@ -84,10 +84,8 @@ The table below shows the Average Marginal Effect (AME) for each radiologist in 
 
 When allowing for interactions between radiologist and each control variable as in Model 2, radiologist89 is still the most conservative - holding patient risk factors equal, the probability of being recalled increases by 17.48 percentage points when radiologist89 is the one reading the mammogram compared to the baseline radiologist13.
 
-<div align="center">
 ```{r 2.2.3, echo=FALSE, warning = FALSE}
 brca2 = brca
-brca2$radiologist_raw = brca2$radiologist
 brca2$radiologist = str_replace(brca2$radiologist, "radiologist","")
 brca2$age = str_replace(brca2$age, "age","")
 brca2$menopause = str_replace(brca2$menopause, "meno","")
@@ -114,12 +112,12 @@ kable(ame) %>%
   kable_styling("striped") %>%
   add_header_above(c(" " = 1, "Model 1" = 2, "Model 2" = 2))
 ```
-</div>
+
 Finally, in order to estimate how each radiologist would perform when facing the same set of patients, we used a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing 20% of the observations, repeating the proccess 100 times. In each repetition, we fitted both models using the train dataset, and compared each model's predictions when all radiologists, in a hypothetical scenario, analyze the entire test dataset. 
 
 We computed average probability of recall per repetition, and calculated the average of the 100 samples to mitigate the effect of randomization. For both models, radiologist89 has the highest probability of recall, followed by radiologist66, radiologist13, radiologist95 and radiologist 34.
 
-<div align="center">
+
 ```{r 2.2.4, echo=FALSE, warning = FALSE}
 n = nrow(brca_new)
 
@@ -139,17 +137,12 @@ boot1 = do(100)*{
     mutate(radiologist.66 = 0) %>%
     mutate(radiologist.89 = 0) %>%
     mutate(radiologist.95 = 0)
-  brca_test =  brca_test %>%
-    mutate(radiologist.34 = 0) %>%
-    mutate(radiologist.66 = 0) %>%
-    mutate(radiologist.89 = 0) %>%
-    mutate(radiologist.95 = 0)
   brca_test = brca_test %>%
-    mutate(radiologist.34 = ifelse(radiologist_raw == "radiologist34", 1, 0)) %>%
-    mutate(radiologist.66 = ifelse(radiologist_raw == "radiologist66", 1, 0)) %>%
-    mutate(radiologist.89 = ifelse(radiologist_raw == "radiologist89", 1, 0)) %>%
-    mutate(radiologist.95 = ifelse(radiologist_raw == "radiologist95", 1, 0))
-  
+    mutate(radiologist.34 = ifelse(n > nrow(brca_test)/5 & nrow(brca_test)*2/5 >= n, 1, 0)) %>%
+    mutate(radiologist.66 = ifelse(n > nrow(brca_test)*2/5 & nrow(brca_test)*3/5 >= n, 1, 0)) %>%
+    mutate(radiologist.89 = ifelse(n > nrow(brca_test)*3/5 & nrow(brca_test)*4/5 >= n, 1, 0)) %>%
+    mutate(radiologist.95 = ifelse(n > nrow(brca_test)*4/5 & nrow(brca_test) >= n, 1, 0))
+ 
   # fit to this training set
   glm_1 = glm(recall ~ . - cancer, data=brca_train, family=binomial)
   glm_2 = glm(recall ~ (history + symptoms + age.5059 + age.6069 + age.70plus + menopause.postNoHT
@@ -159,14 +152,19 @@ boot1 = do(100)*{
   # predict on this testing set
   yhat_test1 = predict(glm_1, brca_test, type="response")
   yhat_test2 = predict(glm_2, brca_test, type="response")
-
+  brca_test = brca_test %>%
+    mutate(radiologist = ifelse(radiologist.34 == 1, "radiologist.34",
+                         ifelse(radiologist.66 == 1, "radiologist.66",
+                         ifelse(radiologist.89 == 1, "radiologist.89",
+                         ifelse(radiologist.95 == 1, "radiologist.95", "radiologist.13")))))
+  
   brca_test$pred1 = yhat_test1
   brca_test$pred2 = yhat_test2
   recalls_1 = brca_test %>%
-    group_by(radiologist_raw)  %>%
+    group_by(radiologist)  %>%
     summarize(recalls = mean(pred1))
   recalls_2 = brca_test %>%
-    group_by(radiologist_raw)  %>%
+    group_by(radiologist)  %>%
     summarize(recalls = mean(pred2))
   recalls_t = rbind(recalls_1, recalls_2)
   recalls = as.data.frame(t(recalls_t))
@@ -191,4 +189,3 @@ kable(a) %>%
   kable_styling("striped") %>%
   add_header_above(c(" " = 1, "(Out of sample) Average recall probability" = 2))
 ```
-</div>
