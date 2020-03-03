@@ -108,11 +108,89 @@ yhat_test_medium = predict(model_medium, saratoga_test)
 
 c(rmse(saratoga_test$price, yhat_test1), rmse(saratoga_test$price, yhat_test2), rmse(saratoga_test$price, yhat_test3), rmse(saratoga_test$price, yhat_test4), rmse(saratoga_test$price, yhat_test5), rmse(saratoga_test$price, yhat_test_medium))}
 
-rmse_result= data.frame('model1'= colMeans(rmse_check[1]), 'model2'=colMeans(rmse_check[2]), 'model3'=colMeans(rmse_check[3]), 'model4'=colMeans(rmse_check[4]), 'model5'=colMeans(rmse_check[5]), 'model_medium'=colMeans(rmse_check[6]))
+rmse_result= data.frame('model 1'= colMeans(rmse_check[1]), 'model 2'=colMeans(rmse_check[2]), 'model 3'=colMeans(rmse_check[3]), 'model 4'=colMeans(rmse_check[4]), 'model 5'=colMeans(rmse_check[5]), 'model_medium'=colMeans(rmse_check[6]), row.names="AVG RMSE")
 
-rmse_result
+kable(rmse_result) %>% kable_styling("striped")
 
 ```
 
+We can find the variable which is the strongest driver of house prices by assessing how much it improves the out-of-sample RMSE when it is included in the model.
+So we test how much the out-of-sample increases when we exclude a certain variable from our model 1, and get the average RMSE by doing the Monte Carlo simulation on different training-test sets(80%-20%) for 100 times.
+
+```{r 2.1.4, echo=FALSE, warning=FALSE}
+rmse_check2 = do(100)*{# Split into training and testing sets
+train_cases2 = sample.int(n, n_train, replace=FALSE)
+test_cases2 = setdiff(1:n, train_cases)
+saratoga_train2 = SaratogaHouses[train_cases2,]
+saratoga_test2 = SaratogaHouses[test_cases2,]
+
+#Hand-build some models and fit into training data
+
+# model1_wo_lotSize: without lotSize
+model1_wo_lotSize= lm(price ~ .-rooms-age2-lotSize, data=saratoga_train2)
+
+# model1_wo_age: without age
+model1_wo_age= lm(price ~ .-rooms-age2-age, data=saratoga_train2)
+
+# model1_wo_landValue: without landValue
+model1_wo_landValue= lm(price ~ .-rooms-age2-landValue, data=saratoga_train2)
+
+# model1_wo_livingArea: without livingArea
+model1_wo_livingArea= lm(price ~ .-rooms-age2-livingArea, data=saratoga_train2)
+
+# model1_wo_pctCollege: without pctCollege
+model1_wo_pctCollege= lm(price ~ .-rooms-age2-pctCollege, data=saratoga_train2)
+
+# model1_wo_bedrooms: without bedrooms
+model1_wo_bedrooms= lm(price ~ .-rooms-age2-bedrooms, data=saratoga_train2)
+
+# model1_wo_fireplaces: without fireplaces
+model1_wo_fireplaces= lm(price ~ .-rooms-age2-fireplaces, data=saratoga_train2)
+
+# model1_wo_bathrooms: without bathrooms
+model1_wo_bathrooms= lm(price ~ .-rooms-age2-bathrooms, data=saratoga_train2)
+
+# model1_wo_heating: without heating
+model1_wo_heating= lm(price ~ .-rooms-age2-heating, data=saratoga_train2)
+
+# model1_wo_fuel: without fuel
+model1_wo_fuel= lm(price ~ .-rooms-age2-fuel, data=saratoga_train2)
+
+# model1_wo_sewer: without sewer
+model1_wo_sewer= lm(price ~ .-rooms-age2-sewer, data=saratoga_train2)
+
+# model1_wo_waterfront: without waterfront
+model1_wo_waterfront= lm(price ~ .-rooms-age2-waterfront, data=saratoga_train2)
+
+# model1_wo_newConstruction: without newConstruction
+model1_wo_newConstruction= lm(price ~ .-rooms-age2-newConstruction, data=saratoga_train2)
+
+# model1_wo_centralAir: without centralAir
+model1_wo_centralAir= lm(price ~ .-rooms-age2-centralAir, data=saratoga_train2)
+
+# Predictions out of sample
+yhat_test_lotSize = predict(model1_wo_lotSize, saratoga_test2)
+yhat_test_age = predict(model1_wo_age, saratoga_test2)
+yhat_test_landValue = predict(model1_wo_landValue, saratoga_test2)
+yhat_test_livingArea = predict(model1_wo_livingArea, saratoga_test2)
+yhat_test_pctCollege = predict(model1_wo_pctCollege, saratoga_test2)
+yhat_test_bedrooms = predict(model1_wo_bedrooms, saratoga_test2)
+yhat_test_fireplaces = predict(model1_wo_fireplaces, saratoga_test2)
+yhat_test_bathrooms = predict(model1_wo_bathrooms, saratoga_test2)
+yhat_test_heating = predict(model1_wo_heating, saratoga_test2)
+yhat_test_fuel = predict(model1_wo_fuel, saratoga_test2)
+yhat_test_sewer = predict(model1_wo_sewer, saratoga_test2)
+yhat_test_waterfront = predict(model1_wo_waterfront, saratoga_test2)
+yhat_test_newConstruction = predict(model1_wo_newConstruction, saratoga_test2)
+yhat_test_centralAir = predict(model1_wo_centralAir, saratoga_test2)
+
+c(rmse(saratoga_test2$price, yhat_test_lotSize), rmse(saratoga_test2$price, yhat_test_age), rmse(saratoga_test2$price, yhat_test_landValue), rmse(saratoga_test2$price, yhat_test_livingArea), rmse(saratoga_test2$price, yhat_test_pctCollege), rmse(saratoga_test2$price, yhat_test_bedrooms), rmse(saratoga_test2$price, yhat_test_fireplaces), rmse(saratoga_test2$price, yhat_test_bathrooms), rmse(saratoga_test2$price, yhat_test_heating), rmse(saratoga_test2$price, yhat_test_fuel), rmse(saratoga_test2$price, yhat_test_sewer), rmse(saratoga_test2$price, yhat_test_waterfront), rmse(saratoga_test2$price, yhat_test_newConstruction), rmse(saratoga_test2$price, yhat_test_centralAir))}
+
+rmse_result2= data.frame('model_wo_lotSize'= colMeans(rmse_check2[1]), 'model_wo_age'=colMeans(rmse_check2[2]), 'model_wo_landValue'=colMeans(rmse_check2[3]), 'model_wo_livingArea'=colMeans(rmse_check2[4]), 'model_wo_pctCollege'=colMeans(rmse_check2[5]), 'model_wo_bedrooms'=colMeans(rmse_check2[6]), 'model_wo_fireplaces'= colMeans(rmse_check2[7]), 'model_wo_bathrooms'=colMeans(rmse_check2[8]), 'model_wo_heating'=colMeans(rmse_check2[9]), 'model_wo_fuel'=colMeans(rmse_check2[10]), 'model_wo_sewer'=colMeans(rmse_check2[11]), 'model_wo_waterfront'=colMeans(rmse_check2[12]), 'model_wo_newConstruction'=colMeans(rmse_check2[13]), 'model_wo_centralAir'=colMeans(rmse_check2[14]), row.names="AVG RMSE")
+
+rmse_result2_t = t(rmse_result2)
+
+kable(rmse_result2_t) %>% kable_styling("striped")
+```
 
 
