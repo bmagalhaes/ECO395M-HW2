@@ -222,8 +222,8 @@ model_cancer6 = glm(cancer ~ recall + density, data=brca, family=binomial)
 
 tab_model(model_cancer, model_cancer2, model_cancer3, model_cancer4, model_cancer5,
           model_cancer6, show.ci = FALSE, show.p = TRUE,
-          dv.labels = c("Baseline Model", "+ History", "+ Age", "+Symptoms",
-                        "+Menopause", "+ Density"))
+          dv.labels = c("Baseline Model", "+History", "+Age", "+Symptoms",
+                        "+Menopause", "+Density"))
 ```
 
 Considering the results above, we built a new model including those 3 risk factors.
@@ -234,13 +234,13 @@ proposed_model = cancer ~ recall + age.70plus + postmenounknown + density.4
 
 In order to assess how well this model performs when predicting cancer status, we need to compare its predictions with the predictions from the baseline model.
 
-The confusion matrix for the baseline model below shows that the doctors are currently predicting cancer with a 59.46% sensitivity (22/(22+15)) and a accuracy rate of 85.71%.
+The confusion matrix for the baseline model below shows that the doctors are currently predicting cancer with a 59.46% sensitivity (22/(22+15)) and a accuracy rate of 85.71% ((824+22)/987).
 
 ```{r 2.2.9, echo=FALSE, warning = FALSE}
 xtabs(~cancer + recall, data=brca)
 ```
 
-Considering the in-sample probability of cancer as a threshold for the fitted values of the proposed model to predict cancer or not, we computed the following confusion matrix. This matrix show that, when including age.70plus, postmenounknown and density.4 in the model, the sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate slightly decreased to 84.60%.
+Considering the in-sample probability of cancer as a threshold for the fitted values of the proposed model to predict cancer or not, we computed the following confusion matrix. This matrix show that, when including age.70plus, postmenounknown and density.4 in the model, the sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate slightly decreased to 84.60% ((811+24)/987).
 
 ```{r 2.2.10, echo=FALSE, warning = FALSE}
 model_cancer7 = glm(cancer ~ recall + age.70plus + menopause.postunknown + density.4, data=brca_new, family=binomial)
