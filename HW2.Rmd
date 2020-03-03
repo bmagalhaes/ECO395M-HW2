@@ -84,7 +84,7 @@ The table below shows the Average Marginal Effect (AME) for each radiologist in 
 
 When allowing for interactions between radiologist and each control variable as in Model 2, radiologist89 is still the most conservative - holding patient risk factors equal, the probability of being recalled increases by 17.48 percentage points when radiologist89 is the one reading the mammogram compared to the baseline radiologist13.
 
-```{r 2.2.3, echo=FALSE}
+```{r 2.2.3, echo=FALSE, warning = FALSE}
 brca2 = brca
 brca2$radiologist_raw = brca2$radiologist
 brca2$radiologist = str_replace(brca2$radiologist, "radiologist","")
@@ -118,7 +118,7 @@ Finally, in order to estimate how each radiologist would perform when facing the
 
 We computed average probability of recall per repetition, and calculated the average of the 100 samples to mitigate the effect of randomization. For both models, radiologist89 has the highest probability of recall, followed by radiologist66, radiologist13, radiologist95 and radiologist 34.
 
-```{r 2.2.4, echo=FALSE}
+```{r 2.2.4, echo=FALSE, warning = FALSE}
 n = nrow(brca_new)
 
 boot1 = do(100)*{
