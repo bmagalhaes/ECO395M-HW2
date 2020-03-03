@@ -71,7 +71,7 @@ ggplot(data = radiologist_long) +
   theme(plot.title = element_text(hjust = 0.5), panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) 
 ```
 
-However, since each radiologist read the mammograms of a different set of patients, this difference could be explained by the fact that some radiologists might have seen patients whose clinical situation required the patient to be recalled for further examination.
+However, since each radiologist read the mammograms of a different set of patients, this difference could be explained by the fact that some radiologists might have seen patients whose clinical situation required them to be recalled for further examination.
 
 In order to analyse if, holding patient risk factors equal, some radiologists are more clinically conservative than others in recalling patients, we built two classification models:
 
@@ -190,7 +190,9 @@ kable(a) %>%
   add_header_above(c(" " = 1, "(Out of sample) Average recall probability" = 2))
 ```
 
-After that, we analyzed if the data suggest that radiologists at this hospital should be weighting some clinical risk factors more heavily than they currently are when interpreting mammograms in order to make a decision on whether to recall a patient or not.
+The results corroborate what we observed in the AME table, that some radiologists are more clinically conservative than others in recalling patients, even holding patient risk factors equal.
+
+After that, we analyzed if the data suggests that radiologists at this hospital should be weighting some clinical risk factors more heavily than they currently are when interpreting mammograms in order to make a decision on whether to recall a patient or not.
 
 We started by stablishing the following baseline model.
 

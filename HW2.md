@@ -27,7 +27,7 @@ and radiologist34, who have the lowest recall rates.
 However, since each radiologist read the mammograms of a different set
 of patients, this difference could be explained by the fact that some
 radiologists might have seen patients whose clinical situation required
-the patient to be recalled for further examination.
+them to be recalled for further examination.
 
 In order to analyse if, holding patient risk factors equal, some
 radiologists are more clinically conservative than others in recalling
@@ -89,13 +89,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0400333
+0.0423993
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.2319665
+0.2891959
 </td>
 </tr>
 <tr>
@@ -106,13 +106,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0368299
+0.0336314
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1400910
+0.1345727
 </td>
 </tr>
 <tr>
@@ -123,13 +123,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0376117
+0.0251637
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1519233
+0.1407878
 </td>
 </tr>
 <tr>
@@ -140,13 +140,13 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0344484
+0.0299268
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.2034522
+0.1796670
 </td>
 </tr>
 </tbody>
@@ -194,10 +194,10 @@ Model\_2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1400036
+0.1398507
 </td>
 <td style="text-align:right;">
-0.1389425
+0.1393507
 </td>
 </tr>
 <tr>
@@ -205,10 +205,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0889651
+0.0875088
 </td>
 <td style="text-align:right;">
-0.0901177
+0.0901486
 </td>
 </tr>
 <tr>
@@ -216,10 +216,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1863515
+0.1833777
 </td>
 <td style="text-align:right;">
-0.1908731
+0.1898897
 </td>
 </tr>
 <tr>
@@ -227,10 +227,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.2001200
+0.2035571
 </td>
 <td style="text-align:right;">
-0.2291956
+0.2295350
 </td>
 </tr>
 <tr>
@@ -238,15 +238,19 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1323920
+0.1330061
 </td>
 <td style="text-align:right;">
-0.1235599
+0.1237606
 </td>
 </tr>
 </tbody>
 </table>
-After that, we analyzed if the data suggest that radiologists at this
+The results corroborate what we observed in the AME table, that some
+radiologists are more clinically conservative than others in recalling
+patients, even holding patient risk factors equal.
+
+After that, we analyzed if the data suggests that radiologists at this
 hospital should be weighting some clinical risk factors more heavily
 than they currently are when interpreting mammograms in order to make a
 decision on whether to recall a patient or not.
