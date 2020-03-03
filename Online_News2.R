@@ -1,15 +1,3 @@
----
-title: "homework2"
-author: "Bernardo Magalhaes, Adhish Luitel, Ji Heon Shim"
-date: "`r format(Sys.Date())`" 
-output:
-  md_document:
-    variant: markdown_github
----
-By Bernardo Magalhaes, Adhish Luitel, Ji Heon Shim
-
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(mosaic)
 library(class)
@@ -21,57 +9,53 @@ library(ggplot2)
 
 dataset = read.csv('https://raw.githubusercontent.com/jgscott/ECO395M/master/data/online_news.csv')
 summary(dataset)
-```
+# Total observations: 39,644. Total variables: 36 (except URL)
 
-# Exercise 2.3
-In this exercise, we attempt to build the best possible model to predict which Mashable article goes viral. The threshold here for defining a viral article refers to reaching or surpassing the threshold of 1,400 shares. From the summary statistics we can see that we have 39,644 observations in total with 36 variables, except URL since it is redundant for us. 
-
-The dependant variable for us would be the number of shares and we could consider every other variable as independent variable which results in the number of shares. 
-
-We can sort and clean out our data a bit more. Since we don't need the variable 'URL' we will take it out. We will remove the average length of the words in the content ('average_token_length) that is zero, as there should be some words in the article. We will also remove variables like number of words in the article ('n_tokens_content') for the same reason. 
-```{r 1.2.1, echo=FALSE}
-# Divide groups into 2 and define 'Root Mean Squre Error' function
+#let's clean the data out. Since we don't need the variable 'url' we will take it out. 
+#We will remove the average length of the words in the content ('average_token_length) that is zero, as there should be some words in the article.
+#We will also remove variables like number of words in the article ('n_tokens_content') for the same reason
 news_articles = subset(dataset, select = -c(url))
 summary(news_articles$n_tokens_content)
 news_zero_content = news_articles[which(news_articles$n_tokens_content==0),]
 summary(news_zero_content)
 news_articles = news_articles[-which(news_articles$n_tokens_content==0),]
 summary(news_articles)
-```
-Now we are left with 38,463 observations.
 
-Let's see the data in a histogram. 
-
-```{r 1.2.2, echo=FALSE}
+#Now we are left with 38,463 observations.
+#Now since the data is uniformly distributed, we take log scale of shares (log(shares)) for our linear and logit regression
 hist(news_articles$shares, xlim=c(1,10000), breaks=5000) ; abline(v=1400, col='blue')
 hist(log(news_articles$shares), breaks=50) ; abline(v=log(1400), col='blue')
 summary(news_articles$shares)
+
+#using mutate to create a new variable, log of shares in the dataset
 news_articles = mutate(news_articles, logshares = log(shares))
-```
-Since the data is uniformly distributed. It would be ideal to log of our dependent variable, which is shares. We take log scale of shares (log(shares)) for our linear and logit regression.
 
-Also, we will use the mutate function to create a new variable, log of shares to replace shares with in the dataset. The mutate function first collects various share values into a seperate dataframe. 
-```{r 1.2.3, echo=FALSE}
-# Make a train-test split
-```
-Now let's get a bit more into data visualization for more insights. 
+##Analysing the data
+#Our goal is to find a worthwhile relationship between logshares and other variables
 
-```{r}
+##Modelling 
+#We will test the model by utilising the confusion matrix 
+#As we are doing random sampling, results may vary every time.
+#We will loop this stage 250 times and average the test results.
 
-```
 
-```{r 1.2.3, echo=FALSE}
-
-```
-Now we start to analyze the data. Since our goal is to find a worthwhile relationship between logshares and other variables, we will attempt to create the best possible model for it. First, it makes sense to do a train-test split.  Like always we use 80% of the data to build a model by training and 20% data for testing.
-```{r 1.2.4, echo=FALSE}
+##Linear model
+# Let's split the data for training and testing. Like always we use 80% of the data to build a model by training 
+#Similarly, 20% data for testing
 n = nrow(news_articles)
-n_train = round(0.8*n)  
+n_train = round(0.8*n)  # round to nearest integer
 n_test = n - n_train
-```
-Let's build a linear regression model by hand build and trial. 
-We first use the overall error rate to find the best linear model. We will try 3 linear models and use the overall error rate as the metric to find the best model. Model 3 is the primary model to check the performance of the hand-build model. By assessing the relationship of variables, building the model and testing it, we make the second model. Then we build the linear model 1 by removing the less likely variables to get the most accurate linear fit. 
-```{r 1.2.5, echo=FALSE}
+
+#Let's build a linear regression model by hand build and trial
+#We first use the overall error rate to find the best linear model
+
+
+## linear model - We will try 3 linear models and use the overall error rate as the metric to find the best model
+# Model 3 is the primary model to check the performance of the hand-build model
+# By assessing the relationship of variables, building the model and testing it, we make the second model
+#Lastly, we build the linear model 1 by deleting the variables which have low p-values.
+
+
 err_vals = do(250)*{
   
   train_cases = sample.int(n, n_train, replace=FALSE)
@@ -99,7 +83,7 @@ err_vals = do(250)*{
               global_rate_negative_words * avg_negative_polarity + title_subjectivity +
               title_sentiment_polarity, data = n_train, weekday_is_friday = binomial)
   
-  lm3 = lm(viral ~ (n_tokens_title + n_tokens_content + num_hrefs + 
+  lm3 = lm(logshares ~ (n_tokens_title + n_tokens_content + num_hrefs + 
                       num_self_hrefs + num_imgs + num_videos + 
                       average_token_length + num_keywords + data_channel_is_lifestyle + 
                       data_channel_is_entertainment + data_channel_is_bus + 
@@ -111,11 +95,8 @@ err_vals = do(250)*{
   yhat_test1 = predict(lm1, news_articles_test)
   yhat_test2 = predict(lm2, news_articles_test)
   yhat_test3 = predict(lm3, news_articles_test)
-```
-The confusion rate here clearly shows that the linear model 1 is better than linear model 2, followed by 3. 
-
-```{r 1.2.5, echo=FALSE}
-# confusion rate
+  
+  # confusion rate
 conf_rate = function(y, yhat) {
     y_test = ifelse(y>log(1400), 1, 0)
     yh_t = ifelse(yhat>log(1400), 1, 0)
@@ -126,26 +107,17 @@ conf_rate = function(y, yhat) {
     conf_rate(news_articles_test$logshares, yhat_test3)) %>% round(3)
   
 }
-```
-We might take an optional book-keeping step and arrange the test data.
-```{r 1.2.6, echo=FALSE}
-D_test = arrange(D_test, mileage)
-```
-After this we seperate the training and testing sets into mileage (X) and outcome (Y)
-```{r 1.2.7, echo=FALSE}
-X_train = select(D_train, mileage)
-y_train = select(D_train, price)
-X_test = select(D_test, mileage)
-y_test = select(D_test, price)
+colMeans(err_vals)
 
-```
-Now let's have a look at the confusion matrix. 
-```{r 1.2.8, echo=FALSE}
+# Confusion matrix 
 confusion_matrix = table(y_test, yhat_test)
 confusion_matrix
-```
-Now let's try our hand at the second approach, which is building a classification model. We now build a logit model for classification as the dependent variable here (viral or not) is a binary. As expected, independent variables would be the same as for a linear model.  
-```{r 1.2.9, echo=FALSE}
+
+
+## Classification model - Second approach
+# We now build a logit model for classification as the dependent variable here (viral or not) is a binary
+# Independent variables would be the same as for a linear model
+# 
 news_articles = mutate(news_articles, viral = ifelse(shares > 1400,1,0))
 errs_vals = do(250) * {
   train_cases = sample.int(n, n_train, replace=FALSE)
@@ -157,8 +129,7 @@ errs_vals = do(250) * {
                   num_keywords + data_channel_is_lifestyle + num_videos * 
                   (data_channel_is_bus + data_channel_is_socmed + data_channel_is_world) + video * 
                   (data_channel_is_entertainment + weekday_is_monday +
-                     data_channel_is_tech + data_channel_is_world) + self_reference_max_shares + is_weekend + 
-                    global_rate_positive_words * 
+                     data_channel_is_tech + data_channel_is_world) + self_reference_max_shares + is_weekend + global_rate_positive_words * 
                   avg_positive_polarity + avg_negative_polarity +
                   title_subjectivity + title_sentiment_polarity, data = news_train, family = 'binomial')
   phat_logit = predict(logit_m, news_test, type = 'response')
@@ -176,10 +147,9 @@ errs_vals = do(250) * {
              title_subjectivity + title_sentiment_polarity, data = news_train)
   yhatF = predict(lmF, news_test)
   ct_lm = conf_table(news_test$logshares, yhatF)
-```
-Our results are 
-```{r 1.2.10, echo=FALSE}
-((1-sum(diag(ct_lg))/sum(ct_lg)), (1-sum(diag(ct_lm))/sum(ct_lm)),
+  
+  # result
+  c((1-sum(diag(ct_lg))/sum(ct_lg)), (1-sum(diag(ct_lm))/sum(ct_lm)),
     ct_lg[2,2]/sum(ct_lg[2,]), ct_lm[2,2]/sum(ct_lm[2,]),
     ct_lg[1,2]/sum(ct_lg[1,]), ct_lm[1,2]/sum(ct_lm[1,]))
 } 
@@ -189,22 +159,16 @@ err = matrix(errMean, nrow = 2, dimnames =
                     c("Overall Error", "True Positive", "False Positive"))) 
 
 kable(err) %>% kable_styling("striped")
-```
-Confusion matrix of our best model
 
-```{r 1.2.11, echo=FALSE}
-confusion = table(y = n_train$viral, yhat_train)
-confusion
-```
-In-sample accuracy
+##
+#  Root mean-squared prediction error
+rmse = function(y, yhat) {
+sqrt( mean( (y - yhat)^2 ) )
+}
+rmse(news_test$shares, yhat_test1)
 
-```{r 1.2.12, echo=FALSE}
-probhat_test = predict(finalin, news_test=spamtest)
-yhat_train = ifelse(predict(finalin) >= 0.75, 1, 0)
-table(y=news_test$logshares, yhat=yhatF)
-```
-KNN
-```{r 1.2.13, echo=FALSE}
+
+##
 KNN_result <- data.frame(K=c(), rsme=c())
 k_grid = seq(3, 150, by=20)
 for(v in k_grid){
@@ -229,5 +193,21 @@ colnames(KNN_result) <- c("K","AVG_RMSE")
 ggplot(data = KNN_result, aes(x = K, y = AVG_RMSE)) + 
   geom_point(shape = "O") +
   geom_line(col = "red")
-```
-Again, we formalize training and testing sets. 
+
+###
+#In-sample accuracy
+probhat_test = predict(finalin, news_test=spamtest)
+yhat_train = ifelse(predict(finalin) >= 0.75, 1, 0)
+table(y=news_test$logshares, yhat=yhatF)
+
+# Confusion matrix of our best model
+confusion = table(y = n_train$viral, yhat_train)
+confusion
+
+# Confusion matrix of logit_m
+confusion_logit_m = table(y = news_articles$viral, yhat = logit_m)
+confusion_logit_m
+
+##
+
+#So we can see that the Oveall Error rate for Classification model
