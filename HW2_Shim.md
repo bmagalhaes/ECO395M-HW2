@@ -66,22 +66,22 @@ model\_medium
 AVG RMSE
 </td>
 <td style="text-align:right;">
-58293.47
+59658.44
 </td>
 <td style="text-align:right;">
-59815.37
+61262
 </td>
 <td style="text-align:right;">
-62798.86
+64840.4
 </td>
 <td style="text-align:right;">
-59617.68
+61064.06
 </td>
 <td style="text-align:right;">
-59652.72
+61120.4
 </td>
 <td style="text-align:right;">
-65979.21
+66806.39
 </td>
 </tr>
 </tbody>
@@ -110,7 +110,7 @@ AVG RMSE
 model\_wo\_lotSize
 </td>
 <td style="text-align:right;">
-54666.04
+58993.28
 </td>
 </tr>
 <tr>
@@ -118,7 +118,7 @@ model\_wo\_lotSize
 model\_wo\_age
 </td>
 <td style="text-align:right;">
-54527.76
+58477.81
 </td>
 </tr>
 <tr>
@@ -126,7 +126,7 @@ model\_wo\_age
 model\_wo\_landValue
 </td>
 <td style="text-align:right;">
-56962.26
+66810.65
 </td>
 </tr>
 <tr>
@@ -134,7 +134,7 @@ model\_wo\_landValue
 model\_wo\_livingArea
 </td>
 <td style="text-align:right;">
-61668.68
+65739.46
 </td>
 </tr>
 <tr>
@@ -142,7 +142,7 @@ model\_wo\_livingArea
 model\_wo\_pctCollege
 </td>
 <td style="text-align:right;">
-54569.87
+58586.01
 </td>
 </tr>
 <tr>
@@ -150,7 +150,7 @@ model\_wo\_pctCollege
 model\_wo\_bedrooms
 </td>
 <td style="text-align:right;">
-54799.69
+58719.28
 </td>
 </tr>
 <tr>
@@ -158,7 +158,7 @@ model\_wo\_bedrooms
 model\_wo\_fireplaces
 </td>
 <td style="text-align:right;">
-54566.22
+58503.63
 </td>
 </tr>
 <tr>
@@ -166,7 +166,7 @@ model\_wo\_fireplaces
 model\_wo\_bathrooms
 </td>
 <td style="text-align:right;">
-55742.95
+58902.71
 </td>
 </tr>
 <tr>
@@ -174,7 +174,7 @@ model\_wo\_bathrooms
 model\_wo\_heating
 </td>
 <td style="text-align:right;">
-54805.78
+58471.46
 </td>
 </tr>
 <tr>
@@ -182,7 +182,7 @@ model\_wo\_heating
 model\_wo\_fuel
 </td>
 <td style="text-align:right;">
-54588.64
+58489.91
 </td>
 </tr>
 <tr>
@@ -190,7 +190,7 @@ model\_wo\_fuel
 model\_wo\_sewer
 </td>
 <td style="text-align:right;">
-54599.69
+58478.03
 </td>
 </tr>
 <tr>
@@ -198,7 +198,7 @@ model\_wo\_sewer
 model\_wo\_waterfront
 </td>
 <td style="text-align:right;">
-55134.43
+59353.37
 </td>
 </tr>
 <tr>
@@ -206,7 +206,7 @@ model\_wo\_waterfront
 model\_wo\_newConstruction
 </td>
 <td style="text-align:right;">
-55070.60
+59222.96
 </td>
 </tr>
 <tr>
@@ -214,7 +214,7 @@ model\_wo\_newConstruction
 model\_wo\_centralAir
 </td>
 <td style="text-align:right;">
-54829.19
+58491.57
 </td>
 </tr>
 </tbody>
