@@ -83,7 +83,7 @@ err_vals = do(250)*{
               global_rate_negative_words * avg_negative_polarity + title_subjectivity +
               title_sentiment_polarity, data = n_train, weekday_is_friday = binomial)
   
-  lm3 = lm(viral ~ (n_tokens_title + n_tokens_content + num_hrefs + 
+  lm3 = lm(logshares ~ (n_tokens_title + n_tokens_content + num_hrefs + 
                       num_self_hrefs + num_imgs + num_videos + 
                       average_token_length + num_keywords + data_channel_is_lifestyle + 
                       data_channel_is_entertainment + data_channel_is_bus + 
@@ -97,6 +97,12 @@ err_vals = do(250)*{
   yhat_test3 = predict(lm3, news_articles_test)
   
   # confusion rate
+conf_rate = function(y, yhat) {
+    y_test = ifelse(y>log(1400), 1, 0)
+    yh_t = ifelse(yhat>log(1400), 1, 0)
+    sum(yh_t != y_test)/length(y)
+  }  
+
   c(conf_rate(news_articles_test$logshares, yhat_test1), conf_rate(news_test$logshares, yhat_test2),
     conf_rate(news_articles_test$logshares, yhat_test3)) %>% round(3)
   
