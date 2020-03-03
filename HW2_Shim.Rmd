@@ -44,7 +44,7 @@ model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fire
 
 ```
 
-
+  
 Here are the main features of our models.
 
 
@@ -121,7 +121,8 @@ kable(rmse_result) %>% kable_styling("striped")
 
 ```
 
-
+  
+  
 The best model turned out to be model 1 with the least out-of-sample RMSE value. Here is the summary of model 1.
 
 
@@ -206,7 +207,7 @@ yhat_test_centralAir = predict(model1_wo_centralAir, saratoga_test2)
 
 c(rmse(saratoga_test2$price, yhat_test_lotSize), rmse(saratoga_test2$price, yhat_test_age), rmse(saratoga_test2$price, yhat_test_landValue), rmse(saratoga_test2$price, yhat_test_livingArea), rmse(saratoga_test2$price, yhat_test_pctCollege), rmse(saratoga_test2$price, yhat_test_bedrooms), rmse(saratoga_test2$price, yhat_test_fireplaces), rmse(saratoga_test2$price, yhat_test_bathrooms), rmse(saratoga_test2$price, yhat_test_heating), rmse(saratoga_test2$price, yhat_test_fuel), rmse(saratoga_test2$price, yhat_test_sewer), rmse(saratoga_test2$price, yhat_test_waterfront), rmse(saratoga_test2$price, yhat_test_newConstruction), rmse(saratoga_test2$price, yhat_test_centralAir))}
 
-rmse_result2= data.frame("model_wo_lotSize"= colMeans(rmse_check2[1]), "model w/o age"=colMeans(rmse_check2[2]), "model w/o landValue"=colMeans(rmse_check2[3]), "model w/o livingArea"=colMeans(rmse_check2[4]), "model w/o pctCollege"=colMeans(rmse_check2[5]), "model w/o bedrooms"=colMeans(rmse_check2[6]), "model_wo_fireplaces"= colMeans(rmse_check2[7]), "model w/o bathrooms"=colMeans(rmse_check2[8]), "model w/o heating"=colMeans(rmse_check2[9]), "model w/o fuel"=colMeans(rmse_check2[10]), "model w/o sewer"=colMeans(rmse_check2[11]), "model w/o waterfront"=colMeans(rmse_check2[12]), "model w/o newConstruction"=colMeans(rmse_check2[13]), "model w/o centralAir"=colMeans(rmse_check2[14]), row.names="AVG RMSE")
+rmse_result2= data.frame("model wo lotSize"= colMeans(rmse_check2[1]), "model wo age"=colMeans(rmse_check2[2]), "model wo landValue"=colMeans(rmse_check2[3]), "model wo livingArea"=colMeans(rmse_check2[4]), "model wo pctCollege"=colMeans(rmse_check2[5]), "model wo bedrooms"=colMeans(rmse_check2[6]), "model wo fireplaces"= colMeans(rmse_check2[7]), "model wo bathrooms"=colMeans(rmse_check2[8]), "model wo heating"=colMeans(rmse_check2[9]), "model wo fuel"=colMeans(rmse_check2[10]), "model wo sewer"=colMeans(rmse_check2[11]), "model wo waterfront"=colMeans(rmse_check2[12]), "model wo newConstruction"=colMeans(rmse_check2[13]), "model wo centralAir"=colMeans(rmse_check2[14]), row.names="AVG RMSE")
 
 rmse_result2_t = t(rmse_result2)
 
@@ -251,7 +252,7 @@ modelcompare = data.frame('Kmin'=K, "knn model RMSE" = rmse(ytest, knn_model$pre
 kable(modelcompare) %>% kable_styling("striped", full_width=F)
 ```
 
-
+  
 But there is random variation due to the particular choice of data points that end up in your train/test split. So we run Monte-Carlo simulation again using random train/test split for 100 times, and compare the minimim RMSE of knn model with RMSE of our linear model.
 As a result, we can see that our linear model outperforms the knn model.
 
