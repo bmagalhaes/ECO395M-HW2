@@ -71,8 +71,8 @@ err_vals = do(100)*{
   yhat_test3 = predict(lm3, news_articles_test)
   yhat_test4 = predict(lm4, news_articles_test)
  
-  c(error_rate(news_articles_test$share, yhat_test1), error_rate(news_articles_test$share, yhat_test2),
-    error_rate(news_articles_test$share, yhat_test3), error_rate(news_articles_test$share, yhat_test4)) %>% round(3)
+  c(error_rate(news_articles_test$shares, yhat_test1), error_rate(news_articles_test$shares, yhat_test2),
+    error_rate(news_articles_test$shares, yhat_test3), error_rate(news_articles_test$shares, yhat_test4)) %>% round(3)
   
 }
 colMeans(err_vals)

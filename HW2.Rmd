@@ -361,8 +361,9 @@ err_vals = do(100)*{
   yhat_test3 = predict(lm3, news_articles_test)
   yhat_test4 = predict(lm4, news_articles_test)
  
-  c(error_rate(news_articles_test$share, yhat_test1), error_rate(news_articles_test$share, yhat_test2),
-    error_rate(news_articles_test$share, yhat_test3), error_rate(news_articles_test$share, yhat_test4)) %>% round(3)
+  c(error_rate(news_articles_test$shares, yhat_test1), error_rate(news_articles_test$shares, yhat_test2),
+    error_rate(news_articles_test$shares, yhat_test3), error_rate(news_articles_test$shares, yhat_test4)) %>% round(3)
+  
   
 }
 colMeans(err_vals)
@@ -375,7 +376,7 @@ lm_chosen = lm(shares ~ (. - n_tokens_content - self_reference_max_shares - week
 
 news_articles$yhat = predict(lm_chosen, news_articles)
 
-news_articles = mutate(news_articles, viral = ifelse(news_articles$share >= log(1400), 1, 0))
+news_articles = mutate(news_articles, viral = ifelse(news_articles$shares >= log(1400), 1, 0))
 news_articles = mutate(news_articles, viral_hat = ifelse(news_articles$yhat >= log(1400), 1, 0))
 
 xtabs(~viral + viral_hat, data=news_articles)
