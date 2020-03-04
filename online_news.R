@@ -23,11 +23,18 @@ summary(lm1)
 news_articles = subset(dataset, select = -c(url))
 news_articles$shares = log(news_articles$shares)
 
-lm2 = lm(log(shares) ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+lm2 = lm(shares ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
          - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data=news_articles)
 summary(lm2)
 
 lm_step = step(lm2, scope=~(.)^2, steps=1)
+
+# confusion rate
+error_rate = function(y, yhat) {
+  y_test = ifelse(y>log(1400), 1, 0)
+  yh_t = ifelse(yhat>log(1400), 1, 0)
+  sum(yh_t != y_test)/length(y)
+}  
 
 n = nrow(news_articles)
 n_train = round(0.8*n)
@@ -62,15 +69,8 @@ err_vals = do(100)*{
   yhat_test1 = predict(lm1, news_articles_test)
   yhat_test2 = predict(lm2, news_articles_test)
   yhat_test3 = predict(lm3, news_articles_test)
-  yhat_test4 = predict(lm3, news_articles_test)
-  
-  # confusion rate
-  error_rate = function(y, yhat) {
-    y_test = ifelse(y>log(1400), 1, 0)
-    yh_t = ifelse(yhat>log(1400), 1, 0)
-    sum(yh_t != y_test)/length(y)
-  }  
-  
+  yhat_test4 = predict(lm4, news_articles_test)
+ 
   c(error_rate(news_articles_test$share, yhat_test1), error_rate(news_articles_test$share, yhat_test2),
     error_rate(news_articles_test$share, yhat_test3), error_rate(news_articles_test$share, yhat_test4)) %>% round(3)
   
