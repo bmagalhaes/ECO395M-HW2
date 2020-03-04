@@ -4,17 +4,19 @@ library(FNN)
 library(foreach)
 data(SaratogaHouses)
 
-#Baseline model= lm_medium with 11 main effects
-lm_medium = lm(price ~ lotSize + age + livingArea + pctCollege + bedrooms + 
-                 fireplaces + bathrooms + rooms + heating + fuel + centralAir, data=SaratogaHouses)
-
 # We are not considering making a new variable "Housevalue= price - landValue" although it seems reasonable.
 # Once we change y variable, new models we build are not comparable with our original model, medium. 
 
 # make a new variable age2=(age)^2 and add it into our original data, SaratogaHouses in order to make a new model with this variable later
 SaratogaHouses <- mutate(SaratogaHouses, age2=(age)^2)
 
-# Split into training and testing sets
+rmse = function(y, yhat) {
+  sqrt( mean( (y - yhat)^2 ) )
+}
+
+# now, do Monte Carlo simulation 100 times with different training-test sets and find each mean of RSME
+
+rmse_check = do(100)*{# Split into training and testing sets
 n = nrow(SaratogaHouses)
 n_train = round(0.8*n)  # round to nearest integer
 n_test = n - n_train
@@ -56,50 +58,11 @@ yhat_test4 = predict(model4, saratoga_test)
 yhat_test5 = predict(model5, saratoga_test)
 yhat_test_medium = predict(model_medium, saratoga_test)
 
-rmse = function(y, yhat) {
-  sqrt( mean( (y - yhat)^2 ) )
-}
-
-# Root mean-squared prediction error
-rmse(saratoga_test$price, yhat_test1)
-rmse(saratoga_test$price, yhat_test2)
-rmse(saratoga_test$price, yhat_test3)
-rmse(saratoga_test$price, yhat_test4)
-rmse(saratoga_test$price, yhat_test5)
-rmse(saratoga_test$price, yhat_test_medium)
-
-# now, do Monte Carlo simulation 1000 times with different training-test sets and find each mean of RSME
-
-rmse_check = do(100)*{# Split into training and testing sets
-n = nrow(SaratogaHouses)
-n_train = round(0.8*n)  # round to nearest integer
-n_test = n - n_train
-train_cases = sample.int(n, n_train, replace=FALSE)
-test_cases = setdiff(1:n, train_cases)
-saratoga_train = SaratogaHouses[train_cases,]
-saratoga_test = SaratogaHouses[test_cases,]
-
-model1= lm(price ~ .-rooms-age2, data=saratoga_train)
-model2= lm(price~ .-rooms-sewer-waterfront-newConstruction-age2, data=saratoga_train)
-model3= lm(price~ (.-rooms-sewer-waterfront-newConstruction-age2)^2, data=saratoga_train)
-model4= lm(price~ lotSize + age +pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir, data=saratoga_train)
-model5= lm(price~ lotSize + age + age2 + pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir, data=saratoga_train)
-model_medium = lm(price ~ lotSize + age + livingArea + pctCollege + bedrooms + 
-                 fireplaces + bathrooms + rooms + heating + fuel + centralAir, data=saratoga_train)
-
-# Predictions out of sample
-yhat_test1 = predict(model1, saratoga_test)
-yhat_test2 = predict(model2, saratoga_test)
-yhat_test3 = predict(model3, saratoga_test)
-yhat_test4 = predict(model4, saratoga_test)
-yhat_test5 = predict(model5, saratoga_test)
-yhat_test_medium = predict(model_medium, saratoga_test)
-
 c(rmse(saratoga_test$price, yhat_test1), rmse(saratoga_test$price, yhat_test2), rmse(saratoga_test$price, yhat_test3), rmse(saratoga_test$price, yhat_test4), rmse(saratoga_test$price, yhat_test5), rmse(saratoga_test$price, yhat_test_medium))}
 
-rmse_result= data.frame('model1'= colMeans(rmse_check[1]), 'model2'=colMeans(rmse_check[2]), 'model3'=colMeans(rmse_check[3]), 'model4'=colMeans(rmse_check[4]), 'model5'=colMeans(rmse_check[5]), 'model_medium'=colMeans(rmse_check[6]))
+rmse_result= data.frame("model1"= colMeans(rmse_check[1]), "model2"=colMeans(rmse_check[2]), "model3"=colMeans(rmse_check[3]), "model4"=colMeans(rmse_check[4]), "model5"=colMeans(rmse_check[5]), "model_medium"=colMeans(rmse_check[6]), row.names="AVG_RMSE")
 
-rmse_result
+kable(rmse_result) %>% kable_styling("striped")
 
 # We can see that model 1 shows the least rmse
 
@@ -175,9 +138,11 @@ yhat_test_centralAir = predict(model1_wo_centralAir, saratoga_test2)
 
 c(rmse(saratoga_test2$price, yhat_test_lotSize), rmse(saratoga_test2$price, yhat_test_age), rmse(saratoga_test2$price, yhat_test_landValue), rmse(saratoga_test2$price, yhat_test_livingArea), rmse(saratoga_test2$price, yhat_test_pctCollege), rmse(saratoga_test2$price, yhat_test_bedrooms), rmse(saratoga_test2$price, yhat_test_fireplaces), rmse(saratoga_test2$price, yhat_test_bathrooms), rmse(saratoga_test2$price, yhat_test_heating), rmse(saratoga_test2$price, yhat_test_fuel), rmse(saratoga_test2$price, yhat_test_sewer), rmse(saratoga_test2$price, yhat_test_waterfront), rmse(saratoga_test2$price, yhat_test_newConstruction), rmse(saratoga_test2$price, yhat_test_centralAir))}
 
-rmse_result2= data.frame('model_wo_lotSize'= colMeans(rmse_check2[1]), 'model_wo_age'=colMeans(rmse_check2[2]), 'model_wo_landValue'=colMeans(rmse_check2[3]), 'model_wo_livingArea'=colMeans(rmse_check2[4]), 'model_wo_pctCollege'=colMeans(rmse_check2[5]), 'model_wo_bedrooms'=colMeans(rmse_check2[6]), 'model_wo_fireplaces'= colMeans(rmse_check2[7]), 'model_wo_bathrooms'=colMeans(rmse_check2[8]), 'model_wo_heating'=colMeans(rmse_check2[9]), 'model_wo_fuel'=colMeans(rmse_check2[10]), 'model_wo_sewer'=colMeans(rmse_check2[11]), 'model_wo_waterfront'=colMeans(rmse_check2[12]), 'model_wo_newConstruction'=colMeans(rmse_check2[13]), 'model_wo_centralAir'=colMeans(rmse_check2[14]))
+rmse_result2= data.frame("model_wo_lotSize"= colMeans(rmse_check2[1]), "model_wo_age"=colMeans(rmse_check2[2]), "model_wo_landValue"=colMeans(rmse_check2[3]), "model_wo_livingArea"=colMeans(rmse_check2[4]), "model_wo_pctCollege"=colMeans(rmse_check2[5]), "model_wo_bedrooms"=colMeans(rmse_check2[6]), "model_wo_fireplaces"= colMeans(rmse_check2[7]), "model_wo_bathrooms"=colMeans(rmse_check2[8]), "model_wo_heating"=colMeans(rmse_check2[9]), "model_wo_fuel"=colMeans(rmse_check2[10]), "model_wo_sewer"=colMeans(rmse_check2[11]), "model_wo_waterfront"=colMeans(rmse_check2[12]), "model_wo_newConstruction"=colMeans(rmse_check2[13]), "model_wo_centralAir"=colMeans(rmse_check2[14]), row.names="AVG RMSE")
 
-rmse_result2
+rmse_result2_t = t(rmse_result2)
+
+kable(rmse_result2_t) %>% kable_styling("striped")
 
 # Rmse gets the biggest when "landValue" variable isn't there.
 # Therefore we can say "landValue" is the strongest driver of house prices.
@@ -216,8 +181,8 @@ abline(h=rmse(ytest, yhat_test1), col='red')
 # We can see our linear model is better than knn_model whatever value k has
 
 K= which.min(rmse_grid)
-rmse(ytest, knn_model$pred)
-rmse(ytest, yhat_test1)
+modelcompare = data.frame("Kmin" = K, "knn_model_RMSE" = rmse(ytest, knn_model$pred), "linear_model_RMSE" = rmse(ytest, yhat_test1))
+kable(modelcompare) %>% kable_styling("striped", full_width=F)
 
 # the minimized rmse of knn-reg is still bigger than the rmse of our best-fit linear model
 
@@ -257,8 +222,10 @@ min(rmse_grid3)
 
 # When we compare the means, we can see our linear regression predicts better values than the knn regression
 
-colMeans(rmse_check3[1])
-rmse_result[1]
+
+modelcompare2 = data.frame("knn_model"= colMeans(rmse_check3), "linear_model"= colMeans(rmse_check[1]), row.names="Average_RMSE")
+kable(modelcompare2) %>% kable_styling("striped")
+
 
 
 
