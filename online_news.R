@@ -77,17 +77,8 @@ err_vals = do(100)*{
 }
 colMeans(err_vals)
 
-lm_chosen = lm(formula = shares ~ n_tokens_title + num_hrefs + num_self_hrefs + 
-     num_imgs + num_videos + average_token_length + num_keywords + 
-     data_channel_is_lifestyle + data_channel_is_entertainment + 
-     data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech + 
-     data_channel_is_world + self_reference_min_shares + self_reference_avg_sharess + 
-     weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
-     weekday_is_thursday + weekday_is_friday + global_rate_positive_words + 
-     global_rate_negative_words + avg_positive_polarity + min_positive_polarity + 
-     max_positive_polarity + avg_negative_polarity + title_subjectivity + 
-     title_sentiment_polarity + abs_title_sentiment_polarity + 
-     self_reference_min_shares:self_reference_avg_sharess, data=news_articles)
+lm_chosen = lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+                         - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data=news_articles)
 
 news_articles$yhat = predict(lm_chosen, news_articles)
 
