@@ -29,8 +29,8 @@ class.
 The main features of our models are:
 
 Model 1 : include all main effects except roooms (exclude rooms because
-of colinearity, rooms = bedrooms + batherooms) \#\#\#CHECK\#\#\# Model
-2: simplify model1 by reducing some
+of colinearity, rooms = bedrooms + bathrooms) \#\#\#CHECK\#\#\# Model 2:
+simplify model1 by reducing some
 variables(-sewer-waterfront-newConstruction) Model 3: add all the
 interactions on model 2 Model 4: allow only some interactions on model 2
 Model 5: a polynomial model by adding age^2 on model 4 Model\_medium:
@@ -74,22 +74,22 @@ model.medium
 AVG RMSE
 </td>
 <td style="text-align:right;">
-58624.5
+59506.35
 </td>
 <td style="text-align:right;">
-60206.5
+61166.14
 </td>
 <td style="text-align:right;">
-65549.99
+66692.43
 </td>
 <td style="text-align:right;">
-60006.69
+60999.85
 </td>
 <td style="text-align:right;">
-60051.2
+61058.63
 </td>
 <td style="text-align:right;">
-66442.24
+66654.87
 </td>
 </tr>
 </tbody>
@@ -134,7 +134,7 @@ OLS linear regression
 F(17,1364)
 </td>
 <td style="text-align:right;">
-138.54
+163.31
 </td>
 </tr>
 <tr>
@@ -142,7 +142,7 @@ F(17,1364)
 R²
 </td>
 <td style="text-align:right;">
-0.63
+0.67
 </td>
 </tr>
 <tr>
@@ -150,7 +150,7 @@ R²
 Adj. R²
 </td>
 <td style="text-align:right;">
-0.63
+0.67
 </td>
 </tr>
 </tbody>
@@ -180,13 +180,13 @@ p
 (Intercept)
 </td>
 <td style="text-align:right;">
-103461.43
+112791.20
 </td>
 <td style="text-align:right;">
-23673.07
+21612.74
 </td>
 <td style="text-align:right;">
-4.37
+5.22
 </td>
 <td style="text-align:right;">
 0.00
@@ -197,16 +197,16 @@ p
 lotSize
 </td>
 <td style="text-align:right;">
-4441.24
+8649.45
 </td>
 <td style="text-align:right;">
-2641.43
+2310.89
 </td>
 <td style="text-align:right;">
-1.68
+3.74
 </td>
 <td style="text-align:right;">
-0.09
+0.00
 </td>
 </tr>
 <tr>
@@ -214,16 +214,16 @@ lotSize
 age
 </td>
 <td style="text-align:right;">
--151.57
+-113.80
 </td>
 <td style="text-align:right;">
-69.32
+63.80
 </td>
 <td style="text-align:right;">
--2.19
+-1.78
 </td>
 <td style="text-align:right;">
-0.03
+0.07
 </td>
 </tr>
 <tr>
@@ -231,13 +231,13 @@ age
 landValue
 </td>
 <td style="text-align:right;">
-0.96
+0.95
 </td>
 <td style="text-align:right;">
-0.06
+0.05
 </td>
 <td style="text-align:right;">
-17.16
+19.10
 </td>
 <td style="text-align:right;">
 0.00
@@ -248,13 +248,13 @@ landValue
 livingArea
 </td>
 <td style="text-align:right;">
-77.50
+75.88
 </td>
 <td style="text-align:right;">
-4.93
+4.59
 </td>
 <td style="text-align:right;">
-15.71
+16.52
 </td>
 <td style="text-align:right;">
 0.00
@@ -265,16 +265,16 @@ livingArea
 pctCollege
 </td>
 <td style="text-align:right;">
--24.72
+-311.71
 </td>
 <td style="text-align:right;">
-171.98
+164.29
 </td>
 <td style="text-align:right;">
--0.14
+-1.90
 </td>
 <td style="text-align:right;">
-0.89
+0.06
 </td>
 </tr>
 <tr>
@@ -282,16 +282,16 @@ pctCollege
 bedrooms
 </td>
 <td style="text-align:right;">
--4174.37
+-6014.84
 </td>
 <td style="text-align:right;">
-2823.28
+2569.09
 </td>
 <td style="text-align:right;">
--1.48
+-2.34
 </td>
 <td style="text-align:right;">
-0.14
+0.02
 </td>
 </tr>
 <tr>
@@ -299,16 +299,16 @@ bedrooms
 fireplaces
 </td>
 <td style="text-align:right;">
--289.37
+3293.09
 </td>
 <td style="text-align:right;">
-3446.70
+3241.88
 </td>
 <td style="text-align:right;">
--0.08
+1.02
 </td>
 <td style="text-align:right;">
-0.93
+0.31
 </td>
 </tr>
 <tr>
@@ -316,13 +316,13 @@ fireplaces
 bathrooms
 </td>
 <td style="text-align:right;">
-20834.89
+22446.83
 </td>
 <td style="text-align:right;">
-3855.36
+3715.81
 </td>
 <td style="text-align:right;">
-5.40
+6.04
 </td>
 <td style="text-align:right;">
 0.00
@@ -333,16 +333,16 @@ bathrooms
 heatinghot water/steam
 </td>
 <td style="text-align:right;">
--11261.48
+-9405.34
 </td>
 <td style="text-align:right;">
-4861.98
+4526.60
 </td>
 <td style="text-align:right;">
--2.32
+-2.08
 </td>
 <td style="text-align:right;">
-0.02
+0.04
 </td>
 </tr>
 <tr>
@@ -350,16 +350,16 @@ heatinghot water/steam
 heatingelectric
 </td>
 <td style="text-align:right;">
-421.69
+-2659.63
 </td>
 <td style="text-align:right;">
-14550.18
+14950.56
 </td>
 <td style="text-align:right;">
-0.03
+-0.18
 </td>
 <td style="text-align:right;">
-0.98
+0.86
 </td>
 </tr>
 <tr>
@@ -367,16 +367,16 @@ heatingelectric
 fuelelectric
 </td>
 <td style="text-align:right;">
--10880.71
+-8646.94
 </td>
 <td style="text-align:right;">
-14326.00
+14741.20
 </td>
 <td style="text-align:right;">
--0.76
+-0.59
 </td>
 <td style="text-align:right;">
-0.45
+0.56
 </td>
 </tr>
 <tr>
@@ -384,16 +384,16 @@ fuelelectric
 fueloil
 </td>
 <td style="text-align:right;">
--2561.24
+-5893.64
 </td>
 <td style="text-align:right;">
-5763.93
+5387.55
 </td>
 <td style="text-align:right;">
--0.44
+-1.09
 </td>
 <td style="text-align:right;">
-0.66
+0.27
 </td>
 </tr>
 <tr>
@@ -401,16 +401,16 @@ fueloil
 sewerpublic/commercial
 </td>
 <td style="text-align:right;">
--1442.69
+-2391.18
 </td>
 <td style="text-align:right;">
-4262.92
+3935.76
 </td>
 <td style="text-align:right;">
--0.34
+-0.61
 </td>
 <td style="text-align:right;">
-0.74
+0.54
 </td>
 </tr>
 <tr>
@@ -418,16 +418,16 @@ sewerpublic/commercial
 sewernone
 </td>
 <td style="text-align:right;">
-4205.86
+15068.27
 </td>
 <td style="text-align:right;">
-19222.13
+20163.35
 </td>
 <td style="text-align:right;">
-0.22
+0.75
 </td>
 <td style="text-align:right;">
-0.83
+0.46
 </td>
 </tr>
 <tr>
@@ -435,13 +435,13 @@ sewernone
 waterfrontNo
 </td>
 <td style="text-align:right;">
--119647.72
+-108505.43
 </td>
 <td style="text-align:right;">
-19444.55
+17417.38
 </td>
 <td style="text-align:right;">
--6.15
+-6.23
 </td>
 <td style="text-align:right;">
 0.00
@@ -452,13 +452,13 @@ waterfrontNo
 newConstructionNo
 </td>
 <td style="text-align:right;">
-48815.02
+46224.74
 </td>
 <td style="text-align:right;">
-8221.54
+7841.10
 </td>
 <td style="text-align:right;">
-5.94
+5.90
 </td>
 <td style="text-align:right;">
 0.00
@@ -469,16 +469,16 @@ newConstructionNo
 centralAirNo
 </td>
 <td style="text-align:right;">
--11138.38
+-9850.78
 </td>
 <td style="text-align:right;">
-3956.77
+3747.04
 </td>
 <td style="text-align:right;">
--2.82
+-2.63
 </td>
 <td style="text-align:right;">
-0.00
+0.01
 </td>
 </tr>
 </tbody>
@@ -521,7 +521,7 @@ AVG RMSE
 model.wo.lotSize
 </td>
 <td style="text-align:right;">
-54396.43
+66538.59
 </td>
 </tr>
 <tr>
@@ -529,7 +529,7 @@ model.wo.lotSize
 model.wo.age
 </td>
 <td style="text-align:right;">
-53426.38
+66748.89
 </td>
 </tr>
 <tr>
@@ -537,7 +537,7 @@ model.wo.age
 model.wo.landValue
 </td>
 <td style="text-align:right;">
-59691.02
+69398.07
 </td>
 </tr>
 <tr>
@@ -545,7 +545,7 @@ model.wo.landValue
 model.wo.livingArea
 </td>
 <td style="text-align:right;">
-58839.03
+71473.02
 </td>
 </tr>
 <tr>
@@ -553,7 +553,7 @@ model.wo.livingArea
 model.wo.pctCollege
 </td>
 <td style="text-align:right;">
-53501.29
+66492.18
 </td>
 </tr>
 <tr>
@@ -561,7 +561,7 @@ model.wo.pctCollege
 model.wo.bedrooms
 </td>
 <td style="text-align:right;">
-53605.03
+66536.07
 </td>
 </tr>
 <tr>
@@ -569,7 +569,7 @@ model.wo.bedrooms
 model.wo.fireplaces
 </td>
 <td style="text-align:right;">
-53435.16
+66565.08
 </td>
 </tr>
 <tr>
@@ -577,7 +577,7 @@ model.wo.fireplaces
 model.wo.bathrooms
 </td>
 <td style="text-align:right;">
-54940.32
+67531.09
 </td>
 </tr>
 <tr>
@@ -585,7 +585,7 @@ model.wo.bathrooms
 model.wo.heating
 </td>
 <td style="text-align:right;">
-53521.11
+66788.96
 </td>
 </tr>
 <tr>
@@ -593,7 +593,7 @@ model.wo.heating
 model.wo.fuel
 </td>
 <td style="text-align:right;">
-53505.93
+66616.82
 </td>
 </tr>
 <tr>
@@ -601,7 +601,7 @@ model.wo.fuel
 model.wo.sewer
 </td>
 <td style="text-align:right;">
-53457.95
+66588.23
 </td>
 </tr>
 <tr>
@@ -609,7 +609,7 @@ model.wo.sewer
 model.wo.waterfront
 </td>
 <td style="text-align:right;">
-55152.77
+68245.85
 </td>
 </tr>
 <tr>
@@ -617,7 +617,7 @@ model.wo.waterfront
 model.wo.newConstruction
 </td>
 <td style="text-align:right;">
-53604.69
+67025.71
 </td>
 </tr>
 <tr>
@@ -625,7 +625,7 @@ model.wo.newConstruction
 model.wo.centralAir
 </td>
 <td style="text-align:right;">
-53386.33
+66715.59
 </td>
 </tr>
 </tbody>
@@ -660,13 +660,13 @@ linear.model.RMSE
 <tbody>
 <tr>
 <td style="text-align:right;">
-9
+5
 </td>
 <td style="text-align:right;">
-67101.34
+74003.49
 </td>
 <td style="text-align:right;">
-54178.57
+67199.81
 </td>
 </tr>
 </tbody>
@@ -697,10 +697,10 @@ linear.model
 Average RMSE
 </td>
 <td style="text-align:right;">
-62864.41
+62098.79
 </td>
 <td style="text-align:right;">
-58624.5
+59506.35
 </td>
 </tr>
 </tbody>
@@ -788,13 +788,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0379302
+0.0366124
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.3054881
+0.2287037
 </td>
 </tr>
 <tr>
@@ -805,13 +805,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0336480
+0.0377086
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1554936
+0.1118306
 </td>
 </tr>
 <tr>
@@ -822,13 +822,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0368868
+0.0401084
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1728664
+0.1364717
 </td>
 </tr>
 <tr>
@@ -839,13 +839,13 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0351458
+0.0403017
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.1474867
+0.1798595
 </td>
 </tr>
 </tbody>
@@ -893,10 +893,10 @@ Model\_2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1410330
+0.1383089
 </td>
 <td style="text-align:right;">
-0.1401818
+0.1374405
 </td>
 </tr>
 <tr>
@@ -904,10 +904,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0892270
+0.0884653
 </td>
 <td style="text-align:right;">
-0.0917248
+0.0897776
 </td>
 </tr>
 <tr>
@@ -915,10 +915,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1858439
+0.1860244
 </td>
 <td style="text-align:right;">
-0.1927892
+0.1943894
 </td>
 </tr>
 <tr>
@@ -926,10 +926,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.2027323
+0.2053038
 </td>
 <td style="text-align:right;">
-0.2300670
+0.2355296
 </td>
 </tr>
 <tr>
@@ -937,10 +937,10 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1349018
+0.1321578
 </td>
 <td style="text-align:right;">
-0.1242611
+0.1215129
 </td>
 </tr>
 </tbody>

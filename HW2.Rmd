@@ -48,7 +48,7 @@ model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fire
 The main features of our models are:
 
 Model 1 : include all main effects except roooms
-(exclude rooms because of colinearity, rooms = bedrooms + batherooms) ###CHECK###
+(exclude rooms because of colinearity, rooms = bedrooms + bathrooms) ###CHECK###
 Model 2: simplify model1 by reducing some variables(-sewer-waterfront-newConstruction)
 Model 3: add all the interactions on model 2
 Model 4: allow only some interactions on model 2
