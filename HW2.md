@@ -7,6 +7,691 @@ Adhish Luitel - UTEID al49674
 
 Ji Heon Shim - UTEID js93996
 
+Exercise 2.1
+------------
+
+In this exercise, we hand-build five models for price in order to find
+out the best one which outperforms the "medium" model that we considered
+in class.
+
+    model1= price ~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + sewer + waterfront + newConstruction + centralAir 
+    model2= price~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + centralAir 
+    model3= price~ (lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + centralAir)^2 
+    model4= price~ lotSize + age +pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir
+    model5= price~ lotSize + age + age2 + pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir
+
+    model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + centralAir
+
+Here are the main features of our models.
+
+Model 1 : include all main effects except roooms (exclude rooms because
+of colinearity, rooms = bedrooms + batherooms) Model 2: simplify model1
+by reducing some variables(-sewer-waterfront-newConstruction) Model 3:
+add all the interactions on model 2 Model 4: allow only some
+interactions on model 2 Model 5: a polynomial model by adding age^2 on
+model 4 Model\_medium: baseline model with 11 main effects
+
+In order to measure performances of each model, we run Monte Carlo
+training-test split(train 80%, test 20%) for 100 times and calcaulate
+the average values of out-of-sample RMSE for each model.
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+model1
+</th>
+<th style="text-align:right;">
+model2
+</th>
+<th style="text-align:right;">
+model3
+</th>
+<th style="text-align:right;">
+model4
+</th>
+<th style="text-align:right;">
+model5
+</th>
+<th style="text-align:right;">
+model.medium
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+AVG RMSE
+</td>
+<td style="text-align:right;">
+58823.38
+</td>
+<td style="text-align:right;">
+60359.28
+</td>
+<td style="text-align:right;">
+63191.25
+</td>
+<td style="text-align:right;">
+60127.91
+</td>
+<td style="text-align:right;">
+60159.14
+</td>
+<td style="text-align:right;">
+67037.46
+</td>
+</tr>
+</tbody>
+</table>
+The best model turned out to be model 1 with the least out-of-sample
+RMSE value. Here is the summary of model 1.
+
+    summ(model1)
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Observations
+</td>
+<td style="text-align:right;">
+1382
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Dependent variable
+</td>
+<td style="text-align:right;">
+price
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Type
+</td>
+<td style="text-align:right;">
+OLS linear regression
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+F(17,1364)
+</td>
+<td style="text-align:right;">
+164.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+R²
+</td>
+<td style="text-align:right;">
+0.67
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Adj. R²
+</td>
+<td style="text-align:right;">
+0.67
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Est.
+</th>
+<th style="text-align:right;">
+S.E.
+</th>
+<th style="text-align:right;">
+t val.
+</th>
+<th style="text-align:right;">
+p
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+125145.39
+</td>
+<td style="text-align:right;">
+22607.11
+</td>
+<td style="text-align:right;">
+5.54
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+lotSize
+</td>
+<td style="text-align:right;">
+9497.13
+</td>
+<td style="text-align:right;">
+2460.88
+</td>
+<td style="text-align:right;">
+3.86
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+age
+</td>
+<td style="text-align:right;">
+-87.43
+</td>
+<td style="text-align:right;">
+64.16
+</td>
+<td style="text-align:right;">
+-1.36
+</td>
+<td style="text-align:right;">
+0.17
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+landValue
+</td>
+<td style="text-align:right;">
+0.88
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+16.98
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+livingArea
+</td>
+<td style="text-align:right;">
+83.49
+</td>
+<td style="text-align:right;">
+4.66
+</td>
+<td style="text-align:right;">
+17.90
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+pctCollege
+</td>
+<td style="text-align:right;">
+-182.13
+</td>
+<td style="text-align:right;">
+165.70
+</td>
+<td style="text-align:right;">
+-1.10
+</td>
+<td style="text-align:right;">
+0.27
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+bedrooms
+</td>
+<td style="text-align:right;">
+-4491.99
+</td>
+<td style="text-align:right;">
+2594.91
+</td>
+<td style="text-align:right;">
+-1.73
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+fireplaces
+</td>
+<td style="text-align:right;">
+762.48
+</td>
+<td style="text-align:right;">
+3239.21
+</td>
+<td style="text-align:right;">
+0.24
+</td>
+<td style="text-align:right;">
+0.81
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+bathrooms
+</td>
+<td style="text-align:right;">
+18422.97
+</td>
+<td style="text-align:right;">
+3721.12
+</td>
+<td style="text-align:right;">
+4.95
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+heatinghot water/steam
+</td>
+<td style="text-align:right;">
+-9538.96
+</td>
+<td style="text-align:right;">
+4623.82
+</td>
+<td style="text-align:right;">
+-2.06
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+heatingelectric
+</td>
+<td style="text-align:right;">
+2036.03
+</td>
+<td style="text-align:right;">
+12834.83
+</td>
+<td style="text-align:right;">
+0.16
+</td>
+<td style="text-align:right;">
+0.87
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+fuelelectric
+</td>
+<td style="text-align:right;">
+-9694.72
+</td>
+<td style="text-align:right;">
+12656.19
+</td>
+<td style="text-align:right;">
+-0.77
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+fueloil
+</td>
+<td style="text-align:right;">
+-1966.40
+</td>
+<td style="text-align:right;">
+5437.39
+</td>
+<td style="text-align:right;">
+-0.36
+</td>
+<td style="text-align:right;">
+0.72
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+sewerpublic/commercial
+</td>
+<td style="text-align:right;">
+1656.15
+</td>
+<td style="text-align:right;">
+3997.12
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+<td style="text-align:right;">
+0.68
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+sewernone
+</td>
+<td style="text-align:right;">
+-4830.56
+</td>
+<td style="text-align:right;">
+16726.43
+</td>
+<td style="text-align:right;">
+-0.29
+</td>
+<td style="text-align:right;">
+0.77
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+waterfrontNo
+</td>
+<td style="text-align:right;">
+-137036.43
+</td>
+<td style="text-align:right;">
+18385.51
+</td>
+<td style="text-align:right;">
+-7.45
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+newConstructionNo
+</td>
+<td style="text-align:right;">
+44417.49
+</td>
+<td style="text-align:right;">
+8052.12
+</td>
+<td style="text-align:right;">
+5.52
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+centralAirNo
+</td>
+<td style="text-align:right;">
+-11469.36
+</td>
+<td style="text-align:right;">
+3776.32
+</td>
+<td style="text-align:right;">
+-3.04
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; border: 0;" colspan="100%">
+<sup></sup> Standard errors: OLS
+</td>
+</tr>
+</tfoot>
+</table>
+And we can find the variable which is the strongest driver of house
+prices by assessing how much it improves the out-of-sample RMSE when it
+is included in the model. So we test how much the out-of-sample
+increases when we exclude a certain variable from our model 1, and get
+the average RMSE by doing Monte Carlo simulation on different
+training-test sets(80%-20%) for 100 times.
+
+As the table below shows, "landValue" variable seems to be the storngest
+drive of house prices. This result might be caused because land values
+are already included in house prices(House price = Land value + Pure
+house value), so they are strongly related to each other.
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+AVG RMSE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+model.wo.lotSize
+</td>
+<td style="text-align:right;">
+64202.59
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.age
+</td>
+<td style="text-align:right;">
+64624.46
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.landValue
+</td>
+<td style="text-align:right;">
+71933.70
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.livingArea
+</td>
+<td style="text-align:right;">
+65926.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.pctCollege
+</td>
+<td style="text-align:right;">
+64307.09
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.bedrooms
+</td>
+<td style="text-align:right;">
+64449.61
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.fireplaces
+</td>
+<td style="text-align:right;">
+64335.65
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.bathrooms
+</td>
+<td style="text-align:right;">
+66161.54
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.heating
+</td>
+<td style="text-align:right;">
+64543.96
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.fuel
+</td>
+<td style="text-align:right;">
+64417.19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.sewer
+</td>
+<td style="text-align:right;">
+64381.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.waterfront
+</td>
+<td style="text-align:right;">
+64911.14
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.newConstruction
+</td>
+<td style="text-align:right;">
+65069.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+model.wo.centralAir
+</td>
+<td style="text-align:right;">
+64280.37
+</td>
+</tr>
+</tbody>
+</table>
+Now, we build a nonparametic KNN model to compare it with our linear
+model and figure out which one performs better. By using the same train
+and test sets that we used in our linear regression, the result shows
+that whatever value K may have, the knn model is unlikely to perfrom
+better than our linear model. In the graph below, the horizontal red
+line shows the out-of-sample RMSE of our linear model. We can see that
+all the RMSEs of the knn model in accordance with k values are plotted
+above the red line. And the table below suggests the fact that the
+minimum RMSE value of knn model is still bigger than our best-fit linear
+model.
+
+![](HW2_files/figure-markdown_strict/2.1.6-1.png)
+<table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+Kmin
+</th>
+<th style="text-align:right;">
+knn.model.RMSE
+</th>
+<th style="text-align:right;">
+linear.model.RMSE
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+11
+</td>
+<td style="text-align:right;">
+71478.79
+</td>
+<td style="text-align:right;">
+65617.56
+</td>
+</tr>
+</tbody>
+</table>
+But there is random variation due to the particular choice of data
+points that end up in your train/test split. So we run Monte-Carlo
+simulation again using random train/test split for 100 times, and
+compare the minimim RMSE of knn model with RMSE of our linear model. As
+a result, we can see that our linear model outperforms the knn model.
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+knn.model
+</th>
+<th style="text-align:right;">
+linear.model
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+Average RMSE
+</td>
+<td style="text-align:right;">
+62596.12
+</td>
+<td style="text-align:right;">
+58823.38
+</td>
+</tr>
+</tbody>
+</table>
 Exercise 2.2
 ------------
 
@@ -16,11 +701,12 @@ of the analysis is to evaluate the performance of five different
 radiologists considering several risk factors.
 
 First, we analyzed the raw data to verify whether each radiologist has a
-different recall rate or not, and compare precision and error rates. We
-can observe that, even though radiologist89 has a higher probability of
-recalling patients, his Type II error rate (not recalling patients that
-actually have cancer) doesn't substantially differ from radiologist95
-and radiologist34, who have the lowest recall rates.
+different recall rate (A.recallrate) or not, and compare precision
+(B.cancerrate) and false negatice (C.false\_negative) rates. We can
+observe that, even though radiologist89 has a higher probability of
+recalling patients, his false negative error rate (not recalling
+patients that actually have cancer) doesn't substantially differ from
+radiologist95 and radiologist34, who have the lowest recall rates.
 
 ![](HW2_files/figure-markdown_strict/2.2.1-1.png)
 
@@ -89,13 +775,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0423993
+0.0436959
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.2891959
+0.2019470
 </td>
 </tr>
 <tr>
@@ -106,13 +792,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0336314
+0.0281342
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1345727
+0.1393645
 </td>
 </tr>
 <tr>
@@ -123,13 +809,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0251637
+0.0322686
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1407878
+0.1716214
 </td>
 </tr>
 <tr>
@@ -140,13 +826,13 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0299268
+0.0348694
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.1796670
+0.1575822
 </td>
 </tr>
 </tbody>
@@ -194,10 +880,10 @@ Model\_2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1398507
+0.1388412
 </td>
 <td style="text-align:right;">
-0.1393507
+0.1373825
 </td>
 </tr>
 <tr>
@@ -205,10 +891,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0875088
+0.0884677
 </td>
 <td style="text-align:right;">
-0.0901486
+0.0898032
 </td>
 </tr>
 <tr>
@@ -216,10 +902,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1833777
+0.1869201
 </td>
 <td style="text-align:right;">
-0.1898897
+0.1953044
 </td>
 </tr>
 <tr>
@@ -227,10 +913,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.2035571
+0.2047768
 </td>
 <td style="text-align:right;">
-0.2295350
+0.2342552
 </td>
 </tr>
 <tr>
@@ -238,10 +924,10 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1330061
+0.1324789
 </td>
 <td style="text-align:right;">
-0.1237606
+0.1227129
 </td>
 </tr>
 </tbody>
@@ -260,7 +946,7 @@ We started by stablishing the following baseline model.
     baseline_model = cancer ~ recall
 
 Then, we built multiple models adding each of the clinical risk factors
-to the baseline model.
+to the baseline model to evaluate the results separately.
 
     baseline_history_model = cancer ~ recall + history
     baseline_age_model = cancer ~ recall + age
@@ -839,7 +1525,7 @@ and a accuracy rate of 85.71% ((824+22)/987).
 
 Considering the in-sample probability of cancer as a threshold for the
 fitted values of the proposed model to predict cancer or not, we
-computed the following confusion matrix. This matrix show that, when
+computed the following confusion matrix. This matrix shows that, when
 including age.70plus, postmenounknown and density.4 in the model, the
 sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate
 slightly decreased to 84.60% ((811+24)/987).

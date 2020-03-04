@@ -15,8 +15,274 @@ Adhish Luitel - UTEID al49674
 
 Ji Heon Shim - UTEID js93996
 
-## Exercise 2.2
+## Exercise 2.1
 ```{r setup1, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(dummies)
+library(margins)
+library(dplyr)
+library(kableExtra)
+library(sjPlot)
+library(mosaic)
+library(FNN)
+library(foreach)
+library(jtools)
+data(SaratogaHouses)
+```
+
+In this exercise, we hand-build five models for price in order to find out the best one which outperforms the "medium" model that we considered in class.
+
+```{r 2.1.1, echo= TRUE, warning = FALSE}
+model1= price ~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + sewer + waterfront + newConstruction + centralAir 
+model2= price~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + centralAir 
+model3= price~ (lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + centralAir)^2 
+model4= price~ lotSize + age +pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir
+model5= price~ lotSize + age + age2 + pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir
+
+model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + centralAir
+
+```
+
+Here are the main features of our models.
+
+Model 1 : include all main effects except roooms
+(exclude rooms because of colinearity, rooms = bedrooms + batherooms)
+Model 2: simplify model1 by reducing some variables(-sewer-waterfront-newConstruction)
+Model 3: add all the interactions on model 2
+Model 4: allow only some interactions on model 2
+Model 5: a polynomial model by adding age^2 on model 4
+Model_medium: baseline model with 11 main effects
+             
+```{r 2.1.2, echo=FALSE}
+# make a new variable age2=(age)^2
+SaratogaHouses <- mutate(SaratogaHouses, age2=(age)^2)
+
+rmse = function(y, yhat) {
+  sqrt( mean( (y - yhat)^2 ) )
+}
+```
+
+In order to measure performances of each model, we run Monte Carlo training-test split(train 80%, test 20%) for 100 times and calcaulate the average values of out-of-sample RMSE for each model.
+
+```{r 2.1.3, echo=FALSE, warning=FALSE}
+rmse_check = do(100)*{# Split into training and testing sets
+n = nrow(SaratogaHouses)
+n_train = round(0.8*n)  # round to nearest integer
+n_test = n - n_train
+train_cases = sample.int(n, n_train, replace=FALSE)
+test_cases = setdiff(1:n, train_cases)
+saratoga_train = SaratogaHouses[train_cases,]
+saratoga_test = SaratogaHouses[test_cases,]
+
+#Hand-build some models and fit into training data
+
+# model1: use all possible variables except rooms and age2 without interactions
+# we get rid of "rooms" because of collinearity, rooms=bathrooms+bedrooms)
+model1= lm(price ~ .-rooms-age2, data=saratoga_train)
+
+# model2: simplify model1 by deleting some variables that look unimportant
+# sewer(unimportant), waterfront, newConstruction(not enough samples with value of 1)
+model2= lm(price~ .-rooms-sewer-waterfront-newConstruction-age2, data=saratoga_train)
+
+# model3 : add all the interactions on model2
+model3= lm(price~ (.-rooms-sewer-waterfront-newConstruction-age2)^2, data=saratoga_train)
+
+# model4: allow only some interactions
+model4= lm(price~ lotSize + age +pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir, data=saratoga_train)
+
+# add a new variables for polynomial regression on model4
+# we added age^2 because it is likely that house price rapidly goes down as it becomes aged
+
+model5= lm(price~ lotSize + age + age2 + pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir, data=saratoga_train)
+
+# our baseline model, medium
+model_medium = lm(price ~ lotSize + age + livingArea + pctCollege + bedrooms + 
+                 fireplaces + bathrooms + rooms + heating + fuel + centralAir, data=saratoga_train)
+
+# Predictions out of sample
+yhat_test1 = predict(model1, saratoga_test)
+yhat_test2 = predict(model2, saratoga_test)
+yhat_test3 = predict(model3, saratoga_test)
+yhat_test4 = predict(model4, saratoga_test)
+yhat_test5 = predict(model5, saratoga_test)
+yhat_test_medium = predict(model_medium, saratoga_test)
+
+c(rmse(saratoga_test$price, yhat_test1), rmse(saratoga_test$price, yhat_test2), rmse(saratoga_test$price, yhat_test3), rmse(saratoga_test$price, yhat_test4), rmse(saratoga_test$price, yhat_test5), rmse(saratoga_test$price, yhat_test_medium))}
+
+rmse_result= data.frame("model1"= colMeans(rmse_check[1]), "model2"=colMeans(rmse_check[2]), "model3"=colMeans(rmse_check[3]), "model4"=colMeans(rmse_check[4]), "model5"=colMeans(rmse_check[5]), "model medium"=colMeans(rmse_check[6]), row.names="AVG RMSE")
+
+kable(rmse_result) %>% kable_styling("striped")
+
+```
+  
+The best model turned out to be model 1 with the least out-of-sample RMSE value. Here is the summary of model 1.
+
+```{r 2.1.4, echo=TRUE}
+summ(model1)
+```
+
+And we can find the variable which is the strongest driver of house prices by assessing how much it improves the out-of-sample RMSE when it is included in the model.
+So we test how much the out-of-sample increases when we exclude a certain variable from our model 1, and get the average RMSE by doing Monte Carlo simulation on different training-test sets(80%-20%) for 100 times.
+
+As the table below shows, "landValue" variable seems to be the storngest drive of house prices. This result might be caused because land values are already included in house prices(House price = Land value + Pure house value), so they are strongly related to each other.
+
+```{r 2.1.5, echo=FALSE, warning=FALSE}
+rmse_check2 = do(100)*{# Split into training and testing sets
+train_cases2 = sample.int(n, n_train, replace=FALSE)
+test_cases2 = setdiff(1:n, train_cases)
+saratoga_train2 = SaratogaHouses[train_cases2,]
+saratoga_test2 = SaratogaHouses[test_cases2,]
+
+#Hand-build some models and fit into training data
+
+# model1_wo_lotSize: without lotSize
+model1_wo_lotSize= lm(price ~ .-rooms-age2-lotSize, data=saratoga_train2)
+
+# model1_wo_age: without age
+model1_wo_age= lm(price ~ .-rooms-age2-age, data=saratoga_train2)
+
+# model1_wo_landValue: without landValue
+model1_wo_landValue= lm(price ~ .-rooms-age2-landValue, data=saratoga_train2)
+
+# model1_wo_livingArea: without livingArea
+model1_wo_livingArea= lm(price ~ .-rooms-age2-livingArea, data=saratoga_train2)
+
+# model1_wo_pctCollege: without pctCollege
+model1_wo_pctCollege= lm(price ~ .-rooms-age2-pctCollege, data=saratoga_train2)
+
+# model1_wo_bedrooms: without bedrooms
+model1_wo_bedrooms= lm(price ~ .-rooms-age2-bedrooms, data=saratoga_train2)
+
+# model1_wo_fireplaces: without fireplaces
+model1_wo_fireplaces= lm(price ~ .-rooms-age2-fireplaces, data=saratoga_train2)
+
+# model1_wo_bathrooms: without bathrooms
+model1_wo_bathrooms= lm(price ~ .-rooms-age2-bathrooms, data=saratoga_train2)
+
+# model1_wo_heating: without heating
+model1_wo_heating= lm(price ~ .-rooms-age2-heating, data=saratoga_train2)
+
+# model1_wo_fuel: without fuel
+model1_wo_fuel= lm(price ~ .-rooms-age2-fuel, data=saratoga_train2)
+
+# model1_wo_sewer: without sewer
+model1_wo_sewer= lm(price ~ .-rooms-age2-sewer, data=saratoga_train2)
+
+# model1_wo_waterfront: without waterfront
+model1_wo_waterfront= lm(price ~ .-rooms-age2-waterfront, data=saratoga_train2)
+
+# model1_wo_newConstruction: without newConstruction
+model1_wo_newConstruction= lm(price ~ .-rooms-age2-newConstruction, data=saratoga_train2)
+
+# model1_wo_centralAir: without centralAir
+model1_wo_centralAir= lm(price ~ .-rooms-age2-centralAir, data=saratoga_train2)
+
+# Predictions out of sample
+yhat_test_lotSize = predict(model1_wo_lotSize, saratoga_test2)
+yhat_test_age = predict(model1_wo_age, saratoga_test2)
+yhat_test_landValue = predict(model1_wo_landValue, saratoga_test2)
+yhat_test_livingArea = predict(model1_wo_livingArea, saratoga_test2)
+yhat_test_pctCollege = predict(model1_wo_pctCollege, saratoga_test2)
+yhat_test_bedrooms = predict(model1_wo_bedrooms, saratoga_test2)
+yhat_test_fireplaces = predict(model1_wo_fireplaces, saratoga_test2)
+yhat_test_bathrooms = predict(model1_wo_bathrooms, saratoga_test2)
+yhat_test_heating = predict(model1_wo_heating, saratoga_test2)
+yhat_test_fuel = predict(model1_wo_fuel, saratoga_test2)
+yhat_test_sewer = predict(model1_wo_sewer, saratoga_test2)
+yhat_test_waterfront = predict(model1_wo_waterfront, saratoga_test2)
+yhat_test_newConstruction = predict(model1_wo_newConstruction, saratoga_test2)
+yhat_test_centralAir = predict(model1_wo_centralAir, saratoga_test2)
+
+c(rmse(saratoga_test2$price, yhat_test_lotSize), rmse(saratoga_test2$price, yhat_test_age), rmse(saratoga_test2$price, yhat_test_landValue), rmse(saratoga_test2$price, yhat_test_livingArea), rmse(saratoga_test2$price, yhat_test_pctCollege), rmse(saratoga_test2$price, yhat_test_bedrooms), rmse(saratoga_test2$price, yhat_test_fireplaces), rmse(saratoga_test2$price, yhat_test_bathrooms), rmse(saratoga_test2$price, yhat_test_heating), rmse(saratoga_test2$price, yhat_test_fuel), rmse(saratoga_test2$price, yhat_test_sewer), rmse(saratoga_test2$price, yhat_test_waterfront), rmse(saratoga_test2$price, yhat_test_newConstruction), rmse(saratoga_test2$price, yhat_test_centralAir))}
+
+rmse_result2= data.frame("model wo lotSize"= colMeans(rmse_check2[1]), "model wo age"=colMeans(rmse_check2[2]), "model wo landValue"=colMeans(rmse_check2[3]), "model wo livingArea"=colMeans(rmse_check2[4]), "model wo pctCollege"=colMeans(rmse_check2[5]), "model wo bedrooms"=colMeans(rmse_check2[6]), "model wo fireplaces"= colMeans(rmse_check2[7]), "model wo bathrooms"=colMeans(rmse_check2[8]), "model wo heating"=colMeans(rmse_check2[9]), "model wo fuel"=colMeans(rmse_check2[10]), "model wo sewer"=colMeans(rmse_check2[11]), "model wo waterfront"=colMeans(rmse_check2[12]), "model wo newConstruction"=colMeans(rmse_check2[13]), "model wo centralAir"=colMeans(rmse_check2[14]), row.names="AVG RMSE")
+
+rmse_result2_t = t(rmse_result2)
+
+kable(rmse_result2_t) %>% kable_styling("striped")
+```
+
+Now, we build a nonparametic KNN model to compare it with our linear model and figure out which one performs better.
+By using the same train and test sets that we used in our linear regression, the result shows that whatever value K may have, the knn model is unlikely to perfrom better than our linear model.
+In the graph below, the horizontal red line shows the out-of-sample RMSE of our linear model. We can see that all the RMSEs of the knn model in accordance with k values are plotted above the red line. 
+And the table below suggests the fact that the minimum RMSE value of knn model is still bigger than our best-fit linear model. 
+
+```{r 2.1.6, echo=FALSE}
+# construct the training and test-set feature matrices
+Xtrain= model.matrix(~ .-(price + rooms + age2)-1, data=saratoga_train)
+Xtest = model.matrix(~ .-(price + rooms + age2)-1, data= saratoga_test)
+
+# training and testing set responses 
+ytrain = saratoga_train$price
+ytest = saratoga_test$price
+
+# rescale
+scale_train = apply(Xtrain, 2, sd)
+Xtilde_train = scale(Xtrain, scale = scale_train)
+Xtilde_test = scale(Xtest, scale= scale_train)
+K= 10
+
+# fit the model
+knn_model = knn.reg(Xtilde_train, Xtilde_test, ytrain, k=K)
+
+k_grid = seq(1,50, by=1)
+rmse_grid = foreach(K= k_grid, .combine='c') %do% {
+knn_model = knn.reg(Xtilde_train, Xtilde_test, ytrain, k=K)
+rmse(ytest, knn_model$pred)
+}
+plot(k_grid, rmse_grid, ylim=c(55000,80000))
+abline(h=rmse(ytest, yhat_test1), col='red')
+
+K= which.min(rmse_grid)
+modelcompare = data.frame('Kmin'=K, "knn model RMSE" = rmse(ytest, knn_model$pred), "linear model RMSE" = rmse(ytest, yhat_test1))
+kable(modelcompare) %>% kable_styling("striped", full_width=F)
+```
+
+But there is random variation due to the particular choice of data points that end up in your train/test split. So we run Monte-Carlo simulation again using random train/test split for 100 times, and compare the minimim RMSE of knn model with RMSE of our linear model.
+As a result, we can see that our linear model outperforms the knn model.
+
+```{r 2.1.7, echo=FALSE}
+rmse_check3 = do(100)*{# Split into training and testing sets
+train_cases3 = sample.int(n, n_train, replace=FALSE)
+test_cases3 = setdiff(1:n, train_cases3)
+saratoga_train3 = SaratogaHouses[train_cases3,]
+saratoga_test3 = SaratogaHouses[test_cases3,]
+
+# construct the training and test-set feature matrices
+Xtrain3= model.matrix(~ .-(price + rooms + age2)-1, data=saratoga_train3)
+Xtest3 = model.matrix(~ .-(price + rooms + age2)-1, data= saratoga_test3)
+
+# training and testing set responses 
+ytrain3 = saratoga_train3$price
+ytest3 = saratoga_test3$price
+
+# rescale
+scale_train3 = apply(Xtrain3, 2, sd)
+Xtilde_train3 = scale(Xtrain3, scale = scale_train3)
+Xtilde_test3 = scale(Xtest3, scale= scale_train3)
+K3=10
+
+# fit the model
+knn_model3 = knn.reg(Xtilde_train3, Xtilde_test3, ytrain3, k=K3)
+
+
+k_grid3 = seq(1,50, by=1)
+rmse_grid3 = foreach(K3= k_grid3, .combine='c') %do% {
+knn_model3 = knn.reg(Xtilde_train3, Xtilde_test3, ytrain3, k=K3)
+rmse(ytest3, knn_model3$pred)}
+min(rmse_grid3)
+}
+
+
+modelcompare2 = data.frame("knn model"= colMeans(rmse_check3), "linear model"= colMeans(rmse_check[1]), row.names="Average RMSE")
+kable(modelcompare2) %>% kable_styling("striped")
+
+```
+
+## Exercise 2.2
+
+```{r setup2, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(dummies)
@@ -30,7 +296,7 @@ brca = read.csv(url("https://raw.githubusercontent.com/bmagalhaes/ECO395M-HW2/ma
 ```
 This exercise is based on a dataset consisted of 987 screening mammograms administered at a hospital in Seattle, Washington. The goal of the analysis is to evaluate the performance of five different radiologists considering several risk factors.
 
-First, we analyzed the raw data to verify whether each radiologist has a different recall rate or not, and compare precision and error rates. We can observe that, even though radiologist89 has a higher probability of recalling patients, his Type II error rate (not recalling patients that actually have cancer) doesn't substantially differ from radiologist95 and radiologist34, who have the lowest recall rates.
+First, we analyzed the raw data to verify whether each radiologist has a different recall rate (A.recallrate) or not, and compare precision (B.cancerrate) and false negatice (C.false_negative) rates. We can observe that, even though radiologist89 has a higher probability of recalling patients, his false negative error rate (not recalling patients that actually have cancer) doesn't substantially differ from radiologist95 and radiologist34, who have the lowest recall rates.
 
 ```{r 2.2.1, echo=FALSE}
 recall_rate = brca %>%
@@ -48,7 +314,7 @@ cancer_rate = brca %>%
 
 error_rate = brca %>%
   group_by(radiologist)  %>%
-  summarize(C.error = length(which(recall == 0 & cancer == 1)) / (length(which(recall == 0 & 
+  summarize(C.false_negative = length(which(recall == 0 & cancer == 1)) / (length(which(recall == 0 & 
             cancer == 1)) + length(which(recall == 0 & cancer == 0))))
 
 radiologist = left_join(recall_rate, cancer_rate, by = "radiologist")
@@ -116,7 +382,6 @@ kable(ame) %>%
 Finally, in order to estimate how each radiologist would perform when facing the same set of patients, we used a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing 20% of the observations, repeating the proccess 100 times. In each repetition, we fitted both models using the train dataset, and compared each model's predictions when all radiologists, in a hypothetical scenario, analyze the entire test dataset. 
 
 We computed average probability of recall per repetition, and calculated the average of the 100 samples to mitigate the effect of randomization. For both models, radiologist89 has the highest probability of recall, followed by radiologist66, radiologist13, radiologist95 and radiologist 34.
-
 
 ```{r 2.2.4, echo=FALSE, warning = FALSE}
 n = nrow(brca_new)
@@ -200,7 +465,7 @@ We started by stablishing the following baseline model.
 baseline_model = cancer ~ recall
 ```
 
-Then, we built multiple models adding each of the clinical risk factors to the baseline model.
+Then, we built multiple models adding each of the clinical risk factors to the baseline model to evaluate the results separately.
 
 ```{r 2.2.6, echo=TRUE}
 baseline_history_model = cancer ~ recall + history
@@ -242,7 +507,7 @@ The confusion matrix for the baseline model below shows that the doctors are cur
 xtabs(~cancer + recall, data=brca)
 ```
 
-Considering the in-sample probability of cancer as a threshold for the fitted values of the proposed model to predict cancer or not, we computed the following confusion matrix. This matrix show that, when including age.70plus, postmenounknown and density.4 in the model, the sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate slightly decreased to 84.60% ((811+24)/987).
+Considering the in-sample probability of cancer as a threshold for the fitted values of the proposed model to predict cancer or not, we computed the following confusion matrix. This matrix shows that, when including age.70plus, postmenounknown and density.4 in the model, the sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate slightly decreased to 84.60% ((811+24)/987).
 
 ```{r 2.2.10, echo=FALSE, warning = FALSE}
 model_cancer7 = glm(cancer ~ recall + age.70plus + menopause.postunknown + density.4, data=brca_new, family=binomial)
@@ -253,244 +518,3 @@ table(y=brca_new$cancer, yhat=yhat_test7)
 ```
 
 Since a cancer that is diagnosed at an early stage is more likely to be treated successfully, it is reasonable to argue that the increase in sensitivity overcomes the decrease in the accuracy rates caused by a higher amount of false positive predictions. Hence, our best judgement is that the radiologists should be weighting more heavily patients with 70 years old and above, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status when deciding whether to recall patients.
-
-## Exercise 2.3
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-
-library(class)
-library(FNN)
-library(foreach)
-library(knitr)
-library(ggplot2)
-
-dataset = read.csv('https://raw.githubusercontent.com/jgscott/ECO395M/master/data/online_news.csv')
-```
-
-In this exercise, we attempt to build the best possible model to predict which Mashable article goes viral. The threshold here for defining a viral article refers to reaching or surpassing the threshold of 1,400 shares. From the summary statistics we can see that we have 39,644 observations in total with 36 variables, except URL since it is redundant for us. 
-
-The dependant variable for us would be the number of shares and we could consider every other variable as independent variable which results in the number of shares. 
-
-We can sort and clean out our data a bit more. Since we don't need the variable 'URL' we will take it out. We will remove the average length of the words in the content ('average_token_length) that is zero, as there should be some words in the article. We will also remove variables like number of words in the article ('n_tokens_content') for the same reason. 
-
-```{r 2.3.1, echo=FALSE}
-# Divide groups into 2 and define 'Root Mean Squre Error' function
-news_articles = subset(dataset, select = -c(url))
-```
-
-Now we are left with 38,463 observations.
-
-Let's see the data in a histogram.
-
-```{r 2.3.2, echo=FALSE}
-ggplot(data=dataset, aes(x = shares)) +
-  geom_histogram(binwidth = 200, fill="lightgray", color="black", alpha=.6) +
-  geom_vline(xintercept = 1400 , color="red" , linetype = "dashed") +
-  labs(title = 'Shares Histogram', x = "# Shares", y = "Frequency")+
-  xlim(0, 10000)+
-  theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
-
-```
-
-Since the data is uniformly distributed. It would be ideal to log of our dependent variable, which is shares. We take log scale of shares (log(shares)) for our linear and logit regression.
-
-```{r 2.3.3, echo=FALSE}
-ggplot(data=dataset, aes(x = log(shares))) +
-  geom_histogram(binwidth = 0.275, fill="lightgray", color="black", alpha=.6) +
-  geom_vline(xintercept = log(1400) , color="red" , linetype = "dashed") +
-  labs(title = 'Log Shares Histogram', x = "Log Shares", y = "Frequency")+
-  theme_bw() +
-  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
-
-```
-
-Also, we will use the mutate function to create a new variable, log of shares to replace shares with in the dataset. The mutate function first collects various share values into a seperate dataframe.
-
-Now let's get a bit more into data visualization for more insights. 
-
-Now we start to analyze the data. Since our goal is to find a worthwhile relationship between logshares and other variables, we will attempt to create the best possible model for it. First, it makes sense to do a train-test split.  Like always we use 80% of the data to build a model by training and 20% data for testing.
-
-```{r 2.3.4, echo=FALSE}
-news_articles = subset(dataset, select = -c(url))
-news_articles$shares = log(news_articles$shares)
-
-error_rate = function(y, yhat) {
-  y_test = ifelse(y>log(1400), 1, 0)
-  yh_t = ifelse(yhat>log(1400), 1, 0)
-  sum(yh_t != y_test)/length(y)
-}  
-
-n = nrow(news_articles)
-n_train = round(0.8*n)  
-n_test = n - n_train
-```
-
-Let's build a linear regression model by hand build and trial. 
-We first use the overall error rate to find the best linear model. We will try 3 linear models and use the overall error rate as the metric to find the best model. Model 3 is the primary model to check the performance of the hand-build model. By assessing the relationship of variables, building the model and testing it, we make the second model. Then we build the linear model 1 by removing the less likely variables to get the most accurate linear fit. 
-
-```{r 2.3.5, echo=FALSE}
-err_vals = do(100)*{
-  train_cases = sample.int(n, n_train, replace=FALSE)
-  test_cases = setdiff(1:n, train_cases)
-  news_articles_train = news_articles[train_cases,]
-  news_articles_test = news_articles[test_cases,]
-  
-  lm1 = lm(shares ~ . , data = news_articles_test)
-  
-  lm2 =  lm(shares ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
-            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data = news_articles_test)
-  
-  lm3 =  lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
-            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data = news_articles_test)
-  
-  lm4 = lm(formula = shares ~ n_tokens_title + num_hrefs + num_self_hrefs + 
-             num_imgs + num_videos + average_token_length + num_keywords + 
-             data_channel_is_lifestyle + data_channel_is_entertainment + 
-             data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech + 
-             data_channel_is_world + self_reference_min_shares + self_reference_avg_sharess + 
-             weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
-             weekday_is_thursday + weekday_is_friday + global_rate_positive_words + 
-             global_rate_negative_words + avg_positive_polarity + min_positive_polarity + 
-             max_positive_polarity + avg_negative_polarity + title_subjectivity + 
-             title_sentiment_polarity + abs_title_sentiment_polarity + 
-             self_reference_min_shares:self_reference_avg_sharess, data=news_articles_test)
-  
-  yhat_test1 = predict(lm1, news_articles_test)
-  yhat_test2 = predict(lm2, news_articles_test)
-  yhat_test3 = predict(lm3, news_articles_test)
-  yhat_test4 = predict(lm4, news_articles_test)
- 
-  c(error_rate(news_articles_test$shares, yhat_test1), error_rate(news_articles_test$shares, yhat_test2),
-    error_rate(news_articles_test$shares, yhat_test3), error_rate(news_articles_test$shares, yhat_test4)) %>% round(3)
-  
-  
-}
-colMeans(err_vals)
-```
-
-We might take an optional book-keeping step and arrange the test data.
-
-```{r 2.3.6, echo=FALSE}
-lm_chosen = lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data=news_articles)
-
-news_articles$yhat = predict(lm_chosen, news_articles)
-
-news_articles = mutate(news_articles, viral = ifelse(news_articles$shares >= log(1400), 1, 0))
-news_articles = mutate(news_articles, viral_hat = ifelse(news_articles$yhat >= log(1400), 1, 0))
-
-xtabs(~viral + viral_hat, data=news_articles)
-```
-
-After this we seperate the training and testing sets into mileage (X) and outcome (Y)
-
-```{r 2.3.7, echo=FALSE}
-#accuracy rate
-(length(which(news_articles$viral == 1 & news_articles$viral_hat == 1))+
-  length(which(news_articles$viral == 0 & news_articles$viral_hat == 0))) / nrow(news_articles)
-#null model
-length(which(news_articles$viral == 1)) / nrow(news_articles)
-
-```
-
-Now let's have a look at the confusion matrix. 
-
-```{r 2.3.8, echo=FALSE}
-confusion_matrix = table(y_test, yhat_test)
-confusion_matrix
-```
-
-Now let's try our hand at the second approach, which is building a classification model. We now build a logit model for classification as the dependent variable here (viral or not) is a binary. As expected, independent variables would be the same as for a linear model. 
-
-```{r 2.3.9, echo=FALSE}
-news_articles = mutate(news_articles, viral = ifelse(shares > 1400,1,0))
-errs_vals = do(250) * {
-  train_cases = sample.int(n, n_train, replace=FALSE)
-  test_cases = setdiff(1:n, train_cases)
-  news_train = news_articles[train_cases,]
-  news_test = news_articles[test_cases,]
-  
-  logit_model = glm(viral ~  n_tokens_content + num_hrefs + num_self_hrefs + average_token_length + 
-                  num_keywords + data_channel_is_lifestyle + num_videos * 
-                  (data_channel_is_bus + data_channel_is_socmed + data_channel_is_world) + video * 
-                  (data_channel_is_entertainment + weekday_is_monday +
-                     data_channel_is_tech + data_channel_is_world) + self_reference_max_shares + is_weekend + 
-                    global_rate_positive_words * 
-                  avg_positive_polarity + avg_negative_polarity +
-                  title_subjectivity + title_sentiment_polarity, data = news_train, family = 'binomial')
-  phat_logit = predict(logit_m, news_test, type = 'response')
-  yhat_logit = ifelse(phat_logit>0.5, 1, 0)
-  ct_lg = table(news_test$viral, yhat_logit)
-  
-  # linear
-  finalin = lm(logshares ~ n_tokens_content + num_hrefs + num_self_hrefs + average_token_length + 
-             num_keywords + data_channel_is_lifestyle + num_imgs * 
-             (data_channel_is_bus + data_channel_is_socmed + data_channel_is_world) + video * 
-             (data_channel_is_entertainment + global_rate_positive_words + global_rate_negative_words + data_channel_is_socmed +
-                data_channel_is_tech + data_channel_is_world) +  self_reference_avg_sharess * 
-             self_reference_max_shares + is_weekend + global_rate_positive_words * 
-             avg_positive_polarity + avg_negative_polarity +
-             title_subjectivity + title_sentiment_polarity, data = news_train)
-  yhatF = predict(lmF, news_test)
-  ct_lm = conf_table(news_test$logshares, yhatF)
-```
-
-Our results are 
-
-```{r 2.3.10, echo=FALSE}
-((1-sum(diag(ct_lg))/sum(ct_lg)), (1-sum(diag(ct_lm))/sum(ct_lm)),
-    ct_lg[2,2]/sum(ct_lg[2,]), ct_lm[2,2]/sum(ct_lm[2,]),
-    ct_lg[1,2]/sum(ct_lg[1,]), ct_lm[1,2]/sum(ct_lm[1,]))
-} 
-errMean = colMeans(errs_vals) %>% round(3)
-err = matrix(errMean, nrow = 2, dimnames = 
-               list(c("Classification Model", "Linear Model"), 
-                    c("Overall Error", "True Positive", "False Positive"))) 
-
-kable(err) %>% kable_styling("striped")
-```
-
-Confusion matrix of our best model
-
-```{r 2.3.11, echo=FALSE}
-confusion = table(y = n_train$viral, yhat_train)
-confusion
-```
-
-In-sample accuracy
-
-```{r 2.3.12, echo=FALSE}
-probhat_test = predict(finalin, news_test=spamtest)
-yhat_train = ifelse(predict(finalin) >= 0.75, 1, 0)
-table(y=news_test$logshares, yhat=yhatF)
-```
-
-KNN
-
-```{r 2.3.13, echo=FALSE}
-KNN_result <- data.frame(K=c(), rsme=c())
-k_grid = seq(3, 150, by=20)
-for(v in k_grid){
-  avgrmse = KNN_C_error(data_X = X,data_y = Y, K = v,Ntimes = 5)
-  KNN_result <- rbind(KNN_result,c(v,avgrmse))
-}
-colnames(KNN_result) <- c("K","AVG_RMSE")
-ggplot(data = KNN_result, aes(x = K, y = AVG_RMSE)) + 
-  geom_point(shape = "O") +
-  geom_line(col = "red")
-
-
-obj_Y = subset(news_articles,select = c(viral))
-
-KNN_result <- data.frame(K=c(), rsme=c())
-k_grid = seq(53, 250, by=30)
-for(v in k_grid){
-  avgrmse = KNN_C_error_linear(data_X = x,data_y = Y,obj_y = obj_Y, K = v,threshold = 1400,Ntimes = 5)
-  KNN_result <- rbind(KNN_result,c(v,avgrmse))
-}
-colnames(KNN_result) <- c("K","AVG_RMSE")
-ggplot(data = KNN_result, aes(x = K, y = AVG_RMSE)) + 
-  geom_point(shape = "O") +
-  geom_line(col = "red")
-```
-Again, we formalize training and testing sets. 
