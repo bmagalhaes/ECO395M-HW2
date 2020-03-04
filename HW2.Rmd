@@ -31,7 +31,9 @@ library(jtools)
 data(SaratogaHouses)
 ```
 
-In this exercise, we hand-build five models for price in order to find out the best one which outperforms the "medium" model that we considered in class.
+In this exercise, we analyzed a data set on house prices in Saratoga, NY, in order to provide the local tax authority a predictive model to estimate properties market values.
+
+We started by hand-building five models for price in order to find out the best one which outperforms the "medium" model that we considered in class.
 
 ```{r 2.1.1, echo= TRUE, warning = FALSE}
 model1= price ~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + sewer + waterfront + newConstruction + centralAir 
@@ -43,10 +45,10 @@ model5= price~ lotSize + age + age2 + pctCollege * landValue + livingArea * (bed
 model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + centralAir
 ```
 
-Here are the main features of our models.
+The main features of our models are:
 
 Model 1 : include all main effects except roooms
-(exclude rooms because of colinearity, rooms = bedrooms + batherooms)
+(exclude rooms because of colinearity, rooms = bedrooms + batherooms) ###CHECK###
 Model 2: simplify model1 by reducing some variables(-sewer-waterfront-newConstruction)
 Model 3: add all the interactions on model 2
 Model 4: allow only some interactions on model 2
@@ -62,7 +64,7 @@ rmse = function(y, yhat) {
 }
 ```
 
-In order to measure performances of each model, we run Monte Carlo training-test split(train 80%, test 20%) for 100 times and calcaulate the average values of out-of-sample RMSE for each model.
+In order to measure performances of each model, we randomly splitted the data into training-test sets (with the training set containing 80% of the ovservations and the test set containing the other 20%) 100 times and calcaulated the average values of out-of-sample RMSE for each model by comparing the fitted values with the observed values in each repetition.
 
 ```{r 2.1.3, echo=FALSE, warning=FALSE}
 rmse_check = do(100)*{# Split into training and testing sets
@@ -115,16 +117,17 @@ kable(rmse_result) %>% kable_styling("striped")
 
 ```
   
-The best model turned out to be model 1 with the least out-of-sample RMSE value. Here is the summary of model 1.
+The best model turned out to be model 1 with the least out-of-sample RMSE value. The table below show the summary statistics for this model.
 
 ```{r 2.1.4, echo=TRUE}
 summ(model1)
 ```
 
-And we can find the variable which is the strongest driver of house prices by assessing how much it improves the out-of-sample RMSE when it is included in the model.
-So we test how much the out-of-sample increases when we exclude a certain variable from our model 1, and get the average RMSE by doing Monte Carlo simulation on different training-test sets(80%-20%) for 100 times.
+In order to assess which variable is the strongest driver of house prices (SO how much it improves the out-of-sample RMSE when it is included in the model), we tested multiple scenarios where we excluded each of the variables from model 1.
 
-As the table below shows, "landValue" variable seems to be the storngest drive of house prices. This result might be caused because land values are already included in house prices(House price = Land value + Pure house value), so they are strongly related to each other.
+Than, we verified how much the out-of-sample RMSE increases when we exclude each certain variable, and get the average RMSE by doing Monte Carlo simulation on different training-test sets (80%-20%) for 100 times.
+
+As we can observe from the table below, "landValue" variable seems to be the strongest drive of house prices. This result might be caused because land values are already included in house prices(House price = Land value + Pure house value), so they are strongly related to each other.
 
 ```{r 2.1.5, echo=FALSE, warning=FALSE}
 rmse_check2 = do(100)*{# Split into training and testing sets
@@ -202,10 +205,9 @@ rmse_result2_t = t(rmse_result2)
 kable(rmse_result2_t) %>% kable_styling("striped")
 ```
 
-Now, we build a nonparametic KNN model to compare it with our linear model and figure out which one performs better.
-By using the same train and test sets that we used in our linear regression, the result shows that whatever value K may have, the knn model is unlikely to perfrom better than our linear model.
-In the graph below, the horizontal red line shows the out-of-sample RMSE of our linear model. We can see that all the RMSEs of the knn model in accordance with k values are plotted above the red line. 
-And the table below suggests the fact that the minimum RMSE value of knn model is still bigger than our best-fit linear model. 
+Now, we built a nonparametic KNN model to compare with our linear model and figure out which one performs better. By using the same train and test sets that we used in our linear regression, the result shows that whatever value K may have, the knn model is unlikely to perform better than our linear model.
+
+In the graph below, the horizontal red line shows the out-of-sample RMSE of our linear model. We can see that all the RMSEs of the knn model in accordance with k values are plotted above the red line.  And the table below suggests that the minimum RMSE value of knn model is still bigger than our best-fit linear model. 
 
 ```{r 2.1.6, echo=FALSE}
 # construct the training and test-set feature matrices
@@ -244,7 +246,7 @@ modelcompare = data.frame('Kmin'=K, "knn model RMSE" = rmse(ytest, knn_model$pre
 kable(modelcompare) %>% kable_styling("striped", full_width=F)
 ```
 
-But there is random variation due to the particular choice of data points that end up in your train/test split. So we run Monte-Carlo simulation again using random train/test split for 100 times, and compare the minimim RMSE of knn model with RMSE of our linear model.
+Since randomness plays a role due to the particular choice of data points that end up in our train/test split, we addressed that issue by running Monte-Carlo simulation again using random train/test split for 100 times, and compared the minimum RMSE of knn model with RMSE of our linear model.
 As a result, we can see that our linear model outperforms the knn model.
 
 ```{r 2.1.7, echo=FALSE}

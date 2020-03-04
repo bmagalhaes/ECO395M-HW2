@@ -10,9 +10,13 @@ Ji Heon Shim - UTEID js93996
 Exercise 2.1
 ------------
 
-In this exercise, we hand-build five models for price in order to find
-out the best one which outperforms the "medium" model that we considered
-in class.
+In this exercise, we analyzed a data set on house prices in Saratoga,
+NY, in order to provide the local tax authority a predictive model to
+estimate properties market values.
+
+We started by hand-building five models for price in order to find out
+the best one which outperforms the "medium" model that we considered in
+class.
 
     model1= price ~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + sewer + waterfront + newConstruction + centralAir 
     model2= price~ lotSize + age + landValue + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + heating + fuel + centralAir 
@@ -22,18 +26,22 @@ in class.
 
     model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + centralAir
 
-Here are the main features of our models.
+The main features of our models are:
 
 Model 1 : include all main effects except roooms (exclude rooms because
-of colinearity, rooms = bedrooms + batherooms) Model 2: simplify model1
-by reducing some variables(-sewer-waterfront-newConstruction) Model 3:
-add all the interactions on model 2 Model 4: allow only some
-interactions on model 2 Model 5: a polynomial model by adding age^2 on
-model 4 Model\_medium: baseline model with 11 main effects
+of colinearity, rooms = bedrooms + batherooms) \#\#\#CHECK\#\#\# Model
+2: simplify model1 by reducing some
+variables(-sewer-waterfront-newConstruction) Model 3: add all the
+interactions on model 2 Model 4: allow only some interactions on model 2
+Model 5: a polynomial model by adding age^2 on model 4 Model\_medium:
+baseline model with 11 main effects
 
-In order to measure performances of each model, we run Monte Carlo
-training-test split(train 80%, test 20%) for 100 times and calcaulate
-the average values of out-of-sample RMSE for each model.
+In order to measure performances of each model, we randomly splitted the
+data into training-test sets (with the training set containing 80% of
+the ovservations and the test set containing the other 20%) 100 times
+and calcaulated the average values of out-of-sample RMSE for each model
+by comparing the fitted values with the observed values in each
+repetition.
 
 <table class="table table-striped" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -66,28 +74,28 @@ model.medium
 AVG RMSE
 </td>
 <td style="text-align:right;">
-58524.25
+58624.5
 </td>
 <td style="text-align:right;">
-60079.23
+60206.5
 </td>
 <td style="text-align:right;">
-63099.46
+65549.99
 </td>
 <td style="text-align:right;">
-59869.86
+60006.69
 </td>
 <td style="text-align:right;">
-59897.52
+60051.2
 </td>
 <td style="text-align:right;">
-65880.39
+66442.24
 </td>
 </tr>
 </tbody>
 </table>
 The best model turned out to be model 1 with the least out-of-sample
-RMSE value. Here is the summary of model 1.
+RMSE value. The table below show the summary statistics for this model.
 
     summ(model1)
 
@@ -126,7 +134,7 @@ OLS linear regression
 F(17,1364)
 </td>
 <td style="text-align:right;">
-159.04
+138.54
 </td>
 </tr>
 <tr>
@@ -134,7 +142,7 @@ F(17,1364)
 R²
 </td>
 <td style="text-align:right;">
-0.66
+0.63
 </td>
 </tr>
 <tr>
@@ -142,7 +150,7 @@ R²
 Adj. R²
 </td>
 <td style="text-align:right;">
-0.66
+0.63
 </td>
 </tr>
 </tbody>
@@ -172,13 +180,13 @@ p
 (Intercept)
 </td>
 <td style="text-align:right;">
-122115.02
+103461.43
 </td>
 <td style="text-align:right;">
-20938.79
+23673.07
 </td>
 <td style="text-align:right;">
-5.83
+4.37
 </td>
 <td style="text-align:right;">
 0.00
@@ -189,16 +197,16 @@ p
 lotSize
 </td>
 <td style="text-align:right;">
-6988.08
+4441.24
 </td>
 <td style="text-align:right;">
-2372.12
+2641.43
 </td>
 <td style="text-align:right;">
-2.95
+1.68
 </td>
 <td style="text-align:right;">
-0.00
+0.09
 </td>
 </tr>
 <tr>
@@ -206,16 +214,16 @@ lotSize
 age
 </td>
 <td style="text-align:right;">
--119.81
+-151.57
 </td>
 <td style="text-align:right;">
-64.45
+69.32
 </td>
 <td style="text-align:right;">
--1.86
+-2.19
 </td>
 <td style="text-align:right;">
-0.06
+0.03
 </td>
 </tr>
 <tr>
@@ -223,13 +231,13 @@ age
 landValue
 </td>
 <td style="text-align:right;">
-0.90
+0.96
 </td>
 <td style="text-align:right;">
-0.05
+0.06
 </td>
 <td style="text-align:right;">
-17.30
+17.16
 </td>
 <td style="text-align:right;">
 0.00
@@ -240,13 +248,13 @@ landValue
 livingArea
 </td>
 <td style="text-align:right;">
-79.02
+77.50
 </td>
 <td style="text-align:right;">
-4.62
+4.93
 </td>
 <td style="text-align:right;">
-17.10
+15.71
 </td>
 <td style="text-align:right;">
 0.00
@@ -257,16 +265,16 @@ livingArea
 pctCollege
 </td>
 <td style="text-align:right;">
--191.04
+-24.72
 </td>
 <td style="text-align:right;">
-165.51
+171.98
 </td>
 <td style="text-align:right;">
--1.15
+-0.14
 </td>
 <td style="text-align:right;">
-0.25
+0.89
 </td>
 </tr>
 <tr>
@@ -274,95 +282,10 @@ pctCollege
 bedrooms
 </td>
 <td style="text-align:right;">
--5849.63
+-4174.37
 </td>
 <td style="text-align:right;">
-2623.35
-</td>
-<td style="text-align:right;">
--2.23
-</td>
-<td style="text-align:right;">
-0.03
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-fireplaces
-</td>
-<td style="text-align:right;">
-1724.57
-</td>
-<td style="text-align:right;">
-3255.14
-</td>
-<td style="text-align:right;">
-0.53
-</td>
-<td style="text-align:right;">
-0.60
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-bathrooms
-</td>
-<td style="text-align:right;">
-22207.53
-</td>
-<td style="text-align:right;">
-3658.98
-</td>
-<td style="text-align:right;">
-6.07
-</td>
-<td style="text-align:right;">
-0.00
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-heatinghot water/steam
-</td>
-<td style="text-align:right;">
--7547.63
-</td>
-<td style="text-align:right;">
-4636.07
-</td>
-<td style="text-align:right;">
--1.63
-</td>
-<td style="text-align:right;">
-0.10
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-heatingelectric
-</td>
-<td style="text-align:right;">
-11284.72
-</td>
-<td style="text-align:right;">
-13449.41
-</td>
-<td style="text-align:right;">
-0.84
-</td>
-<td style="text-align:right;">
-0.40
-</td>
-</tr>
-<tr>
-<td style="text-align:left;font-weight: bold;">
-fuelelectric
-</td>
-<td style="text-align:right;">
--19480.65
-</td>
-<td style="text-align:right;">
-13150.73
+2823.28
 </td>
 <td style="text-align:right;">
 -1.48
@@ -373,19 +296,104 @@ fuelelectric
 </tr>
 <tr>
 <td style="text-align:left;font-weight: bold;">
+fireplaces
+</td>
+<td style="text-align:right;">
+-289.37
+</td>
+<td style="text-align:right;">
+3446.70
+</td>
+<td style="text-align:right;">
+-0.08
+</td>
+<td style="text-align:right;">
+0.93
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+bathrooms
+</td>
+<td style="text-align:right;">
+20834.89
+</td>
+<td style="text-align:right;">
+3855.36
+</td>
+<td style="text-align:right;">
+5.40
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+heatinghot water/steam
+</td>
+<td style="text-align:right;">
+-11261.48
+</td>
+<td style="text-align:right;">
+4861.98
+</td>
+<td style="text-align:right;">
+-2.32
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+heatingelectric
+</td>
+<td style="text-align:right;">
+421.69
+</td>
+<td style="text-align:right;">
+14550.18
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.98
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+fuelelectric
+</td>
+<td style="text-align:right;">
+-10880.71
+</td>
+<td style="text-align:right;">
+14326.00
+</td>
+<td style="text-align:right;">
+-0.76
+</td>
+<td style="text-align:right;">
+0.45
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
 fueloil
 </td>
 <td style="text-align:right;">
--3479.01
+-2561.24
 </td>
 <td style="text-align:right;">
-5419.64
+5763.93
 </td>
 <td style="text-align:right;">
--0.64
+-0.44
 </td>
 <td style="text-align:right;">
-0.52
+0.66
 </td>
 </tr>
 <tr>
@@ -393,16 +401,16 @@ fueloil
 sewerpublic/commercial
 </td>
 <td style="text-align:right;">
--1893.46
+-1442.69
 </td>
 <td style="text-align:right;">
-4052.18
+4262.92
 </td>
 <td style="text-align:right;">
--0.47
+-0.34
 </td>
 <td style="text-align:right;">
-0.64
+0.74
 </td>
 </tr>
 <tr>
@@ -410,16 +418,16 @@ sewerpublic/commercial
 sewernone
 </td>
 <td style="text-align:right;">
--611.11
+4205.86
 </td>
 <td style="text-align:right;">
-17728.42
+19222.13
 </td>
 <td style="text-align:right;">
--0.03
+0.22
 </td>
 <td style="text-align:right;">
-0.97
+0.83
 </td>
 </tr>
 <tr>
@@ -427,13 +435,13 @@ sewernone
 waterfrontNo
 </td>
 <td style="text-align:right;">
--125457.58
+-119647.72
 </td>
 <td style="text-align:right;">
-15971.22
+19444.55
 </td>
 <td style="text-align:right;">
--7.86
+-6.15
 </td>
 <td style="text-align:right;">
 0.00
@@ -444,13 +452,13 @@ waterfrontNo
 newConstructionNo
 </td>
 <td style="text-align:right;">
-45654.09
+48815.02
 </td>
 <td style="text-align:right;">
-8300.68
+8221.54
 </td>
 <td style="text-align:right;">
-5.50
+5.94
 </td>
 <td style="text-align:right;">
 0.00
@@ -461,13 +469,13 @@ newConstructionNo
 centralAirNo
 </td>
 <td style="text-align:right;">
--13047.08
+-11138.38
 </td>
 <td style="text-align:right;">
-3897.54
+3956.77
 </td>
 <td style="text-align:right;">
--3.35
+-2.82
 </td>
 <td style="text-align:right;">
 0.00
@@ -482,17 +490,20 @@ centralAirNo
 </tr>
 </tfoot>
 </table>
-And we can find the variable which is the strongest driver of house
-prices by assessing how much it improves the out-of-sample RMSE when it
-is included in the model. So we test how much the out-of-sample
-increases when we exclude a certain variable from our model 1, and get
-the average RMSE by doing Monte Carlo simulation on different
-training-test sets(80%-20%) for 100 times.
+In order to assess which variable is the strongest driver of house
+prices (SO how much it improves the out-of-sample RMSE when it is
+included in the model), we tested multiple scenarios where we excluded
+each of the variables from model 1.
 
-As the table below shows, "landValue" variable seems to be the storngest
-drive of house prices. This result might be caused because land values
-are already included in house prices(House price = Land value + Pure
-house value), so they are strongly related to each other.
+Than, we verified how much the out-of-sample RMSE increases when we
+exclude each certain variable, and get the average RMSE by doing Monte
+Carlo simulation on different training-test sets (80%-20%) for 100
+times.
+
+As we can observe from the table below, "landValue" variable seems to be
+the strongest drive of house prices. This result might be caused because
+land values are already included in house prices(House price = Land
+value + Pure house value), so they are strongly related to each other.
 
 <table class="table table-striped" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -510,7 +521,7 @@ AVG RMSE
 model.wo.lotSize
 </td>
 <td style="text-align:right;">
-61593.36
+54396.43
 </td>
 </tr>
 <tr>
@@ -518,7 +529,7 @@ model.wo.lotSize
 model.wo.age
 </td>
 <td style="text-align:right;">
-61423.51
+53426.38
 </td>
 </tr>
 <tr>
@@ -526,7 +537,7 @@ model.wo.age
 model.wo.landValue
 </td>
 <td style="text-align:right;">
-67800.87
+59691.02
 </td>
 </tr>
 <tr>
@@ -534,7 +545,7 @@ model.wo.landValue
 model.wo.livingArea
 </td>
 <td style="text-align:right;">
-64101.33
+58839.03
 </td>
 </tr>
 <tr>
@@ -542,7 +553,7 @@ model.wo.livingArea
 model.wo.pctCollege
 </td>
 <td style="text-align:right;">
-61259.23
+53501.29
 </td>
 </tr>
 <tr>
@@ -550,7 +561,7 @@ model.wo.pctCollege
 model.wo.bedrooms
 </td>
 <td style="text-align:right;">
-61252.39
+53605.03
 </td>
 </tr>
 <tr>
@@ -558,7 +569,7 @@ model.wo.bedrooms
 model.wo.fireplaces
 </td>
 <td style="text-align:right;">
-61280.10
+53435.16
 </td>
 </tr>
 <tr>
@@ -566,7 +577,7 @@ model.wo.fireplaces
 model.wo.bathrooms
 </td>
 <td style="text-align:right;">
-62158.03
+54940.32
 </td>
 </tr>
 <tr>
@@ -574,7 +585,7 @@ model.wo.bathrooms
 model.wo.heating
 </td>
 <td style="text-align:right;">
-61631.86
+53521.11
 </td>
 </tr>
 <tr>
@@ -582,7 +593,7 @@ model.wo.heating
 model.wo.fuel
 </td>
 <td style="text-align:right;">
-61251.71
+53505.93
 </td>
 </tr>
 <tr>
@@ -590,7 +601,7 @@ model.wo.fuel
 model.wo.sewer
 </td>
 <td style="text-align:right;">
-61308.01
+53457.95
 </td>
 </tr>
 <tr>
@@ -598,7 +609,7 @@ model.wo.sewer
 model.wo.waterfront
 </td>
 <td style="text-align:right;">
-61176.78
+55152.77
 </td>
 </tr>
 <tr>
@@ -606,7 +617,7 @@ model.wo.waterfront
 model.wo.newConstruction
 </td>
 <td style="text-align:right;">
-61961.90
+53604.69
 </td>
 </tr>
 <tr>
@@ -614,21 +625,22 @@ model.wo.newConstruction
 model.wo.centralAir
 </td>
 <td style="text-align:right;">
-61123.16
+53386.33
 </td>
 </tr>
 </tbody>
 </table>
-Now, we build a nonparametic KNN model to compare it with our linear
-model and figure out which one performs better. By using the same train
-and test sets that we used in our linear regression, the result shows
-that whatever value K may have, the knn model is unlikely to perfrom
-better than our linear model. In the graph below, the horizontal red
-line shows the out-of-sample RMSE of our linear model. We can see that
-all the RMSEs of the knn model in accordance with k values are plotted
-above the red line. And the table below suggests the fact that the
-minimum RMSE value of knn model is still bigger than our best-fit linear
-model.
+Now, we built a nonparametic KNN model to compare with our linear model
+and figure out which one performs better. By using the same train and
+test sets that we used in our linear regression, the result shows that
+whatever value K may have, the knn model is unlikely to perform better
+than our linear model.
+
+In the graph below, the horizontal red line shows the out-of-sample RMSE
+of our linear model. We can see that all the RMSEs of the knn model in
+accordance with k values are plotted above the red line. And the table
+below suggests that the minimum RMSE value of knn model is still bigger
+than our best-fit linear model.
 
 ![](HW2_files/figure-markdown_strict/2.1.6-1.png)
 <table class="table table-striped" style="width: auto !important; margin-left: auto; margin-right: auto;">
@@ -648,22 +660,23 @@ linear.model.RMSE
 <tbody>
 <tr>
 <td style="text-align:right;">
-6
+9
 </td>
 <td style="text-align:right;">
-66375.15
+67101.34
 </td>
 <td style="text-align:right;">
-61749.77
+54178.57
 </td>
 </tr>
 </tbody>
 </table>
-But there is random variation due to the particular choice of data
-points that end up in your train/test split. So we run Monte-Carlo
-simulation again using random train/test split for 100 times, and
-compare the minimim RMSE of knn model with RMSE of our linear model. As
-a result, we can see that our linear model outperforms the knn model.
+Since randomness plays a role due to the particular choice of data
+points that end up in our train/test split, we addressed that issue by
+running Monte-Carlo simulation again using random train/test split for
+100 times, and compared the minimum RMSE of knn model with RMSE of our
+linear model. As a result, we can see that our linear model outperforms
+the knn model.
 
 <table class="table table-striped" style="margin-left: auto; margin-right: auto;">
 <thead>
@@ -684,10 +697,10 @@ linear.model
 Average RMSE
 </td>
 <td style="text-align:right;">
-62454.55
+62864.41
 </td>
 <td style="text-align:right;">
-58524.25
+58624.5
 </td>
 </tr>
 </tbody>
@@ -775,13 +788,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0466605
+0.0379302
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.2862899
+0.3054881
 </td>
 </tr>
 <tr>
@@ -792,13 +805,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0340582
+0.0336480
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1134616
+0.1554936
 </td>
 </tr>
 <tr>
@@ -809,13 +822,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0362476
+0.0368868
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1882719
+0.1728664
 </td>
 </tr>
 <tr>
@@ -826,13 +839,13 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0319132
+0.0351458
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.2105251
+0.1474867
 </td>
 </tr>
 </tbody>
@@ -880,10 +893,10 @@ Model\_2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1383483
+0.1410330
 </td>
 <td style="text-align:right;">
-0.1376463
+0.1401818
 </td>
 </tr>
 <tr>
@@ -891,10 +904,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0882825
+0.0892270
 </td>
 <td style="text-align:right;">
-0.0886276
+0.0917248
 </td>
 </tr>
 <tr>
@@ -902,10 +915,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1879345
+0.1858439
 </td>
 <td style="text-align:right;">
-0.1941092
+0.1927892
 </td>
 </tr>
 <tr>
@@ -913,10 +926,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.1985145
+0.2027323
 </td>
 <td style="text-align:right;">
-0.2264008
+0.2300670
 </td>
 </tr>
 <tr>
@@ -924,10 +937,10 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1332161
+0.1349018
 </td>
 <td style="text-align:right;">
-0.1235210
+0.1242611
 </td>
 </tr>
 </tbody>
