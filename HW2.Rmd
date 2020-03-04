@@ -276,8 +276,6 @@ We can sort and clean out our data a bit more. Since we don't need the variable 
 ```{r 2.3.1, echo=FALSE}
 # Divide groups into 2 and define 'Root Mean Squre Error' function
 news_articles = subset(dataset, select = -c(url))
-news_zero_content = news_articles[which(news_articles$n_tokens_content==0),]
-news_articles = news_articles[-which(news_articles$n_tokens_content==0),]
 ```
 
 Now we are left with 38,463 observations.
@@ -285,12 +283,27 @@ Now we are left with 38,463 observations.
 Let's see the data in a histogram.
 
 ```{r 2.3.2, echo=FALSE}
-hist(news_articles$shares, xlim=c(1,10000), breaks=5000) ; abline(v=1400, col='blue')
-hist(log(news_articles$shares), breaks=50) ; abline(v=log(1400), col='blue')
-news_articles = mutate(news_articles, logshares = log(shares))
+ggplot(data=dataset, aes(x = shares)) +
+  geom_histogram(binwidth = 200, fill="lightgray", color="black", alpha=.6) +
+  geom_vline(xintercept = 1400 , color="red" , linetype = "dashed") +
+  labs(title = 'Shares Histogram', x = "# Shares", y = "Frequency")+
+  xlim(0, 10000)+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
+
 ```
 
 Since the data is uniformly distributed. It would be ideal to log of our dependent variable, which is shares. We take log scale of shares (log(shares)) for our linear and logit regression.
+
+```{r 2.3.3, echo=FALSE}
+ggplot(data=dataset, aes(x = log(shares))) +
+  geom_histogram(binwidth = 0.275, fill="lightgray", color="black", alpha=.6) +
+  geom_vline(xintercept = log(1400) , color="red" , linetype = "dashed") +
+  labs(title = 'Log Shares Histogram', x = "Log Shares", y = "Frequency")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
+
+```
 
 Also, we will use the mutate function to create a new variable, log of shares to replace shares with in the dataset. The mutate function first collects various share values into a seperate dataframe.
 
@@ -299,6 +312,8 @@ Now let's get a bit more into data visualization for more insights.
 Now we start to analyze the data. Since our goal is to find a worthwhile relationship between logshares and other variables, we will attempt to create the best possible model for it. First, it makes sense to do a train-test split.  Like always we use 80% of the data to build a model by training and 20% data for testing.
 
 ```{r 2.3.4, echo=FALSE}
+news_articles = subset(dataset, select = -c(url))
+news_articles$shares = log(news_articles$shares)
 n = nrow(news_articles)
 n_train = round(0.8*n)  
 n_test = n - n_train
@@ -308,49 +323,46 @@ Let's build a linear regression model by hand build and trial.
 We first use the overall error rate to find the best linear model. We will try 3 linear models and use the overall error rate as the metric to find the best model. Model 3 is the primary model to check the performance of the hand-build model. By assessing the relationship of variables, building the model and testing it, we make the second model. Then we build the linear model 1 by removing the less likely variables to get the most accurate linear fit. 
 
 ```{r 2.3.5, echo=FALSE}
-err_vals = do(250)*{
-  
+err_vals = do(100)*{
   train_cases = sample.int(n, n_train, replace=FALSE)
   test_cases = setdiff(1:n, train_cases)
   news_articles_train = news_articles[train_cases,]
   news_articles_test = news_articles[test_cases,]
   
-  lm1 = lm(logshares ~ num_hrefs + n_tokens_content + num_self_hrefs + average_token_length + 
-             num_keywords + data_channel_is_lifestyle + 
-             num_imgs * (data_channel_is_bus + data_channel_is_socmed + data_channel_is_world) +
-             num_videos * (data_channel_is_entertainment + data_channel_is_bus + 
-                        data_channel_is_socmed + data_channel_is_tech + data_channel_is_world) +
-             self_reference_avg_sharess * weekday_is_saturday + 
-             is_weekend + global_rate_positive_words * is_weekend + 
-             title_subjectivity + title_sentiment_polarity, data = news_articles_train)
+  lm1 = lm(shares ~ . , data = news_articles_test)
   
-  lm2 =  lm(logshares ~ n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs + 
-              average_token_length + num_keywords + (num_videos + num_imgs) * 
-              (data_channel_is_lifestyle + data_channel_is_entertainment +
-                 data_channel_is_bus + data_channel_is_socmed +
-                 data_channel_is_tech + data_channel_is_world) +
-              self_reference_avg_sharess * (self_reference_min_shares + 
-              self_reference_max_shares) + weekday_is_monday + 
-              global_rate_positive_words * avg_positive_polarity + 
-              global_rate_negative_words * avg_negative_polarity + title_subjectivity +
-              title_sentiment_polarity, data = news_articles_train, weekday_is_friday = binomial)
+  lm2 =  lm(shares ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data = news_articles_test)
   
-  lm3 = lm(logshares ~ (n_tokens_title + n_tokens_content + num_hrefs + 
-                      num_self_hrefs + num_imgs + num_videos + 
-                      average_token_length + num_keywords + data_channel_is_lifestyle + 
-                      data_channel_is_entertainment + data_channel_is_bus + 
-                      + data_channel_is_socmed + data_channel_is_tech + 
-                      data_channel_is_world + self_reference_avg_sharess + 
-                      weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
-                      weekday_is_thursday + weekday_is_friday + weekday_is_saturday)^2, data=news_articles_train)
+  lm3 =  lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data = news_articles_test)
+  
+  lm4 = lm(formula = shares ~ n_tokens_title + num_hrefs + num_self_hrefs + 
+             num_imgs + num_videos + average_token_length + num_keywords + 
+             data_channel_is_lifestyle + data_channel_is_entertainment + 
+             data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech + 
+             data_channel_is_world + self_reference_min_shares + self_reference_avg_sharess + 
+             weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
+             weekday_is_thursday + weekday_is_friday + global_rate_positive_words + 
+             global_rate_negative_words + avg_positive_polarity + min_positive_polarity + 
+             max_positive_polarity + avg_negative_polarity + title_subjectivity + 
+             title_sentiment_polarity + abs_title_sentiment_polarity + 
+             self_reference_min_shares:self_reference_avg_sharess, data=news_articles_test)
   
   yhat_test1 = predict(lm1, news_articles_test)
   yhat_test2 = predict(lm2, news_articles_test)
   yhat_test3 = predict(lm3, news_articles_test)
+  yhat_test4 = predict(lm3, news_articles_test)
   
   # confusion rate
-  c(conf_rate(news_articles_test$logshares, yhat_test1), conf_rate(news_test$logshares, yhat_test2),
-    conf_rate(news_articles_test$logshares, yhat_test3)) %>% round(3)
+  error_rate = function(y, yhat) {
+    y_test = ifelse(y>log(1400), 1, 0)
+    yh_t = ifelse(yhat>log(1400), 1, 0)
+    sum(yh_t != y_test)/length(y)
+  }  
+  
+  c(error_rate(news_articles_test$share, yhat_test1), error_rate(news_articles_test$share, yhat_test2),
+    error_rate(news_articles_test$share, yhat_test3), error_rate(news_articles_test$share, yhat_test4)) %>% round(3)
   
 }
 colMeans(err_vals)
@@ -359,16 +371,34 @@ colMeans(err_vals)
 We might take an optional book-keeping step and arrange the test data.
 
 ```{r 2.3.6, echo=FALSE}
-D_test = arrange(D_test, mileage)
+lm_chosen = lm(formula = shares ~ n_tokens_title + num_hrefs + num_self_hrefs + 
+     num_imgs + num_videos + average_token_length + num_keywords + 
+     data_channel_is_lifestyle + data_channel_is_entertainment + 
+     data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech + 
+     data_channel_is_world + self_reference_min_shares + self_reference_avg_sharess + 
+     weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
+     weekday_is_thursday + weekday_is_friday + global_rate_positive_words + 
+     global_rate_negative_words + avg_positive_polarity + min_positive_polarity + 
+     max_positive_polarity + avg_negative_polarity + title_subjectivity + 
+     title_sentiment_polarity + abs_title_sentiment_polarity + 
+     self_reference_min_shares:self_reference_avg_sharess, data=news_articles)
+
+news_articles$yhat = predict(lm_chosen, news_articles)
+
+news_articles = mutate(news_articles, viral = ifelse(news_articles$share >= log(1400), 1, 0))
+news_articles = mutate(news_articles, viral_hat = ifelse(news_articles$yhat >= log(1400), 1, 0))
+
+xtabs(~viral + viral_hat, data=news_articles)
 ```
 
 After this we seperate the training and testing sets into mileage (X) and outcome (Y)
 
 ```{r 2.3.7, echo=FALSE}
-X_train = select(D_train, mileage)
-y_train = select(D_train, price)
-X_test = select(D_test, mileage)
-y_test = select(D_test, price)
+#accuracy rate
+(length(which(news_articles$viral == 1 & news_articles$viral_hat == 1))+
+  length(which(news_articles$viral == 0 & news_articles$viral_hat == 0))) / nrow(news_articles)
+#null model
+length(which(news_articles$viral == 1)) / nrow(news_articles)
 
 ```
 
