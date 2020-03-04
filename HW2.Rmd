@@ -299,9 +299,10 @@ library(mosaic)
 
 brca = read.csv(url("https://raw.githubusercontent.com/bmagalhaes/ECO395M-HW2/master/brca.csv"))
 ```
-This exercise is based on a dataset consisted of 987 screening mammograms administered at a hospital in Seattle, Washington. The goal of the analysis is to evaluate the performance of five different radiologists considering several risk factors.
 
-First, we analyzed the raw data to verify whether each radiologist has a different recall rate (A.recallrate) or not, and compare precision (B.cancerrate) and false negatice (C.false_negative) rates. We can observe that, even though radiologist89 has a higher probability of recalling patients, his false negative error rate (not recalling patients that actually have cancer) doesn't substantially differ from radiologist95 and radiologist34, who have the lowest recall rates.
+This exercise is based on a dataset consisting of 987 screening mammograms administered at a hospital in Seattle, Washington. The goal of the analysis is to evaluate the performance of five different radiologists considering several risk factors.
+
+First, we analyzed the raw data to verify whether each radiologist has a different recall rate (A.recallrate) or not, and compare precision (B.cancerrate) and false negative (C.false_negative) rates. We can observe that, even though radiologist89 has a higher probability of recalling patients, his false negative error rate (not recalling patients that actually have cancer) doesn't substantially differ from radiologist95 and radiologist34, who have the lowest recall rates.
 
 ```{r 2.2.1, echo=FALSE}
 recall_rate = brca %>%
@@ -482,7 +483,7 @@ baseline_density_model = cancer ~ recall + density
 
 If the radiologists were appropriately accounting for the clinical risk factors when deciding whether to recall a patient for further examination, we would expect the coefficient associated with the recall variable to capture this effect, and the coefficient of the control variable to be close to zero (so the odds ratio to be close to one). Hence, including this variables in the model shouldn't considerably affect the cancer predictions.
 
-The table below summarizes the estimates from the 6 models. Here, we observe that age 70 or plus, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status are some factors that are increasing the odds of having a cancer, even after medical analysis! Thus there's extra information in the risk factors that the doctors should be weighting more heavily to recall patients than they currently are.
+The table below summarizes the estimates from the 6 models. Here, we observe that age 70 plus, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status are some factors that are increasing the odds of having a cancer, even after medical analysis! Thus there's extra information in the risk factors that the doctors should be weighting more heavily to recall patients than they currently are.
 
 ```{r 2.2.7, echo=FALSE, warning = FALSE}
 model_cancer = glm(cancer ~ recall, data=brca, family=binomial)
@@ -512,7 +513,7 @@ The confusion matrix for the baseline model below shows that the doctors are cur
 xtabs(~cancer + recall, data=brca)
 ```
 
-Considering the in-sample probability of cancer as a threshold for the fitted values of the proposed model to predict cancer or not, we computed the following confusion matrix. This matrix shows that, when including age.70plus, postmenounknown and density.4 in the model, the sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate slightly decreased to 84.60% ((811+24)/987).
+Considering the in-sample probability of cancer as a threshold for the fitted values of the proposed model to predict cancer or not, we computed the following confusion matrix. This matrix shows that, when including age.70plus, postmenounknown and density.4 in the model, the sensitivity increased to 64.86 (24/(13+24)) but the accuracy rate slightly decreased to 84.60% ((811+24)/987).
 
 ```{r 2.2.10, echo=FALSE, warning = FALSE}
 model_cancer7 = glm(cancer ~ recall + age.70plus + menopause.postunknown + density.4, data=brca_new, family=binomial)

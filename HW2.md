@@ -66,22 +66,22 @@ model.medium
 AVG RMSE
 </td>
 <td style="text-align:right;">
-59920.7
+58524.25
 </td>
 <td style="text-align:right;">
-61449.58
+60079.23
 </td>
 <td style="text-align:right;">
-64224.05
+63099.46
 </td>
 <td style="text-align:right;">
-61297.82
+59869.86
 </td>
 <td style="text-align:right;">
-61367.64
+59897.52
 </td>
 <td style="text-align:right;">
-67947.43
+65880.39
 </td>
 </tr>
 </tbody>
@@ -126,7 +126,7 @@ OLS linear regression
 F(17,1364)
 </td>
 <td style="text-align:right;">
-152.26
+159.04
 </td>
 </tr>
 <tr>
@@ -134,7 +134,7 @@ F(17,1364)
 R²
 </td>
 <td style="text-align:right;">
-0.65
+0.66
 </td>
 </tr>
 <tr>
@@ -142,7 +142,7 @@ R²
 Adj. R²
 </td>
 <td style="text-align:right;">
-0.65
+0.66
 </td>
 </tr>
 </tbody>
@@ -172,13 +172,13 @@ p
 (Intercept)
 </td>
 <td style="text-align:right;">
-98973.81
+122115.02
 </td>
 <td style="text-align:right;">
-22220.10
+20938.79
 </td>
 <td style="text-align:right;">
-4.45
+5.83
 </td>
 <td style="text-align:right;">
 0.00
@@ -189,16 +189,16 @@ p
 lotSize
 </td>
 <td style="text-align:right;">
-7102.33
+6988.08
 </td>
 <td style="text-align:right;">
-2675.63
+2372.12
 </td>
 <td style="text-align:right;">
-2.65
+2.95
 </td>
 <td style="text-align:right;">
-0.01
+0.00
 </td>
 </tr>
 <tr>
@@ -206,16 +206,16 @@ lotSize
 age
 </td>
 <td style="text-align:right;">
--84.78
+-119.81
 </td>
 <td style="text-align:right;">
-68.80
+64.45
 </td>
 <td style="text-align:right;">
--1.23
+-1.86
 </td>
 <td style="text-align:right;">
-0.22
+0.06
 </td>
 </tr>
 <tr>
@@ -223,13 +223,13 @@ age
 landValue
 </td>
 <td style="text-align:right;">
-0.96
+0.90
 </td>
 <td style="text-align:right;">
 0.05
 </td>
 <td style="text-align:right;">
-18.27
+17.30
 </td>
 <td style="text-align:right;">
 0.00
@@ -240,13 +240,13 @@ landValue
 livingArea
 </td>
 <td style="text-align:right;">
-72.84
+79.02
 </td>
 <td style="text-align:right;">
-4.74
+4.62
 </td>
 <td style="text-align:right;">
-15.35
+17.10
 </td>
 <td style="text-align:right;">
 0.00
@@ -257,16 +257,16 @@ livingArea
 pctCollege
 </td>
 <td style="text-align:right;">
--154.11
+-191.04
 </td>
 <td style="text-align:right;">
-171.16
+165.51
 </td>
 <td style="text-align:right;">
--0.90
+-1.15
 </td>
 <td style="text-align:right;">
-0.37
+0.25
 </td>
 </tr>
 <tr>
@@ -274,16 +274,16 @@ pctCollege
 bedrooms
 </td>
 <td style="text-align:right;">
--6118.22
+-5849.63
 </td>
 <td style="text-align:right;">
-2679.82
+2623.35
 </td>
 <td style="text-align:right;">
--2.28
+-2.23
 </td>
 <td style="text-align:right;">
-0.02
+0.03
 </td>
 </tr>
 <tr>
@@ -291,16 +291,16 @@ bedrooms
 fireplaces
 </td>
 <td style="text-align:right;">
-1163.54
+1724.57
 </td>
 <td style="text-align:right;">
-3399.29
+3255.14
 </td>
 <td style="text-align:right;">
-0.34
+0.53
 </td>
 <td style="text-align:right;">
-0.73
+0.60
 </td>
 </tr>
 <tr>
@@ -308,13 +308,13 @@ fireplaces
 bathrooms
 </td>
 <td style="text-align:right;">
-27367.62
+22207.53
 </td>
 <td style="text-align:right;">
-3750.54
+3658.98
 </td>
 <td style="text-align:right;">
-7.30
+6.07
 </td>
 <td style="text-align:right;">
 0.00
@@ -325,16 +325,16 @@ bathrooms
 heatinghot water/steam
 </td>
 <td style="text-align:right;">
--10299.59
+-7547.63
 </td>
 <td style="text-align:right;">
-4797.77
+4636.07
 </td>
 <td style="text-align:right;">
--2.15
+-1.63
 </td>
 <td style="text-align:right;">
-0.03
+0.10
 </td>
 </tr>
 <tr>
@@ -342,16 +342,16 @@ heatinghot water/steam
 heatingelectric
 </td>
 <td style="text-align:right;">
-7681.36
+11284.72
 </td>
 <td style="text-align:right;">
-14124.25
+13449.41
 </td>
 <td style="text-align:right;">
-0.54
+0.84
 </td>
 <td style="text-align:right;">
-0.59
+0.40
 </td>
 </tr>
 <tr>
@@ -359,16 +359,16 @@ heatingelectric
 fuelelectric
 </td>
 <td style="text-align:right;">
--19041.81
+-19480.65
 </td>
 <td style="text-align:right;">
-13941.12
+13150.73
 </td>
 <td style="text-align:right;">
--1.37
+-1.48
 </td>
 <td style="text-align:right;">
-0.17
+0.14
 </td>
 </tr>
 <tr>
@@ -376,16 +376,16 @@ fuelelectric
 fueloil
 </td>
 <td style="text-align:right;">
--2868.15
+-3479.01
 </td>
 <td style="text-align:right;">
-5684.11
+5419.64
 </td>
 <td style="text-align:right;">
--0.50
+-0.64
 </td>
 <td style="text-align:right;">
-0.61
+0.52
 </td>
 </tr>
 <tr>
@@ -393,16 +393,16 @@ fueloil
 sewerpublic/commercial
 </td>
 <td style="text-align:right;">
--1311.78
+-1893.46
 </td>
 <td style="text-align:right;">
-4052.31
+4052.18
 </td>
 <td style="text-align:right;">
--0.32
+-0.47
 </td>
 <td style="text-align:right;">
-0.75
+0.64
 </td>
 </tr>
 <tr>
@@ -410,16 +410,16 @@ sewerpublic/commercial
 sewernone
 </td>
 <td style="text-align:right;">
--3347.76
+-611.11
 </td>
 <td style="text-align:right;">
-18852.80
+17728.42
 </td>
 <td style="text-align:right;">
--0.18
+-0.03
 </td>
 <td style="text-align:right;">
-0.86
+0.97
 </td>
 </tr>
 <tr>
@@ -427,13 +427,13 @@ sewernone
 waterfrontNo
 </td>
 <td style="text-align:right;">
--110330.58
+-125457.58
 </td>
 <td style="text-align:right;">
-17501.87
+15971.22
 </td>
 <td style="text-align:right;">
--6.30
+-7.86
 </td>
 <td style="text-align:right;">
 0.00
@@ -444,13 +444,13 @@ waterfrontNo
 newConstructionNo
 </td>
 <td style="text-align:right;">
-49731.45
+45654.09
 </td>
 <td style="text-align:right;">
-8285.25
+8300.68
 </td>
 <td style="text-align:right;">
-6.00
+5.50
 </td>
 <td style="text-align:right;">
 0.00
@@ -461,16 +461,16 @@ newConstructionNo
 centralAirNo
 </td>
 <td style="text-align:right;">
--9994.60
+-13047.08
 </td>
 <td style="text-align:right;">
-3875.48
+3897.54
 </td>
 <td style="text-align:right;">
--2.58
+-3.35
 </td>
 <td style="text-align:right;">
-0.01
+0.00
 </td>
 </tr>
 </tbody>
@@ -510,7 +510,7 @@ AVG RMSE
 model.wo.lotSize
 </td>
 <td style="text-align:right;">
-59262.46
+61593.36
 </td>
 </tr>
 <tr>
@@ -518,7 +518,7 @@ model.wo.lotSize
 model.wo.age
 </td>
 <td style="text-align:right;">
-59198.43
+61423.51
 </td>
 </tr>
 <tr>
@@ -526,7 +526,7 @@ model.wo.age
 model.wo.landValue
 </td>
 <td style="text-align:right;">
-62446.00
+67800.87
 </td>
 </tr>
 <tr>
@@ -534,7 +534,7 @@ model.wo.landValue
 model.wo.livingArea
 </td>
 <td style="text-align:right;">
-65629.35
+64101.33
 </td>
 </tr>
 <tr>
@@ -542,7 +542,7 @@ model.wo.livingArea
 model.wo.pctCollege
 </td>
 <td style="text-align:right;">
-58854.85
+61259.23
 </td>
 </tr>
 <tr>
@@ -550,7 +550,7 @@ model.wo.pctCollege
 model.wo.bedrooms
 </td>
 <td style="text-align:right;">
-58816.76
+61252.39
 </td>
 </tr>
 <tr>
@@ -558,7 +558,7 @@ model.wo.bedrooms
 model.wo.fireplaces
 </td>
 <td style="text-align:right;">
-58863.78
+61280.10
 </td>
 </tr>
 <tr>
@@ -566,7 +566,7 @@ model.wo.fireplaces
 model.wo.bathrooms
 </td>
 <td style="text-align:right;">
-58423.80
+62158.03
 </td>
 </tr>
 <tr>
@@ -574,7 +574,7 @@ model.wo.bathrooms
 model.wo.heating
 </td>
 <td style="text-align:right;">
-59033.59
+61631.86
 </td>
 </tr>
 <tr>
@@ -582,7 +582,7 @@ model.wo.heating
 model.wo.fuel
 </td>
 <td style="text-align:right;">
-58863.20
+61251.71
 </td>
 </tr>
 <tr>
@@ -590,7 +590,7 @@ model.wo.fuel
 model.wo.sewer
 </td>
 <td style="text-align:right;">
-58876.89
+61308.01
 </td>
 </tr>
 <tr>
@@ -598,7 +598,7 @@ model.wo.sewer
 model.wo.waterfront
 </td>
 <td style="text-align:right;">
-60428.35
+61176.78
 </td>
 </tr>
 <tr>
@@ -606,7 +606,7 @@ model.wo.waterfront
 model.wo.newConstruction
 </td>
 <td style="text-align:right;">
-59093.00
+61961.90
 </td>
 </tr>
 <tr>
@@ -614,7 +614,7 @@ model.wo.newConstruction
 model.wo.centralAir
 </td>
 <td style="text-align:right;">
-58977.64
+61123.16
 </td>
 </tr>
 </tbody>
@@ -648,13 +648,13 @@ linear.model.RMSE
 <tbody>
 <tr>
 <td style="text-align:right;">
-15
+6
 </td>
 <td style="text-align:right;">
-66034.35
+66375.15
 </td>
 <td style="text-align:right;">
-59357.09
+61749.77
 </td>
 </tr>
 </tbody>
@@ -684,10 +684,10 @@ linear.model
 Average RMSE
 </td>
 <td style="text-align:right;">
-62147.63
+62454.55
 </td>
 <td style="text-align:right;">
-59920.7
+58524.25
 </td>
 </tr>
 </tbody>
@@ -695,14 +695,14 @@ Average RMSE
 Exercise 2.2
 ------------
 
-This exercise is based on a dataset consisted of 987 screening
+This exercise is based on a dataset consisting of 987 screening
 mammograms administered at a hospital in Seattle, Washington. The goal
 of the analysis is to evaluate the performance of five different
 radiologists considering several risk factors.
 
 First, we analyzed the raw data to verify whether each radiologist has a
 different recall rate (A.recallrate) or not, and compare precision
-(B.cancerrate) and false negatice (C.false\_negative) rates. We can
+(B.cancerrate) and false negative (C.false\_negative) rates. We can
 observe that, even though radiologist89 has a higher probability of
 recalling patients, his false negative error rate (not recalling
 patients that actually have cancer) doesn't substantially differ from
@@ -775,13 +775,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0343708
+0.0466605
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.2634367
+0.2862899
 </td>
 </tr>
 <tr>
@@ -792,13 +792,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0397060
+0.0340582
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1152922
+0.1134616
 </td>
 </tr>
 <tr>
@@ -809,13 +809,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0319227
+0.0362476
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1328736
+0.1882719
 </td>
 </tr>
 <tr>
@@ -826,13 +826,13 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0369744
+0.0319132
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.1199017
+0.2105251
 </td>
 </tr>
 </tbody>
@@ -880,10 +880,10 @@ Model\_2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1369471
+0.1383483
 </td>
 <td style="text-align:right;">
-0.1364866
+0.1376463
 </td>
 </tr>
 <tr>
@@ -891,10 +891,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0880255
+0.0882825
 </td>
 <td style="text-align:right;">
-0.0891140
+0.0886276
 </td>
 </tr>
 <tr>
@@ -902,10 +902,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1863973
+0.1879345
 </td>
 <td style="text-align:right;">
-0.1923751
+0.1941092
 </td>
 </tr>
 <tr>
@@ -913,10 +913,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.2036605
+0.1985145
 </td>
 <td style="text-align:right;">
-0.2329971
+0.2264008
 </td>
 </tr>
 <tr>
@@ -924,10 +924,10 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1343538
+0.1332161
 </td>
 <td style="text-align:right;">
-0.1240641
+0.1235210
 </td>
 </tr>
 </tbody>
@@ -963,7 +963,7 @@ Hence, including this variables in the model shouldn't considerably
 affect the cancer predictions.
 
 The table below summarizes the estimates from the 6 models. Here, we
-observe that age 70 or plus, density 4 (extremely dense) and
+observe that age 70 plus, density 4 (extremely dense) and
 post-menopausal/unknown hormone-therapy status are some factors that are
 increasing the odds of having a cancer, even after medical analysis!
 Thus there's extra information in the risk factors that the doctors
@@ -1527,7 +1527,7 @@ Considering the in-sample probability of cancer as a threshold for the
 fitted values of the proposed model to predict cancer or not, we
 computed the following confusion matrix. This matrix shows that, when
 including age.70plus, postmenounknown and density.4 in the model, the
-sensitivity increased to 64.86 (24/(13+24)) and the accuracy rate
+sensitivity increased to 64.86 (24/(13+24)) but the accuracy rate
 slightly decreased to 84.60% ((811+24)/987).
 
     ##    yhat
