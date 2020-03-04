@@ -41,7 +41,6 @@ model4= price~ lotSize + age +pctCollege * landValue + livingArea * (bedrooms + 
 model5= price~ lotSize + age + age2 + pctCollege * landValue + livingArea * (bedrooms + bathrooms) + fireplaces + heating + fuel + centralAir
 
 model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fireplaces + bathrooms + rooms + heating + fuel + centralAir
-
 ```
 
 Here are the main features of our models.
@@ -231,8 +230,14 @@ rmse_grid = foreach(K= k_grid, .combine='c') %do% {
 knn_model = knn.reg(Xtilde_train, Xtilde_test, ytrain, k=K)
 rmse(ytest, knn_model$pred)
 }
-plot(k_grid, rmse_grid, ylim=c(55000,80000))
-abline(h=rmse(ytest, yhat_test1), col='red')
+
+ggplot() + 
+  geom_point(mapping = aes(x = k_grid, y = rmse_grid), color="black") + 
+  geom_hline(yintercept = rmse(ytest, yhat_test1), color = "red", size=1) +
+  labs(x = "K", y = "RMSE") +
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank()) +
+  scale_y_continuous(breaks=c(65000, 70000, 75000, 80000, 85000))
 
 K= which.min(rmse_grid)
 modelcompare = data.frame('Kmin'=K, "knn model RMSE" = rmse(ytest, knn_model$pred), "linear model RMSE" = rmse(ytest, yhat_test1))
