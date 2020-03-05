@@ -1,3 +1,12 @@
+library(tidyverse)
+library(mosaic)
+library(class)
+library(FNN)
+library(foreach)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+
 dataset = read.csv('https://raw.githubusercontent.com/jgscott/ECO395M/master/data/online_news.csv')
 
 length(which(dataset$shares >= 1400 & dataset$n_tokens_content == 0))
@@ -52,7 +61,7 @@ err_vals = do(100)*{
             - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data = news_articles_test)
   
   lm3 =  lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
-            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data = news_articles_test)
+                      - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data = news_articles_test)
   
   lm4 = lm(formula = shares ~ n_tokens_title + num_hrefs + num_self_hrefs + 
              num_imgs + num_videos + average_token_length + num_keywords + 
@@ -70,7 +79,7 @@ err_vals = do(100)*{
   yhat_test2 = predict(lm2, news_articles_test)
   yhat_test3 = predict(lm3, news_articles_test)
   yhat_test4 = predict(lm4, news_articles_test)
- 
+  
   c(error_rate(news_articles_test$shares, yhat_test1), error_rate(news_articles_test$shares, yhat_test2),
     error_rate(news_articles_test$shares, yhat_test3), error_rate(news_articles_test$shares, yhat_test4)) %>% round(3)
   
@@ -89,8 +98,60 @@ xtabs(~viral + viral_hat, data=news_articles)
 
 #accuracy rate
 (length(which(news_articles$viral == 1 & news_articles$viral_hat == 1))+
-  length(which(news_articles$viral == 0 & news_articles$viral_hat == 0))) / nrow(news_articles)
+    length(which(news_articles$viral == 0 & news_articles$viral_hat == 0))) / nrow(news_articles)
 #null model
 length(which(news_articles$viral == 1)) / nrow(news_articles)
 
-        
+##GLM models
+err_vals_glm = do(100)*{
+  train_cases = sample.int(n, n_train, replace=FALSE)
+  test_cases = setdiff(1:n, train_cases)
+  news_articles_train = news_articles[train_cases,]
+  news_articles_test = news_articles[test_cases,]
+  
+  glm_base = glm(formula = viral ~ n_tokens_title + num_hrefs + num_self_hrefs + 
+                   num_imgs + num_videos + average_token_length + num_keywords + 
+                   data_channel_is_lifestyle + data_channel_is_entertainment + 
+                   data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech + 
+                   data_channel_is_world + self_reference_min_shares + self_reference_avg_sharess + 
+                   weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
+                   weekday_is_thursday + weekday_is_friday + global_rate_positive_words + 
+                   global_rate_negative_words + avg_positive_polarity + min_positive_polarity + 
+                   max_positive_polarity + avg_negative_polarity + title_subjectivity + 
+                   title_sentiment_polarity + abs_title_sentiment_polarity + 
+                   self_reference_min_shares:self_reference_avg_sharess, data=news_articles_test, family = 'binomial')
+  
+  #glm_base = glm(viral ~  . , data = news_articles_test, family = 'binomial')
+  
+  
+  # glm_step = glm(formula = viral ~ lm_step, data = news_articles_test, family = 'binomial')
+  
+  glm_chosen = glm(viral ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+                            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, 
+                   data=news_articles_test, family = 'binomial')
+  
+  yhat_test1 = predict(glm_base, news_articles_test, type='response')
+  #yhat_test2 = predict(glm_step, news_articles_test)
+  yhat_test3 = predict(glm_chosen, news_articles_test, type='response')
+  
+  c(error_rate(news_articles_test$viral, yhat_test1),
+    error_rate(news_articles_test$viral, yhat_test3)) %>% round(3)
+  
+}
+colMeans(err_vals_glm)
+
+glm_step = glm(viral ~ . ,step(lm2, scope=~(.)^2, steps=1, data = news_articles_test, family = 'binomial'))
+#
+news_articles$yhat = predict(glm_step, news_articles)
+
+news_articles = mutate(news_articles_test, viral = ifelse(news_articles$share >= log(1400), 1, 0))
+news_articles = mutate(news_articles_test, viral_hat = ifelse(news_articles$yhat >= log(1400), 1, 0))
+
+xtabs(~viral + viral_hat, data=news_articles)
+
+#accuracy rate
+(length(which(news_articles$viral == 1 & news_articles$viral_hat == 1))+
+    length(which(news_articles$viral == 0 & news_articles$viral_hat == 0))) / nrow(news_articles)
+
+#null model
+length(which(news_articles$viral == 1)) / nrow(news_articles)

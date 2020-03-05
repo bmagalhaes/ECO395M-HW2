@@ -20,169 +20,132 @@ library(kableExtra)
 library(ggplot2)
 
 dataset = read.csv('https://raw.githubusercontent.com/jgscott/ECO395M/master/data/online_news.csv')
-summary(dataset)
-```
 
+```
 # Exercise 2.3
-In this exercise, we attempt to build the best possible model to predict which Mashable article goes viral. The threshold here for defining a viral article refers to reaching or surpassing the threshold of 1,400 shares. From the summary statistics we can see that we have 39,644 observations in total with 36 variables, except URL since it is redundant for us. 
+In this exercise, we analyzed data from 39,797 online articles published by Mashable during 2013 and 2014, in order to build a model to predict which article goes viral. The criteria used for defining an article as viral is if it surpasses the threshold of 1,400 shares. For each online article, we have 36 variables that can be included in the model (excluding URL since it is redundant for this analysis). 
 
-The dependant variable for us would be the number of shares and we could consider every other variable as independent variable which results in the number of shares. 
-
-We can sort and clean out our data a bit more. Since we don't need the variable 'URL' we will take it out. We will remove the average length of the words in the content ('average_token_length) that is zero, as there should be some words in the article. We will also remove variables like number of words in the article ('n_tokens_content') for the same reason. 
+We started by plotting a histogram to visualize the frequency distribution of the shares per article. 
 ```{r 1.2.1, echo=FALSE}
-# Divide groups into 2 and define 'Root Mean Squre Error' function
-news_articles = subset(dataset, select = -c(url))
-summary(news_articles$n_tokens_content)
-news_zero_content = news_articles[which(news_articles$n_tokens_content==0),]
-summary(news_zero_content)
-news_articles = news_articles[-which(news_articles$n_tokens_content==0),]
-summary(news_articles)
+ggplot(data=dataset, aes(x = shares)) +
+  geom_histogram(binwidth = 200, fill="lightgray", color="black", alpha=.6) +
+  geom_vline(xintercept = 1400 , color="red" , linetype = "dashed") +
+  labs(title = 'Shares Histogram', x = "# Shares", y = "Frequency")+
+  xlim(0, 10000)+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
+
 ```
-Now we are left with 38,463 observations.
+If we observe the histogram of the number of shares, we can see that the data is skewed towards the lower end. It shows that although there are a broad range of articles that have well exceded 7,000 shares, a large portion of Mashable's articles are in the 800-1,200 shares range. A majority being slightly below our 1,400 shares threshold. 
 
-Let's see the data in a histogram. 
-
+As the variation of the shared articles is very broad, ranging from almost 0 shares to close to 10,000 shares, it makes sense to log scale shares in order to compress down our data for uniformity.
 ```{r 1.2.2, echo=FALSE}
-hist(news_articles$shares, xlim=c(1,10000), breaks=5000) ; abline(v=1400, col='blue')
-hist(log(news_articles$shares), breaks=50) ; abline(v=log(1400), col='blue')
-summary(news_articles$shares)
-news_articles = mutate(news_articles, logshares = log(shares))
+ggplot(data=dataset, aes(x = log(shares))) +
+  geom_histogram(binwidth = 0.275, fill="lightgray", color="black", alpha=.6) +
+  geom_vline(xintercept = log(1400) , color="red" , linetype = "dashed") +
+  labs(title = 'Log Shares Histogram', x = "Log Shares", y = "Frequency")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
 ```
-Since the data is uniformly distributed. It would be ideal to log of our dependent variable, which is shares. We take log scale of shares (log(shares)) for our linear and logit regression.
+Since the data is more uniformly distributed in the log scale, we decided to use the transformed variable log(shares) in our predictive models.
 
-Also, we will use the mutate function to create a new variable, log of shares to replace shares with in the dataset. The mutate function first collects various share values into a seperate dataframe. 
+We started the model selection by building a baseline model including all the available features as explanatory variables. So for our first linear model, we fitted all 36 variables in our model (except for URL) to make further assessments. 
 ```{r 1.2.3, echo=FALSE}
-# Make a train-test split
+lm1 = lm(log(shares) ~ . - url, data=dataset)
 ```
-Now let's get a bit more into data visualization for more insights. 
-
+From here, we removed the variables that yield an insignificant p-value such as the number of words in the content (n_tokens_content), maximum share of referenced articles (self_reference_max_share), maximum polarity of negative words (max_negative_polarity), etc. A larger (insignificant) p-value suggested that changes in the predictor were not associated with changes in the response. 
 ```{r}
-
+lm2 = lm(shares ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+         - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data=news_articles)
 ```
-
+We also created a step function from this improved linear model to see how the variables interact with one another for feature selection of the variables. 
 ```{r 1.2.3, echo=FALSE}
 
 ```
-Now we start to analyze the data. Since our goal is to find a worthwhile relationship between logshares and other variables, we will attempt to create the best possible model for it. First, it makes sense to do a train-test split.  Like always we use 80% of the data to build a model by training and 20% data for testing.
+In order to determine the most accurate model which accounts the relevant variables to see how articles reach the 1,400 shares threshold, we utilized a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing the remaining 20%. We then repeated this proccess 100 times. For each repetition, we fitted four linear models using the train dataset, and compared each model's error rate which signified what variables to consider to improve an article's chances of going viral. 
+
 ```{r 1.2.4, echo=FALSE}
-n = nrow(news_articles)
-n_train = round(0.8*n)  
-n_test = n - n_train
-```
-Let's build a linear regression model by hand build and trial. 
-We first use the overall error rate to find the best linear model. We will try 3 linear models and use the overall error rate as the metric to find the best model. Model 3 is the primary model to check the performance of the hand-build model. By assessing the relationship of variables, building the model and testing it, we make the second model. Then we build the linear model 1 by removing the less likely variables to get the most accurate linear fit. 
-```{r 1.2.5, echo=FALSE}
-err_vals = do(250)*{
-  
+err_vals = do(100)*{
   train_cases = sample.int(n, n_train, replace=FALSE)
   test_cases = setdiff(1:n, train_cases)
   news_articles_train = news_articles[train_cases,]
   news_articles_test = news_articles[test_cases,]
   
-  lm1 = lm(logshares ~ num_hrefs + n_tokens_content + num_self_hrefs + average_token_length + 
-             num_keywords + data_channel_is_lifestyle + 
-             num_imgs * (data_channel_is_bus + data_channel_is_socmed + data_channel_is_world) +
-             num_videos * (data_channel_is_entertainment + data_channel_is_bus + 
-                        data_channel_is_socmed + data_channel_is_tech + data_channel_is_world) +
-             self_reference_avg_sharess * weekday_is_saturday + 
-             is_weekend + global_rate_positive_words * is_weekend + 
-             title_subjectivity + title_sentiment_polarity, data = n_train)
+lm1 = lm(shares ~ . , data = news_articles_test)
   
-  lm2 =  lm(logshares ~ n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs + 
-              average_token_length + num_keywords + (num_videos + num_imgs) * 
-              (data_channel_is_lifestyle + data_channel_is_entertainment +
-                 data_channel_is_bus + data_channel_is_socmed +
-                 data_channel_is_tech + data_channel_is_world) +
-              self_reference_avg_sharess * (self_reference_min_shares + 
-              self_reference_max_shares) + weekday_is_monday + 
-              global_rate_positive_words * avg_positive_polarity + 
-              global_rate_negative_words * avg_negative_polarity + title_subjectivity +
-              title_sentiment_polarity, data = n_train, weekday_is_friday = binomial)
+  lm2 =  lm(shares ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data = news_articles_test)
   
-  lm3 = lm(viral ~ (n_tokens_title + n_tokens_content + num_hrefs + 
-                      num_self_hrefs + num_imgs + num_videos + 
-                      average_token_length + num_keywords + data_channel_is_lifestyle + 
-                      data_channel_is_entertainment + data_channel_is_bus + 
-                      + data_channel_is_socmed + data_channel_is_tech + 
-                      data_channel_is_world + self_reference_avg_sharess + 
-                      weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
-                      weekday_is_thursday + weekday_is_friday + weekday_is_saturday)^2, data=OnlineNews_train)
+  lm3 =  lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data = news_articles_test)
   
+  lm4 = lm(formula = shares ~ n_tokens_title + num_hrefs + num_self_hrefs + 
+             num_imgs + num_videos + average_token_length + num_keywords + 
+             data_channel_is_lifestyle + data_channel_is_entertainment + 
+             data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech + 
+             data_channel_is_world + self_reference_min_shares + self_reference_avg_sharess + 
+             weekday_is_monday + weekday_is_tuesday + weekday_is_wednesday + 
+             weekday_is_thursday + weekday_is_friday + global_rate_positive_words + 
+             global_rate_negative_words + avg_positive_polarity + min_positive_polarity + 
+             max_positive_polarity + avg_negative_polarity + title_subjectivity + 
+             title_sentiment_polarity + abs_title_sentiment_polarity + 
+             self_reference_min_shares:self_reference_avg_sharess, data=news_articles_test)
   yhat_test1 = predict(lm1, news_articles_test)
   yhat_test2 = predict(lm2, news_articles_test)
   yhat_test3 = predict(lm3, news_articles_test)
-```
-The confusion rate here clearly shows that the linear model 1 is better than linear model 2, followed by 3. 
-
-```{r 1.2.5, echo=FALSE}
-# confusion rate
-conf_rate = function(y, yhat) {
-    y_test = ifelse(y>log(1400), 1, 0)
-    yh_t = ifelse(yhat>log(1400), 1, 0)
-    sum(yh_t != y_test)/length(y)
-  }  
-
-  c(conf_rate(news_articles_test$logshares, yhat_test1), conf_rate(news_test$logshares, yhat_test2),
-    conf_rate(news_articles_test$logshares, yhat_test3)) %>% round(3)
+  yhat_test4 = predict(lm4, news_articles_test)
+ 
+  c(error_rate(news_articles_test$shares, yhat_test1), error_rate(news_articles_test$shares, yhat_test2),
+    error_rate(news_articles_test$shares, yhat_test3), error_rate(news_articles_test$shares, yhat_test4)) %>% round(3)
   
 }
+colMeans(err_vals)
 ```
-We might take an optional book-keeping step and arrange the test data.
-```{r 1.2.6, echo=FALSE}
-D_test = arrange(D_test, mileage)
-```
-After this we seperate the training and testing sets into mileage (X) and outcome (Y)
-```{r 1.2.7, echo=FALSE}
-X_train = select(D_train, mileage)
-y_train = select(D_train, price)
-X_test = select(D_test, mileage)
-y_test = select(D_test, price)
+We used the table shown below to assess the average error rate for each of the four models. All the results below were the averaged over 100 random train/test split samples in order to mollify the biases that could arise from randomization of samples. We calculated the average error rate of each model and from above we could we that our third linear model is our best model. The third model yields the smallest error rate of 0.04291. 
 
+```{r 1.2.5, echo=FALSE}
+#Error rate of all four models - colMeans(err_vals)
 ```
-Now let's have a look at the confusion matrix. 
+The table below reports the confusion matrix of the best model. 
+```{r 1.2.5, echo=FALSE}
+# confusion rate
+lm_chosen = lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+                         - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, data=news_articles)
+
+news_articles$yhat = predict(lm_chosen, news_articles)
+
+news_articles = mutate(news_articles, viral = ifelse(news_articles$share >= log(1400), 1, 0))
+news_articles = mutate(news_articles, viral_hat = ifelse(news_articles$yhat >= log(1400), 1, 0))
+
+xtabs(~viral + viral_hat, data=news_articles)
+```
+The accuracy rate is 63.44%, the false negative rate is 2/(2+21152) = 0.0094%, the false positive rate is 10/(21152+10) = 0.047%. Meanwhile the error rate is ((2+21152)+(21152+10))/39,797 = 0.030%.
 ```{r 1.2.8, echo=FALSE}
 confusion_matrix = table(y_test, yhat_test)
 confusion_matrix
 ```
-Now let's try our hand at the second approach, which is building a classification model. We now build a logit model for classification as the dependent variable here (viral or not) is a binary. As expected, independent variables would be the same as for a linear model.  
+We compared this with a "null" model, which always predicted a 'viral' status and its gave an accuracy rate of 53.36%. Comparing this to our best model which gave an accuracy of 63.44%, the proposed model did much better. 
+
+After this we approached this question from a classification perspective. The variable viral was defined as as having over 1,400 shares. Having the dependent variable as a binomial, we were able to utilize the logit models which are listed below.
+
+As with linear models, we bootstrapped the models to randomly split the dataset into training and testing datasets containing 80% of observations and 20% of observations respectively. This process was repeated a 100 times. For each repetition, we fitted three logit models using the train dataset and compared each model's accuracy rate which signified what variables to consider to improve an article's chances of going viral. 
+
+The first logit model that was used the base model we used before that accointed for all variables. Similarly, the second model is the step function that was created earlier to see how the variables interact with one another for feature selection. The third model that was chosen was the best linear model that gave the highest accuracy rate. 
 ```{r 1.2.9, echo=FALSE}
-news_articles = mutate(news_articles, viral = ifelse(shares > 1400,1,0))
-errs_vals = do(250) * {
-  train_cases = sample.int(n, n_train, replace=FALSE)
-  test_cases = setdiff(1:n, train_cases)
-  news_train = news_articles[train_cases,]
-  news_test = news_articles[test_cases,]
+
+  glm_base = glm(viral ~  . , data = news_articles_test, family = 'binomial')
   
-  logit_model = glm(viral ~  n_tokens_content + num_hrefs + num_self_hrefs + average_token_length + 
-                  num_keywords + data_channel_is_lifestyle + num_videos * 
-                  (data_channel_is_bus + data_channel_is_socmed + data_channel_is_world) + video * 
-                  (data_channel_is_entertainment + weekday_is_monday +
-                     data_channel_is_tech + data_channel_is_world) + self_reference_max_shares + is_weekend + 
-                    global_rate_positive_words * 
-                  avg_positive_polarity + avg_negative_polarity +
-                  title_subjectivity + title_sentiment_polarity, data = news_train, family = 'binomial')
-  phat_logit = predict(logit_m, news_test, type = 'response')
-  yhat_logit = ifelse(phat_logit>0.5, 1, 0)
-  ct_lg = table(news_test$viral, yhat_logit)
+  #glm_step = glm(viral ~ . ,step(lm2, scope=~(.)^2, steps=1, data = news_articles_test, family = 'binomial'))
   
-  # linear
-  finalin = lm(logshares ~ n_tokens_content + num_hrefs + num_self_hrefs + average_token_length + 
-             num_keywords + data_channel_is_lifestyle + num_imgs * 
-             (data_channel_is_bus + data_channel_is_socmed + data_channel_is_world) + video * 
-             (data_channel_is_entertainment + global_rate_positive_words + global_rate_negative_words + data_channel_is_socmed +
-                data_channel_is_tech + data_channel_is_world) +  self_reference_avg_sharess * 
-             self_reference_max_shares + is_weekend + global_rate_positive_words * 
-             avg_positive_polarity + avg_negative_polarity +
-             title_subjectivity + title_sentiment_polarity, data = news_train)
-  yhatF = predict(lmF, news_test)
-  ct_lm = conf_table(news_test$logshares, yhatF)
+  glm_step = glm(formula = viral ~ lm_step, data = news_articles_test, family = 'binomial')
+  
+  glm_chosen = lm(shares ~ (. - n_tokens_content - self_reference_max_shares - weekday_is_saturday
+                            - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity)^2, 
+                    data=news_articles, family = 'binomial')
+  
 ```
-Our results are 
+As third logit model gave the lowest error rate, this is our best logit model. The table below reports the confusion matrix of the best model. The accuracy rate is xx.xx%, the false negative rate is x/(x+x) = x.x%, the false positive rate is x/(x+x) = x%. Meanwhile the error rate is ((x+x)+(x+x))/x = x.x%.
 ```{r 1.2.10, echo=FALSE}
-((1-sum(diag(ct_lg))/sum(ct_lg)), (1-sum(diag(ct_lm))/sum(ct_lm)),
-    ct_lg[2,2]/sum(ct_lg[2,]), ct_lm[2,2]/sum(ct_lm[2,]),
-    ct_lg[1,2]/sum(ct_lg[1,]), ct_lm[1,2]/sum(ct_lm[1,]))
-} 
 errMean = colMeans(errs_vals) %>% round(3)
 err = matrix(errMean, nrow = 2, dimnames = 
                list(c("Classification Model", "Linear Model"), 
@@ -190,44 +153,19 @@ err = matrix(errMean, nrow = 2, dimnames =
 
 kable(err) %>% kable_styling("striped")
 ```
-Confusion matrix of our best model
+Having assessed the accuracy rates of the best models from the first and the second the approach, the logit/linear model gave a higher accuracy rate. 
 
+A probable reason for this could be because of the nature of imperfectly relationship between the independent variables and log shares and so the logit model was the better fit. In addition, its also likely that the independant variables aren't good enough to predict the depenpendent variable. As a result classifying the dependant variable in a binary form would most certainly have reduced the spread of output (as the outputs were only viral or not) in turn made the logit model more accurate. 
 ```{r 1.2.11, echo=FALSE}
-confusion = table(y = n_train$viral, yhat_train)
-confusion
+#KNN
 ```
 In-sample accuracy
 
 ```{r 1.2.12, echo=FALSE}
-probhat_test = predict(finalin, news_test=spamtest)
-yhat_train = ifelse(predict(finalin) >= 0.75, 1, 0)
-table(y=news_test$logshares, yhat=yhatF)
+
 ```
 KNN
 ```{r 1.2.13, echo=FALSE}
-KNN_result <- data.frame(K=c(), rsme=c())
-k_grid = seq(3, 150, by=20)
-for(v in k_grid){
-  avgrmse = KNN_C_error(data_X = X,data_y = Y, K = v,Ntimes = 5)
-  KNN_result <- rbind(KNN_result,c(v,avgrmse))
-}
-colnames(KNN_result) <- c("K","AVG_RMSE")
-ggplot(data = KNN_result, aes(x = K, y = AVG_RMSE)) + 
-  geom_point(shape = "O") +
-  geom_line(col = "red")
 
-
-obj_Y = subset(news_articles,select = c(viral))
-
-KNN_result <- data.frame(K=c(), rsme=c())
-k_grid = seq(53, 250, by=30)
-for(v in k_grid){
-  avgrmse = KNN_C_error_linear(data_X = x,data_y = Y,obj_y = obj_Y, K = v,threshold = 1400,Ntimes = 5)
-  KNN_result <- rbind(KNN_result,c(v,avgrmse))
-}
-colnames(KNN_result) <- c("K","AVG_RMSE")
-ggplot(data = KNN_result, aes(x = K, y = AVG_RMSE)) + 
-  geom_point(shape = "O") +
-  geom_line(col = "red")
 ```
 Again, we formalize training and testing sets. 
