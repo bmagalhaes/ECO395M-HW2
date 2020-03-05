@@ -38,7 +38,7 @@ ggplot(data=dataset, aes(x = shares)) +
 ```
 If we observe the histogram of the number of shares, we can see that the data is skewed towards the lower end. It shows that although there are a broad range of articles that have well exceded 7,000 shares, a large portion of Mashable's articles are in the 800-1,200 shares range. A majority being slightly below our 1,400 shares threshold. 
 
-As the variation of the shared articles is very broad, ranging from almost 0 shares to close to 10,000 shares, it makes sense to log scale shares in order to compress down our data for uniformity.
+As the variation of the shared articles is very broad, ranging from almost 0 shares to close to 10,000 shares, it made sense to log scale the dependant variable shares in order to compress down our data for uniformity.
 ```{r 1.2.2, echo=FALSE}
 ggplot(data=dataset, aes(x = log(shares))) +
   geom_histogram(binwidth = 0.275, fill="lightgray", color="black", alpha=.6) +
@@ -58,7 +58,7 @@ From here, we removed the variables that yield an insignificant p-value such as 
 lm2 = lm(shares ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
          - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data=news_articles)
 ```
-We also created a step function from this improved linear model to see how the variables interact with one another for feature selection of the variables. 
+A step function was also created from this improved linear model to see how the variables interact with one another for feature selection of the variables. 
 ```{r 1.2.3, echo=FALSE}
 
 ```
@@ -101,7 +101,7 @@ lm1 = lm(shares ~ . , data = news_articles_test)
 }
 colMeans(err_vals)
 ```
-We used the table shown below to assess the average error rate for each of the four models. All the results below were the averaged over 100 random train/test split samples in order to mollify the biases that could arise from randomization of samples. We calculated the average error rate of each model and from above we could we that our third linear model is our best model. The third model yields the smallest error rate of 0.04291. 
+We used the table shown below to assess the average error rate for each of the four models. All the results below were the averaged over 100 random train/test split samples in order to mollify the irregularities that could arise from randomization of samples. We calculated the average error rate of each model and from above we could we that our third linear model is our best model. The third model yields the smallest error rate of 0.04291. 
 
 ```{r 1.2.5, echo=FALSE}
 #Error rate of all four models - colMeans(err_vals)
@@ -119,18 +119,18 @@ news_articles = mutate(news_articles, viral_hat = ifelse(news_articles$yhat >= l
 
 xtabs(~viral + viral_hat, data=news_articles)
 ```
-The accuracy rate is 63.44%, the false negative rate is 2/(2+21152) = 0.0094%, the false positive rate is 10/(21152+10) = 0.047%. Meanwhile the error rate is ((2+21152)+(21152+10))/39,797 = 0.030%.
+The reported confusion matrix gave an accuracy rate of 63.44%, a false negative rate of 2/(2+21152) = 0.0094%, false positive rate of 10/(21152+10) = 0.047%. Meanwhile the error rate was yielded to be ((2+21152)+(21152+10))/39,797 = 0.030%.
 ```{r 1.2.8, echo=FALSE}
 confusion_matrix = table(y_test, yhat_test)
 confusion_matrix
 ```
-We compared this with a "null" model, which always predicted a 'viral' status and its gave an accuracy rate of 53.36%. Comparing this to our best model which gave an accuracy of 63.44%, the proposed model did much better. 
+We compared this with a "null" model, which always predicted a 'viral' status and it gave an accuracy rate of 53.36%. Comparing this to our best model which gave an accuracy of 63.44%, the proposed model did much better. 
 
 After this we approached this question from a classification perspective. The variable viral was defined as as having over 1,400 shares. Having the dependent variable as a binomial, we were able to utilize the logit models which are listed below.
 
 As with linear models, we bootstrapped the models to randomly split the dataset into training and testing datasets containing 80% of observations and 20% of observations respectively. This process was repeated a 100 times. For each repetition, we fitted three logit models using the train dataset and compared each model's accuracy rate which signified what variables to consider to improve an article's chances of going viral. 
 
-The first logit model that was used the base model we used before that accointed for all variables. Similarly, the second model is the step function that was created earlier to see how the variables interact with one another for feature selection. The third model that was chosen was the best linear model that gave the highest accuracy rate. 
+The first logit model that was used the base model we used before that accounted for all variables. Similarly, the second model is the step function that was created earlier to see how the variables interact with one another for feature selection. The third model that was chosen was the best linear model that gave the highest accuracy rate. 
 ```{r 1.2.9, echo=FALSE}
 
   glm_base = glm(viral ~  . , data = news_articles_test, family = 'binomial')
@@ -144,7 +144,7 @@ The first logit model that was used the base model we used before that accointed
                     data=news_articles, family = 'binomial')
   
 ```
-As third logit model gave the lowest error rate, this is our best logit model. The table below reports the confusion matrix of the best model. The accuracy rate is xx.xx%, the false negative rate is x/(x+x) = x.x%, the false positive rate is x/(x+x) = x%. Meanwhile the error rate is ((x+x)+(x+x))/x = x.x%.
+As third logit model gave the lowest error rate, we would consider this to be the best logit model. The table below reports the confusion matrix of the best model. This yielded an accuracy rate of xx.xx%, the false negative rate of x/(x+x) = x.x% and the false positive rate of x/(x+x) = x%. Meanwhile the error rate is ((x+x)+(x+x))/x = x.x%.
 ```{r 1.2.10, echo=FALSE}
 errMean = colMeans(errs_vals) %>% round(3)
 err = matrix(errMean, nrow = 2, dimnames = 
@@ -155,7 +155,7 @@ kable(err) %>% kable_styling("striped")
 ```
 Having assessed the accuracy rates of the best models from the first and the second the approach, the logit/linear model gave a higher accuracy rate. 
 
-A probable reason for this could be because of the nature of imperfectly relationship between the independent variables and log shares and so the logit model was the better fit. In addition, its also likely that the independant variables aren't good enough to predict the depenpendent variable. As a result classifying the dependant variable in a binary form would most certainly have reduced the spread of output (as the outputs were only viral or not) in turn made the logit model more accurate. 
+A probable reason for this could be because of the nature of imperfectly relationship between the independent variables and log shares and so the logit model was the better fit. In addition, its also likely that the independant variables aren't good enough to predict the depenpendent variable. As a result classifying the dependant variable in a binary form would most certainly has reduced the spread of output (as the outputs were only viral or not) in turn made the logit model more accurate. 
 ```{r 1.2.11, echo=FALSE}
 #KNN
 ```
