@@ -9,8 +9,6 @@ library(ggplot2)
 
 dataset = read.csv('https://raw.githubusercontent.com/jgscott/ECO395M/master/data/online_news.csv')
 
-length(which(dataset$shares >= 1400 & dataset$n_tokens_content == 0))
-
 ggplot(data=dataset, aes(x = shares)) +
   geom_histogram(binwidth = 200, fill="lightgray", color="black", alpha=.6) +
   geom_vline(xintercept = 1400 , color="red" , linetype = "dashed") +
@@ -27,16 +25,19 @@ ggplot(data=dataset, aes(x = log(shares))) +
   theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
 
 lm1 = lm(log(shares) ~ . - url, data=dataset)
-summary(lm1)
+summ(lm1)
 
-news_articles = subset(dataset, select = -c(url))
+news_articles = subset(dataset, select = -c(n_tokens_content, self_reference_max_shares, max_positive_polarity,
+                                            min_negative_polarity, weekday_is_sunday, is_weekend, url))
 news_articles$shares = log(news_articles$shares)
 
-lm2 = lm(shares ~ . - n_tokens_content - self_reference_max_shares - weekday_is_saturday
-         - weekday_is_sunday - is_weekend - max_negative_polarity - min_negative_polarity, data=news_articles)
-summary(lm2)
+lm2 = lm(shares ~ . , data=news_articles)
+summ(lm2)
 
-lm_step = step(lm2, scope=~(.)^2, steps=1)
+lm3 = lm(shares ~ (.)^2, data=news_articles)
+summ(lm3)
+
+lm_step = step(lm2, scope=~(.)^2, steps = 10)
 
 # confusion rate
 error_rate = function(y, yhat) {
@@ -155,3 +156,116 @@ xtabs(~viral + viral_hat, data=news_articles)
 
 #null model
 length(which(news_articles$viral == 1)) / nrow(news_articles)
+
+#knn
+
+online_news = read.csv('https://raw.githubusercontent.com/jgscott/ECO395M/master/data/online_news.csv')
+online_news = mutate(online_news, viral = ifelse(online_news$shares > 1400, 1, 0))
+prob_viral = length(which(online_news$viral == 1))/nrow(online_news)
+
+X_all = model.matrix(~n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs +
+                       num_imgs + num_videos + average_token_length + num_keywords +
+                       data_channel_is_lifestyle + data_channel_is_entertainment +
+                       data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech +
+                       data_channel_is_world + self_reference_min_shares + self_reference_max_shares +
+                       self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +
+                       weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +
+                       weekday_is_sunday + is_weekend + global_rate_positive_words + global_rate_negative_words +
+                       avg_positive_polarity + min_positive_polarity + max_positive_polarity + avg_negative_polarity +
+                       min_negative_polarity + max_negative_polarity + title_subjectivity + title_sentiment_polarity +
+                       abs_title_sentiment_polarity - 1, data=online_news)
+head(X_all)
+
+# standardize the columns of X_all
+feature_sd = apply(X_all, 2, sd)
+X_std = scale(X_all, scale=feature_sd)
+
+# now use LOOCV across a grid of values for K
+k_grid = seq(3, 75, by=1)
+N = nrow(online_news)
+# loop over the individual data points for leave-one-out
+loo_mse2 = foreach(i = 1:50, .combine='rbind') %dopar% {
+  X_train = X_std[-i,]
+  X_test = X_std[i,]
+  y_train = online_news$shares[-i]
+  y_test = online_news$shares[i]
+  
+  # fit the models: loop over k
+  knn_reg = foreach(k = k_grid, .combine='c') %do% {
+    knn_fit = knn.reg(X_train, X_test, y_train, k)
+    knn_testpred = ifelse(knn_fit&pred >= prob_viral, 1, 0)
+  }
+  
+  # return results from the loop over k
+  knn_mse_out
+}
+
+knn_rmse = sqrt(colMeans(loo_mse2))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+X_all = model.matrix(~n_tokens_title + num_hrefs + num_self_hrefs +
+                       num_imgs + num_videos + average_token_length + num_keywords +
+                       data_channel_is_lifestyle + data_channel_is_entertainment +
+                       data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech +
+                       data_channel_is_world + self_reference_min_shares +
+                       self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +
+                       weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +
+                       + global_rate_positive_words + global_rate_negative_words +
+                       avg_positive_polarity + min_positive_polarity + max_positive_polarity + avg_negative_polarity +
+                       + title_subjectivity + title_sentiment_polarity +
+                       abs_title_sentiment_polarity - 1, data=online_news)
+head(X_all)
+
+# standardize the columns of X_all
+feature_sd = apply(X_all, 2, sd)
+X_std = scale(X_all, scale=feature_sd)
+
+# now use LOOCV across a grid of values for K
+k_grid = seq(25, 27, by=1)
+
+n = nrow(X_all)
+n_train = round(0.8*n)  
+n_test = n - n_train
+
+# loop over the individual data points for leave-one-out
+boot1 = do(2)*{
+  train_cases = sample.int(n, n_train, replace=FALSE)
+  test_cases = setdiff(1:n, train_cases)
+  
+  X_train = X_std[train_cases,]
+  X_test = X_std[test_cases,]
+  
+  y_train = online_news$viral[train_cases]
+  y_test = online_news$viral[test_cases]
+  
+  # fit the models: loop over k
+  knn_reg = foreach(k = k_grid, .combine='c') %do% {
+    knn_fit = knn.reg(X_train, X_test, y_train, k)
+    knn_testpred = ifelse(knn_fit$pred >= prob_viral, 1, 0)
+    conf_matrix = table(y = y_test, yhat= knn_testpred)
+    accuracy = sum(diag(conf_matrix))/sum(conf_matrix)
+    accuracy
+  }
+  
+  # return results from the loop over k
+  knn_reg
+}
+
+knn_rmse = sqrt(colMeans(loo_mse2))
+
