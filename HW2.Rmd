@@ -47,7 +47,7 @@ model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fire
 
 The main features of our models are:
 
-Model 1 : include all main effects except roooms
+Model 1 : include all main effects except rooms
 (excluded due to some degree of collinearity with bedrooms and bathrooms)
 
 Model 2: simplify model1 by reducing some variables(-sewer-waterfront-newConstruction)
@@ -69,7 +69,7 @@ rmse = function(y, yhat) {
 }
 ```
 
-In order to measure performances of each model, we randomly splitted the data into training-test sets (with the training set containing 80% of the ovservations and the test set containing the other 20%) 100 times and calcaulated the average values of out-of-sample RMSE for each model by comparing the fitted values with the observed values in each repetition.
+In order to measure performances of each model, we randomly splitted the data into training-test sets (with the training set containing 80% of the observations and the test set containing the other 20%) 100 times and calculated the average values of out-of-sample RMSE for each model by comparing the fitted values with the observed values in each repetition.
 
 ```{r 2.1.3, echo=FALSE, warning=FALSE}
 rmse_check = do(100)*{# Split into training and testing sets
@@ -124,7 +124,7 @@ kable(rmse_result) %>% kable_styling("striped")
   
 The best model turned out to be model 1 with the least out-of-sample RMSE value. The table below show the summary statistics for this model.
 
-```{r 2.1.4, echo=TRUE}
+```{r 2.1.4, echo=FALSE}
 summ(model1)
 ```
 
@@ -291,6 +291,7 @@ modelcompare2 = data.frame("knn model"= colMeans(rmse_check3), "linear model"= c
 kable(modelcompare2) %>% kable_styling("striped")
 
 ```
+.
 
 ```{r setup2, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
@@ -392,7 +393,7 @@ kable(ame) %>%
   add_header_above(c(" " = 1, "Model 1" = 2, "Model 2" = 2))
 ```
 
-Finally, in order to estimate how each radiologist would perform when facing the same set of patients, we used a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing 20% of the observations, repeating the proccess 100 times. In each repetition, we estimated both models using the train dataset, and compared each model's predictions when all radiologists, in a hypothetical scenario, analyze the entire test dataset. 
+Finally, in order to estimate how each radiologist would perform when facing the same set of patients, we used a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing 20% of the observations, repeating the process 100 times. In each repetition, we estimated both models using the train dataset, and compared each model's predictions when all radiologists, in a hypothetical scenario, analyze the entire test dataset. 
 
 We computed average probability of recall per repetition, and calculated the average of the 100 samples to mitigate the effect of randomization. For both models, radiologist89 has the highest probability of recall, followed by radiologist66, radiologist13, radiologist95 and radiologist 34.
 
@@ -488,7 +489,7 @@ baseline_menopause_model = cancer ~ recall + menopause
 baseline_density_model = cancer ~ recall + density
 ```
 
-If the radiologists were appropriately accounting for the clinical risk factors when deciding whether to recall a patient for further examination, we would expect the coefficient associated with the recall variable to capture this effect, and the coefficient of the control variable to be close to zero (so the odds ratio to be close to one). Hence, including this variables in the model shouldn't considerably affect the cancer predictions.
+If the radiologists were appropriately accounting for the clinical risk factors when deciding whether to recall a patient for further examination, we would expect the coefficient associated with the recall variable to capture this effect, and the coefficient of the control variable to be close to zero (so the odds ratio to be close to one). Hence, including these variables in the model shouldn't considerably affect the cancer predictions.
 
 The table below summarizes the estimates from the 6 models. Here, we observe that age 70 plus, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status are some factors that are increasing the odds of having a cancer, even after medical analysis! Thus there's extra information in the risk factors that the doctors should be weighting more heavily to recall patients than they currently are.
 
@@ -563,7 +564,7 @@ ggplot(data=dataset, aes(x = shares)) +
   theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
 ```
 
-If we observe the histogram of the number of shares, we can see that the data is skewed towards the lower end. It shows that although there are a broad range of articles that have well exceded 7,000 shares, a large portion of Mashable's articles are in the 800-1,200 shares range. A majority being slightly below our 1,400 shares threshold.
+If we observe the histogram of the number of shares, we can see that the data is skewed towards the lower end. It shows that although there are a broad range of articles that have well exceeded 7,000 shares, a large portion of Mashable's articles are in the 800-1,200 shares range. A majority being slightly below our 1,400 shares threshold.
 
 As the variation of the shared articles is very broad, ranging from almost 0 shares to close to 10,000 shares, it made sense to log scale the response variable shares in order to compress down our data for uniformity.
 
@@ -591,7 +592,7 @@ lm1 = lm(log(shares) ~ . - url, data=dataset)
 summ(lm1)
 ```
 
-For our linear models 2 and 3, we removed the variables that were droppef from lm1 due to multicollinearity or that yielded a high p-value such as the number of words in the content (n_tokens_content), maximum share of referenced articles (self_reference_max_shares), maximum polarity of positive words (max_positive_polarity), minimum polarity of negative words (min_negative_polarity), and the dummy variables indicating if the article was posted in a sunday (weekday_is_sunday) or in the weekend (is_weekend).
+For our linear models 2 and 3, we removed the variables that were dropped from lm1 due to multicollinearity or that yielded a high p-value such as the number of words in the content (n_tokens_content), maximum share of referenced articles (self_reference_max_shares), maximum polarity of positive words (max_positive_polarity), minimum polarity of negative words (min_negative_polarity), and the dummy variables indicating if the article was posted in a sunday (weekday_is_sunday) or in the weekend (is_weekend).
 
 Finally, for our linear model 4 we used a stepwise selection (starting from lm2 - with up to 10 steps) and, in order to determine the subset of variables to include, we chose the one that yields the minimum Akaike Information Criteria (AIC).
 
@@ -617,7 +618,7 @@ lm4 = log(shares) ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs +
       num_hrefs:data_channel_is_tech
 ```
 
-In order to determine the most accurate model which accounts the relevant variables to predict how articles reach the 1,400 shares threshold, we utilized a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing the remaining 20%. We then repeated this proccess 100 times and, for each repetition, we estimated our four linear models using the train dataset, and fitted the values in the test dataset to compare each model's prediction error rate. 
+In order to determine the most accurate model which accounts the relevant variables to predict how articles reach the 1,400 shares threshold, we utilized a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing the remaining 20%. We then repeated this process 100 times and, for each repetition, we estimated our four linear models using the train dataset, and fitted the values in the test dataset to compare each model's prediction error rate. 
 
 The table shown below summarizes the average error rate for each of the four models. The results were averaged over 100 random train/test split samples in order to mollify the irregularities that could arise from randomization of samples. We can infer from the results that, on average, the third linear model yields the most accurate predictions.
 
@@ -692,9 +693,9 @@ news_articles = news_articles %>%
 xtabs(~viral + viral_hat, data=news_articles)
 ```
 
-The model is clearly predicting too many false positives. However, to assess its performance we need to compare this results to a "null" model, which would be to always predict the outcome that is most common in the data. Since 20082 out of 39644 articles didn't go viral, if we predicted all the articles not to go viral our accuracy rate would be of 50.66% (20082/39644). Hence, our model improved the accuracy rate from 50.66% to 61.50%. 
+The model is clearly predicting too many false positives. However, to assess its performance we need to compare these results to a "null" model, which would be to always predict the outcome that is most common in the data. Since 20082 out of 39644 articles didn't go viral, if we predicted all the articles not to go viral our accuracy rate would be of 50.66% (20082/39644). Hence, our model improved the accuracy rate from 50.66% to 61.50%. 
 
-Another approach would be to  analyze this question from a classification perspective. We created a dummy variable viral, defined as as having over 1,400 shares or not. By having the response variable as a binomial, we were able to utilize the logit models which are listed below.
+Another approach would be to  analyze this question from a classification perspective. We created a dummy variable viral, defined as having over 1,400 shares or not. By having the response variable as a binomial, we were able to utilize the logit models which are listed below.
 
 In the first logit model we included as explanatory variables all the available features. In the second, we excluded those that showed multicollinearity or too high p-values. In the third model, we used the explanatory variables that were included the linear model that yielded the highest accuracy rate. 
 
@@ -765,7 +766,7 @@ glm_loop = glm_loop %>%
 xtabs(~viral + viral_hat, data=glm_loop)
 ```
 
-Having assessed the accuracy rates of the best models from the first and the second the approach, the logit model turned out to perform slightly better, gaving a higher in-sample accuracy rate when trying to predict which article went viral.
+Having assessed the accuracy rates of the best models from the first and the second the approach, the logit model turned out to perform slightly better, giving a higher in-sample accuracy rate when trying to predict which article went viral.
 
 ```{r 2.3.11, echo=FALSE, warning = FALSE}
 
@@ -856,4 +857,4 @@ kable(k_tab) %>% kable_styling("striped")
 
 Finally, we can conclude that the logit model (lm3) performed better than the other models we tested. This model yielded a 63.79% out of sample accuracy rate, and a 65.02% in sample accuracy rate. When we compare it to the null-model (50.66%), improvement in the out of sample accuracy rate reaches 28.35% (65.02/50.66 - 1).
 
-As a conjecture, our best judgement is that the difference in the performance between each approach possibly occured due to the fact that, when trying to predict the number of shares, the discrepancy in the frequency distrbution observed in the first histogram ends up affecting the variance of the estimates. The logistic model we used don't have that problem since its outcome is a probability (so bounded between 0 and 1) and the fitted values that overcame the in-sample probability of being viral as the models predictions.
+As a conjecture, our best judgement is that the difference in the performance between each approach possibly occurred due to the fact that, when trying to predict the number of shares, the discrepancy in the frequency distribution observed in the first histogram ends up affecting the variance of the estimates. The logistic model we used don't have that problem since its outcome is a probability (so bounded between 0 and 1) and the fitted values that overcame the in-sample probability of being viral as the models predictions.

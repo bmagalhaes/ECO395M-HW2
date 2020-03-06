@@ -28,7 +28,7 @@ class.
 
 The main features of our models are:
 
-Model 1 : include all main effects except roooms (excluded due to some
+Model 1 : include all main effects except rooms (excluded due to some
 degree of collinearity with bedrooms and bathrooms)
 
 Model 2: simplify model1 by reducing some
@@ -44,8 +44,8 @@ Model\_medium: baseline model with 11 main effects
 
 In order to measure performances of each model, we randomly splitted the
 data into training-test sets (with the training set containing 80% of
-the ovservations and the test set containing the other 20%) 100 times
-and calcaulated the average values of out-of-sample RMSE for each model
+the observations and the test set containing the other 20%) 100 times
+and calculated the average values of out-of-sample RMSE for each model
 by comparing the fitted values with the observed values in each
 repetition.
 
@@ -80,30 +80,28 @@ model.medium
 AVG RMSE
 </td>
 <td style="text-align:right;">
-58587.42
+58325.22
 </td>
 <td style="text-align:right;">
-60236.08
+59885.33
 </td>
 <td style="text-align:right;">
-64356.3
+64199.27
 </td>
 <td style="text-align:right;">
-60043.56
+59697
 </td>
 <td style="text-align:right;">
-60112.06
+59737.89
 </td>
 <td style="text-align:right;">
-66309.64
+65992.89
 </td>
 </tr>
 </tbody>
 </table>
 The best model turned out to be model 1 with the least out-of-sample
 RMSE value. The table below show the summary statistics for this model.
-
-    summ(model1)
 
 <table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
 <tbody>
@@ -140,7 +138,7 @@ OLS linear regression
 F(17,1364)
 </td>
 <td style="text-align:right;">
-161.77
+141.55
 </td>
 </tr>
 <tr>
@@ -148,7 +146,7 @@ F(17,1364)
 R²
 </td>
 <td style="text-align:right;">
-0.67
+0.64
 </td>
 </tr>
 <tr>
@@ -156,7 +154,7 @@ R²
 Adj. R²
 </td>
 <td style="text-align:right;">
-0.66
+0.63
 </td>
 </tr>
 </tbody>
@@ -186,13 +184,13 @@ p
 (Intercept)
 </td>
 <td style="text-align:right;">
-94824.80
+106607.40
 </td>
 <td style="text-align:right;">
-22760.78
+22903.65
 </td>
 <td style="text-align:right;">
-4.17
+4.65
 </td>
 <td style="text-align:right;">
 0.00
@@ -203,13 +201,13 @@ p
 lotSize
 </td>
 <td style="text-align:right;">
-8118.77
+9654.26
 </td>
 <td style="text-align:right;">
-2487.63
+2563.44
 </td>
 <td style="text-align:right;">
-3.26
+3.77
 </td>
 <td style="text-align:right;">
 0.00
@@ -220,16 +218,16 @@ lotSize
 age
 </td>
 <td style="text-align:right;">
--136.02
+-99.57
 </td>
 <td style="text-align:right;">
-64.71
+67.16
 </td>
 <td style="text-align:right;">
--2.10
+-1.48
 </td>
 <td style="text-align:right;">
-0.04
+0.14
 </td>
 </tr>
 <tr>
@@ -237,13 +235,13 @@ age
 landValue
 </td>
 <td style="text-align:right;">
-0.91
+0.93
 </td>
 <td style="text-align:right;">
 0.05
 </td>
 <td style="text-align:right;">
-17.30
+17.53
 </td>
 <td style="text-align:right;">
 0.00
@@ -254,13 +252,13 @@ landValue
 livingArea
 </td>
 <td style="text-align:right;">
-78.59
+72.01
 </td>
 <td style="text-align:right;">
-4.65
+4.87
 </td>
 <td style="text-align:right;">
-16.91
+14.79
 </td>
 <td style="text-align:right;">
 0.00
@@ -271,16 +269,16 @@ livingArea
 pctCollege
 </td>
 <td style="text-align:right;">
--175.89
+-47.48
 </td>
 <td style="text-align:right;">
-163.58
+173.98
 </td>
 <td style="text-align:right;">
--1.08
+-0.27
 </td>
 <td style="text-align:right;">
-0.28
+0.78
 </td>
 </tr>
 <tr>
@@ -288,16 +286,16 @@ pctCollege
 bedrooms
 </td>
 <td style="text-align:right;">
--5425.99
+-3226.45
 </td>
 <td style="text-align:right;">
-2628.83
+2792.44
 </td>
 <td style="text-align:right;">
--2.06
+-1.16
 </td>
 <td style="text-align:right;">
-0.04
+0.25
 </td>
 </tr>
 <tr>
@@ -305,16 +303,16 @@ bedrooms
 fireplaces
 </td>
 <td style="text-align:right;">
-760.70
+1893.32
 </td>
 <td style="text-align:right;">
-3217.85
+3462.91
 </td>
 <td style="text-align:right;">
-0.24
+0.55
 </td>
 <td style="text-align:right;">
-0.81
+0.58
 </td>
 </tr>
 <tr>
@@ -322,13 +320,13 @@ fireplaces
 bathrooms
 </td>
 <td style="text-align:right;">
-24085.90
+22850.95
 </td>
 <td style="text-align:right;">
-3631.65
+3811.35
 </td>
 <td style="text-align:right;">
-6.63
+6.00
 </td>
 <td style="text-align:right;">
 0.00
@@ -339,16 +337,16 @@ bathrooms
 heatinghot water/steam
 </td>
 <td style="text-align:right;">
--11147.42
+-10029.48
 </td>
 <td style="text-align:right;">
-4506.30
+4814.64
 </td>
 <td style="text-align:right;">
--2.47
+-2.08
 </td>
 <td style="text-align:right;">
-0.01
+0.04
 </td>
 </tr>
 <tr>
@@ -356,16 +354,16 @@ heatinghot water/steam
 heatingelectric
 </td>
 <td style="text-align:right;">
-947.03
+3381.35
 </td>
 <td style="text-align:right;">
-14224.68
+14317.15
 </td>
 <td style="text-align:right;">
-0.07
+0.24
 </td>
 <td style="text-align:right;">
-0.95
+0.81
 </td>
 </tr>
 <tr>
@@ -373,16 +371,16 @@ heatingelectric
 fuelelectric
 </td>
 <td style="text-align:right;">
--12774.33
+-14827.22
 </td>
 <td style="text-align:right;">
-14008.29
+14086.43
 </td>
 <td style="text-align:right;">
--0.91
+-1.05
 </td>
 <td style="text-align:right;">
-0.36
+0.29
 </td>
 </tr>
 <tr>
@@ -390,16 +388,16 @@ fuelelectric
 fueloil
 </td>
 <td style="text-align:right;">
--175.28
+-7033.69
 </td>
 <td style="text-align:right;">
-5523.78
+5917.91
 </td>
 <td style="text-align:right;">
--0.03
+-1.19
 </td>
 <td style="text-align:right;">
-0.97
+0.23
 </td>
 </tr>
 <tr>
@@ -407,16 +405,16 @@ fueloil
 sewerpublic/commercial
 </td>
 <td style="text-align:right;">
--875.52
+-387.08
 </td>
 <td style="text-align:right;">
-4035.24
+4186.89
 </td>
 <td style="text-align:right;">
--0.22
+-0.09
 </td>
 <td style="text-align:right;">
-0.83
+0.93
 </td>
 </tr>
 <tr>
@@ -424,16 +422,16 @@ sewerpublic/commercial
 sewernone
 </td>
 <td style="text-align:right;">
--22383.11
+2400.34
 </td>
 <td style="text-align:right;">
-18277.95
+20440.35
 </td>
 <td style="text-align:right;">
--1.22
+0.12
 </td>
 <td style="text-align:right;">
-0.22
+0.91
 </td>
 </tr>
 <tr>
@@ -441,13 +439,13 @@ sewernone
 waterfrontNo
 </td>
 <td style="text-align:right;">
--107964.58
+-116535.66
 </td>
 <td style="text-align:right;">
-18290.96
+18099.40
 </td>
 <td style="text-align:right;">
--5.90
+-6.44
 </td>
 <td style="text-align:right;">
 0.00
@@ -458,13 +456,13 @@ waterfrontNo
 newConstructionNo
 </td>
 <td style="text-align:right;">
-47284.64
+42543.88
 </td>
 <td style="text-align:right;">
-7872.19
+8581.98
 </td>
 <td style="text-align:right;">
-6.01
+4.96
 </td>
 <td style="text-align:right;">
 0.00
@@ -475,16 +473,16 @@ newConstructionNo
 centralAirNo
 </td>
 <td style="text-align:right;">
--8956.62
+-10997.61
 </td>
 <td style="text-align:right;">
-3807.17
+4024.81
 </td>
 <td style="text-align:right;">
--2.35
+-2.73
 </td>
 <td style="text-align:right;">
-0.02
+0.01
 </td>
 </tr>
 </tbody>
@@ -527,7 +525,7 @@ AVG RMSE
 model.wo.lotSize
 </td>
 <td style="text-align:right;">
-64715.14
+50470.73
 </td>
 </tr>
 <tr>
@@ -535,7 +533,7 @@ model.wo.lotSize
 model.wo.age
 </td>
 <td style="text-align:right;">
-64645.43
+50987.56
 </td>
 </tr>
 <tr>
@@ -543,7 +541,7 @@ model.wo.age
 model.wo.landValue
 </td>
 <td style="text-align:right;">
-71317.68
+55397.43
 </td>
 </tr>
 <tr>
@@ -551,7 +549,7 @@ model.wo.landValue
 model.wo.livingArea
 </td>
 <td style="text-align:right;">
-68372.29
+58552.70
 </td>
 </tr>
 <tr>
@@ -559,7 +557,7 @@ model.wo.livingArea
 model.wo.pctCollege
 </td>
 <td style="text-align:right;">
-64554.25
+50767.12
 </td>
 </tr>
 <tr>
@@ -567,7 +565,7 @@ model.wo.pctCollege
 model.wo.bedrooms
 </td>
 <td style="text-align:right;">
-64607.59
+51011.86
 </td>
 </tr>
 <tr>
@@ -575,7 +573,7 @@ model.wo.bedrooms
 model.wo.fireplaces
 </td>
 <td style="text-align:right;">
-64583.41
+50686.96
 </td>
 </tr>
 <tr>
@@ -583,7 +581,7 @@ model.wo.fireplaces
 model.wo.bathrooms
 </td>
 <td style="text-align:right;">
-64990.64
+51521.60
 </td>
 </tr>
 <tr>
@@ -591,7 +589,7 @@ model.wo.bathrooms
 model.wo.heating
 </td>
 <td style="text-align:right;">
-64646.29
+50877.97
 </td>
 </tr>
 <tr>
@@ -599,7 +597,7 @@ model.wo.heating
 model.wo.fuel
 </td>
 <td style="text-align:right;">
-64683.39
+50630.78
 </td>
 </tr>
 <tr>
@@ -607,7 +605,7 @@ model.wo.fuel
 model.wo.sewer
 </td>
 <td style="text-align:right;">
-64561.71
+50741.43
 </td>
 </tr>
 <tr>
@@ -615,7 +613,7 @@ model.wo.sewer
 model.wo.waterfront
 </td>
 <td style="text-align:right;">
-66512.86
+52081.83
 </td>
 </tr>
 <tr>
@@ -623,7 +621,7 @@ model.wo.waterfront
 model.wo.newConstruction
 </td>
 <td style="text-align:right;">
-64911.24
+51882.18
 </td>
 </tr>
 <tr>
@@ -631,7 +629,7 @@ model.wo.newConstruction
 model.wo.centralAir
 </td>
 <td style="text-align:right;">
-64799.66
+50719.13
 </td>
 </tr>
 </tbody>
@@ -666,13 +664,13 @@ linear.model.RMSE
 <tbody>
 <tr>
 <td style="text-align:right;">
-6
+16
 </td>
 <td style="text-align:right;">
-73278.13
+61232.38
 </td>
 <td style="text-align:right;">
-65044.53
+51155.57
 </td>
 </tr>
 </tbody>
@@ -703,14 +701,16 @@ linear.model
 Average RMSE
 </td>
 <td style="text-align:right;">
-61917.14
+62430.71
 </td>
 <td style="text-align:right;">
-58587.42
+58325.22
 </td>
 </tr>
 </tbody>
 </table>
+.
+
 Exercise 2.2
 ------------
 
@@ -794,13 +794,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0425504
+0.0540849
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.2538091
+0.2199254
 </td>
 </tr>
 <tr>
@@ -811,13 +811,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0293660
+0.0341096
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1367941
+0.1191771
 </td>
 </tr>
 <tr>
@@ -828,13 +828,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0335460
+0.0384375
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1577133
+0.1601575
 </td>
 </tr>
 <tr>
@@ -845,13 +845,13 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0374188
+0.0402581
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.1480645
+0.1285680
 </td>
 </tr>
 </tbody>
@@ -860,7 +860,7 @@ Finally, in order to estimate how each radiologist would perform when
 facing the same set of patients, we used a bootstrap to randomly split
 the original dataset in a training dataset containing 80% of the
 observations and a testing a dataset containing 20% of the observations,
-repeating the proccess 100 times. In each repetition, we estimated both
+repeating the process 100 times. In each repetition, we estimated both
 models using the train dataset, and compared each model's predictions
 when all radiologists, in a hypothetical scenario, analyze the entire
 test dataset.
@@ -899,10 +899,10 @@ Model2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1409582
+0.1364196
 </td>
 <td style="text-align:right;">
-0.1406501
+0.1366029
 </td>
 </tr>
 <tr>
@@ -910,10 +910,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0896362
+0.0869044
 </td>
 <td style="text-align:right;">
-0.0898066
+0.0887751
 </td>
 </tr>
 <tr>
@@ -921,10 +921,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1883756
+0.1849797
 </td>
 <td style="text-align:right;">
-0.1944242
+0.1917025
 </td>
 </tr>
 <tr>
@@ -932,10 +932,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.2056666
+0.2041218
 </td>
 <td style="text-align:right;">
-0.2349635
+0.2304669
 </td>
 </tr>
 <tr>
@@ -943,10 +943,10 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1358878
+0.1320091
 </td>
 <td style="text-align:right;">
-0.1263368
+0.1209368
 </td>
 </tr>
 </tbody>
@@ -978,7 +978,7 @@ factors when deciding whether to recall a patient for further
 examination, we would expect the coefficient associated with the recall
 variable to capture this effect, and the coefficient of the control
 variable to be close to zero (so the odds ratio to be close to one).
-Hence, including this variables in the model shouldn't considerably
+Hence, including these variables in the model shouldn't considerably
 affect the cancer predictions.
 
 The table below summarizes the estimates from the 6 models. Here, we
@@ -1580,7 +1580,7 @@ distribution of the shares per article.
 
 If we observe the histogram of the number of shares, we can see that the
 data is skewed towards the lower end. It shows that although there are a
-broad range of articles that have well exceded 7,000 shares, a large
+broad range of articles that have well exceeded 7,000 shares, a large
 portion of Mashable's articles are in the 800-1,200 shares range. A
 majority being slightly below our 1,400 shares threshold.
 
@@ -2320,7 +2320,7 @@ abs\_title\_sentiment\_polarity
 </tfoot>
 </table>
 For our linear models 2 and 3, we removed the variables that were
-droppef from lm1 due to multicollinearity or that yielded a high p-value
+dropped from lm1 due to multicollinearity or that yielded a high p-value
 such as the number of words in the content (n\_tokens\_content), maximum
 share of referenced articles (self\_reference\_max\_shares), maximum
 polarity of positive words (max\_positive\_polarity), minimum polarity
@@ -2358,8 +2358,8 @@ relevant variables to predict how articles reach the 1,400 shares
 threshold, we utilized a bootstrap to randomly split the original
 dataset in a training dataset containing 80% of the observations and a
 testing a dataset containing the remaining 20%. We then repeated this
-proccess 100 times and, for each repetition, we estimated our four
-linear models using the train dataset, and fitted the values in the test
+process 100 times and, for each repetition, we estimated our four linear
+models using the train dataset, and fitted the values in the test
 dataset to compare each model's prediction error rate.
 
 The table shown below summarizes the average error rate for each of the
@@ -2393,16 +2393,16 @@ lm4
 AVG Error Rate
 </td>
 <td style="text-align:right;">
-0.41378
+0.41384
 </td>
 <td style="text-align:right;">
-0.41349
+0.41357
 </td>
 <td style="text-align:right;">
-0.39079
+0.39178
 </td>
 <td style="text-align:right;">
-0.40215
+0.403
 </td>
 </tr>
 </tbody>
@@ -2420,7 +2420,7 @@ this model on the entire dataset. The model yielded an accuracy rate of
     ##     1  3230 16332
 
 The model is clearly predicting too many false positives. However, to
-assess its performance we need to compare this results to a "null"
+assess its performance we need to compare these results to a "null"
 model, which would be to always predict the outcome that is most common
 in the data. Since 20082 out of 39644 articles didn't go viral, if we
 predicted all the articles not to go viral our accuracy rate would be of
@@ -2428,9 +2428,9 @@ predicted all the articles not to go viral our accuracy rate would be of
 50.66% to 61.50%.
 
 Another approach would be to analyze this question from a classification
-perspective. We created a dummy variable viral, defined as as having
-over 1,400 shares or not. By having the response variable as a binomial,
-we were able to utilize the logit models which are listed below.
+perspective. We created a dummy variable viral, defined as having over
+1,400 shares or not. By having the response variable as a binomial, we
+were able to utilize the logit models which are listed below.
 
 In the first logit model we included as explanatory variables all the
 available features. In the second, we excluded those that showed
@@ -2479,13 +2479,13 @@ glm3
 AVG Error Rate
 </td>
 <td style="text-align:right;">
-0.3701
+0.3704
 </td>
 <td style="text-align:right;">
-0.3703
+0.37056
 </td>
 <td style="text-align:right;">
-0.3618
+0.3617
 </td>
 </tr>
 </tbody>
@@ -2504,7 +2504,7 @@ this model on the entire dataset. The model yielded an accuracy rate of
 
 Having assessed the accuracy rates of the best models from the first and
 the second the approach, the logit model turned out to perform slightly
-better, gaving a higher in-sample accuracy rate when trying to predict
+better, giving a higher in-sample accuracy rate when trying to predict
 which article went viral.
 
 <table class="table table-striped" style="margin-left: auto; margin-right: auto;">
@@ -2564,10 +2564,10 @@ Accuracy
 <tbody>
 <tr>
 <td style="text-align:right;">
-45
+70
 </td>
 <td style="text-align:right;">
-0.6261319
+0.6261067
 </td>
 </tr>
 </tbody>
@@ -2579,10 +2579,10 @@ compare it to the null-model (50.66%), improvement in the out of sample
 accuracy rate reaches 28.35% (65.02/50.66 - 1).
 
 As a conjecture, our best judgement is that the difference in the
-performance between each approach possibly occured due to the fact that,
-when trying to predict the number of shares, the discrepancy in the
-frequency distrbution observed in the first histogram ends up affecting
-the variance of the estimates. The logistic model we used don't have
-that problem since its outcome is a probability (so bounded between 0
-and 1) and the fitted values that overcame the in-sample probability of
-being viral as the models predictions.
+performance between each approach possibly occurred due to the fact
+that, when trying to predict the number of shares, the discrepancy in
+the frequency distribution observed in the first histogram ends up
+affecting the variance of the estimates. The logistic model we used
+don't have that problem since its outcome is a probability (so bounded
+between 0 and 1) and the fitted values that overcame the in-sample
+probability of being viral as the models predictions.
