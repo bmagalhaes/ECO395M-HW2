@@ -48,11 +48,16 @@ model_medium = price ~ lotSize + age + livingArea + pctCollege + bedrooms + fire
 The main features of our models are:
 
 Model 1 : include all main effects except roooms
-(exclude rooms because of colinearity, rooms = bedrooms + bathrooms) ###CHECK###
+(excluded due to some degree of collinearity with bedrooms and bathrooms)
+
 Model 2: simplify model1 by reducing some variables(-sewer-waterfront-newConstruction)
+
 Model 3: add all the interactions on model 2
+
 Model 4: allow only some interactions on model 2
+
 Model 5: a polynomial model by adding age^2 on model 4
+
 Model_medium: baseline model with 11 main effects
              
 ```{r 2.1.2, echo=FALSE}
@@ -287,8 +292,6 @@ kable(modelcompare2) %>% kable_styling("striped")
 
 ```
 
-## Exercise 2.2
-
 ```{r setup2, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
@@ -301,6 +304,8 @@ library(mosaic)
 
 brca = read.csv(url("https://raw.githubusercontent.com/bmagalhaes/ECO395M-HW2/master/brca.csv"))
 ```
+
+## Exercise 2.2
 
 This exercise is based on a dataset consisting of 987 screening mammograms administered at a hospital in Seattle, Washington. The goal of the analysis is to evaluate the performance of five different radiologists considering several risk factors.
 
@@ -387,7 +392,7 @@ kable(ame) %>%
   add_header_above(c(" " = 1, "Model 1" = 2, "Model 2" = 2))
 ```
 
-Finally, in order to estimate how each radiologist would perform when facing the same set of patients, we used a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing 20% of the observations, repeating the proccess 100 times. In each repetition, we fitted both models using the train dataset, and compared each model's predictions when all radiologists, in a hypothetical scenario, analyze the entire test dataset. 
+Finally, in order to estimate how each radiologist would perform when facing the same set of patients, we used a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing 20% of the observations, repeating the proccess 100 times. In each repetition, we estimated both models using the train dataset, and compared each model's predictions when all radiologists, in a hypothetical scenario, analyze the entire test dataset. 
 
 We computed average probability of recall per repetition, and calculated the average of the 100 samples to mitigate the effect of randomization. For both models, radiologist89 has the highest probability of recall, followed by radiologist66, radiologist13, radiologist95 and radiologist 34.
 
@@ -452,11 +457,11 @@ boot1 = do(100)*{
 boot1[, c(1:10)] = sapply(boot1[, c(1:10)], as.numeric)
 
 radiologist = c("radiologist.13", "radiologist.34", "radiologist.66", "radiologist.89", "radiologist.95")
-Model_1 = c(mean(boot1$M1_radiologist.13), mean(boot1$M1_radiologist.34), mean(boot1$M1_radiologist.66),
+Model1 = c(mean(boot1$M1_radiologist.13), mean(boot1$M1_radiologist.34), mean(boot1$M1_radiologist.66),
        mean(boot1$M1_radiologist.89), mean(boot1$M1_radiologist.95))
-Model_2 = c(mean(boot1$M2_radiologist.13), mean(boot1$M2_radiologist.34), mean(boot1$M2_radiologist.66),
+Model2 = c(mean(boot1$M2_radiologist.13), mean(boot1$M2_radiologist.34), mean(boot1$M2_radiologist.66),
        mean(boot1$M2_radiologist.89), mean(boot1$M2_radiologist.95))
-a = data.frame(radiologist, Model_1,Model_2)
+a = data.frame(radiologist, Model1,Model2)
 
 kable(a) %>%
   kable_styling("striped") %>%
@@ -525,4 +530,330 @@ yhat_test7 = ifelse(yhat_7 >= prob_cancer, 1, 0)
 table(y=brca_new$cancer, yhat=yhat_test7)
 ```
 
-Since a cancer that is diagnosed at an early stage is more likely to be treated successfully, it is reasonable to argue that the increase in sensitivity overcomes the decrease in the accuracy rates caused by a higher amount of false positive predictions. Hence, our best judgement is that the radiologists should be weighting more heavily patients with 70 years old and above, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status when deciding whether to recall patients.
+Since the medical literature suggests that a cancer that is diagnosed at an early stage is more likely to be treated successfully, it is reasonable to argue that the increase in sensitivity overcomes the decrease in the accuracy rates caused by a higher amount of false positive predictions. Hence, our best judgement is that the radiologists should be weighting more heavily patients with 70 years old and above, density 4 (extremely dense) and post-menopausal/unknown hormone-therapy status when deciding whether to recall patients.
+
+```{r setup3, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(mosaic)
+library(class)
+library(FNN)
+library(foreach)
+library(knitr)
+library(kableExtra)
+library(ggplot2)
+
+dataset = read.csv('https://raw.githubusercontent.com/jgscott/ECO395M/master/data/online_news.csv')
+
+```
+
+# Exercise 2.3
+
+In this exercise, we analyzed data from 39,797 online articles published by Mashable during 2013 and 2014, in order to build a model to predict which article goes viral. The criteria used for defining an article as viral is if it surpasses the threshold of 1,400 shares. For each online article, we have 36 variables that can be included in the model (excluding URL since it is redundant for this analysis). 
+
+We started by plotting a histogram to visualize the frequency distribution of the shares per article. 
+
+```{r 2.3.1, echo=FALSE, warning = FALSE}
+ggplot(data=dataset, aes(x = shares)) +
+  geom_histogram(binwidth = 200, fill="lightgray", color="black", alpha=.6) +
+  geom_vline(xintercept = 1400 , color="red" , linetype = "dashed") +
+  labs(title = 'Shares Histogram', x = "# Shares", y = "Frequency")+
+  xlim(0, 10000)+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
+```
+
+If we observe the histogram of the number of shares, we can see that the data is skewed towards the lower end. It shows that although there are a broad range of articles that have well exceded 7,000 shares, a large portion of Mashable's articles are in the 800-1,200 shares range. A majority being slightly below our 1,400 shares threshold.
+
+As the variation of the shared articles is very broad, ranging from almost 0 shares to close to 10,000 shares, it made sense to log scale the response variable shares in order to compress down our data for uniformity.
+
+```{r 2.3.2, echo=FALSE}
+ggplot(data=dataset, aes(x = log(shares))) +
+  geom_histogram(binwidth = 0.275, fill="lightgray", color="black", alpha=.6) +
+  geom_vline(xintercept = log(1400) , color="red" , linetype = "dashed") +
+  labs(title = 'Log Shares Histogram', x = "Log Shares", y = "Frequency")+
+  theme_bw() +
+  theme(plot.title = element_text(hjust = 0.5), panel.grid.major = element_blank(), panel.grid.minor = element_blank(), panel.background = element_blank(), panel.grid.major.y = element_line(colour = "grey"))
+```
+
+Since the data is more uniformly distributed in the log scale, we decided to use the transformed variable log(shares) in our predictive models.
+
+We started the model selection by building a baseline model including all the available features as explanatory variables. So for our first linear model, we fitted all 36 available variables (except for URL) to make further assessments. 
+
+```{r 2.3.3, echo=TRUE}
+lm1 = log(shares) ~ n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs + num_imgs +               num_videos + average_token_length + num_keywords + data_channel_is_lifestyle +                 data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_max_shares + self_reference_avg_sharess + weekday_is_monday +                   weekday_is_tuesday + weekday_is_wednesday + weekday_is_thursday +                              weekday_is_friday + weekday_is_saturday + weekday_is_sunday + is_weekend +                     global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +               min_positive_polarity + max_positive_polarity + avg_negative_polarity +                        min_negative_polarity + max_negative_polarity + title_subjectivity +                           title_sentiment_polarity + abs_title_sentiment_polarity
+```
+
+The table below summarizes the coefficients associated with each variable from this model.
+
+```{r 2.3.4, echo=FALSE}
+lm1 = lm(log(shares) ~ . - url, data=dataset)
+summ(lm1)
+```
+
+For our linear models 2 and 3, we removed the variables that were droppef from lm1 due to multicollinearity or that yielded a high p-value such as the number of words in the content (n_tokens_content), maximum share of referenced articles (self_reference_max_shares), maximum polarity of positive words (max_positive_polarity), minimum polarity of negative words (min_negative_polarity), and the dummy variables indicating if the article was posted in a sunday (weekday_is_sunday) or in the weekend (is_weekend).
+
+Finally, for our linear model 4 we used a stepwise selection (starting from lm2 - with up to 10 steps) and, in order to determine the subset of variables to include, we chose the one that yields the minimum Akaike Information Criteria (AIC).
+
+```{r 2.3.5, echo=TRUE}
+lm2 = log(shares) ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +            average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity
+
+lm3 = log(shares) ~ (n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +            average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity)^2
+
+lm4 = log(shares) ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + 
+      num_videos + average_token_length + num_keywords + data_channel_is_lifestyle + 
+      data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed + 
+      data_channel_is_tech + data_channel_is_world + self_reference_min_shares + 
+      self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday + 
+      weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + 
+      weekday_is_saturday + global_rate_positive_words + global_rate_negative_words + 
+      avg_positive_polarity + min_positive_polarity + avg_negative_polarity + 
+      max_negative_polarity + title_subjectivity + title_sentiment_polarity + 
+      abs_title_sentiment_polarity + self_reference_min_shares:self_reference_avg_sharess + 
+      num_self_hrefs:num_imgs + num_hrefs:data_channel_is_bus + 
+      data_channel_is_socmed:avg_positive_polarity + num_keywords:global_rate_negative_words + 
+      n_tokens_title:num_self_hrefs + num_self_hrefs:global_rate_positive_words + 
+      num_imgs:data_channel_is_world + data_channel_is_entertainment:min_positive_polarity + 
+      num_hrefs:data_channel_is_tech
+```
+
+In order to determine the most accurate model which accounts the relevant variables to predict how articles reach the 1,400 shares threshold, we utilized a bootstrap to randomly split the original dataset in a training dataset containing 80% of the observations and a testing a dataset containing the remaining 20%. We then repeated this proccess 100 times and, for each repetition, we estimated our four linear models using the train dataset, and fitted the values in the test dataset to compare each model's prediction error rate. 
+
+The table shown below summarizes the average error rate for each of the four models. The results were averaged over 100 random train/test split samples in order to mollify the irregularities that could arise from randomization of samples. We can infer from the results that, on average, the third linear model yields the most accurate predictions.
+
+```{r 2.3.6, echo=FALSE, warning=FALSE}
+news_loop = subset(dataset, select = -c(url))
+news_loop$shares = log(news_loop$shares)
+
+error_rate = function(y, yhat) {
+  y_test = ifelse(y>log(1400), 1, 0)
+  y_hat = ifelse(yhat>log(1400), 1, 0)
+  sum(y_hat != y_test)/length(y)
+}  
+
+n = nrow(news_loop)
+n_train = round(0.8*n)
+n_test = n - n_train
+
+err_vals = do(100)*{
+  train_cases = sample.int(n, n_train, replace=FALSE)
+  test_cases = setdiff(1:n, train_cases)
+  news_loop_train = news_loop[train_cases,]
+  news_loop_test = news_loop[test_cases,]
+  
+lm1 = lm(shares ~ . , data=news_loop_train)
+lm2 = lm(shares ~ . - n_tokens_content - self_reference_max_shares - max_positive_polarity -
+           min_negative_polarity - weekday_is_sunday - is_weekend, data = news_loop_train)
+lm3 = lm(shares ~ (. - n_tokens_content - self_reference_max_shares - max_positive_polarity -
+           min_negative_polarity - weekday_is_sunday - is_weekend)^2, data = news_loop_train)
+lm4 = lm(shares ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +
+           average_token_length + num_keywords + data_channel_is_lifestyle + 
+           data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed + 
+           data_channel_is_tech + data_channel_is_world + self_reference_min_shares + 
+           self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday + 
+           weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + 
+           weekday_is_saturday + global_rate_positive_words + global_rate_negative_words + 
+           avg_positive_polarity + min_positive_polarity + avg_negative_polarity + 
+           max_negative_polarity + title_subjectivity + title_sentiment_polarity + 
+           abs_title_sentiment_polarity + self_reference_min_shares:self_reference_avg_sharess
+         + num_self_hrefs:num_imgs + num_hrefs:data_channel_is_bus + 
+           data_channel_is_socmed:avg_positive_polarity +
+           num_keywords:global_rate_negative_words + n_tokens_title:num_self_hrefs + 
+           num_self_hrefs:global_rate_positive_words + num_imgs:data_channel_is_world +
+           data_channel_is_entertainment:min_positive_polarity + 
+           num_hrefs:data_channel_is_tech, data=news_loop_train)
+  yhat_test1 = predict(lm1, news_loop_test)
+  yhat_test2 = predict(lm2, news_loop_test)
+  yhat_test3 = predict(lm3, news_loop_test)
+  yhat_test4 = predict(lm4, news_loop_test)
+ 
+  c(error_rate(news_loop_test$shares, yhat_test1), error_rate(news_loop_test$shares, yhat_test2),
+    error_rate(news_loop_test$shares, yhat_test3), error_rate(news_loop_test$shares, yhat_test4)) %>% round(3)
+  
+}
+
+error_result= data.frame("lm1"= colMeans(err_vals[1]), "lm2"=colMeans(err_vals[2]), "lm3"=colMeans(err_vals[3]), "lm4"=colMeans(err_vals[4]), row.names="AVG Error Rate")
+
+kable(error_result) %>% kable_styling("striped")
+```
+
+The table below reports the confusion matrix yielded by lm3 when using this model on the entire dataset. The model yielded an accuracy rate of 61.50% ((8051+16332)/39644) and an error rate of 38.50% ((12031+3230)/39644). Meanwhile, the true positive rate was 83.49% (16332/(3230+16332)), and the false positive rate was 59.91% (12031/(8051+12031)).
+
+```{r 2.3.7, echo=FALSE, warning = FALSE}
+news_articles = subset(dataset, select = -c(url))
+news_articles$shares = log(news_articles$shares)
+model_chosen = lm(shares ~ (. - n_tokens_content - self_reference_max_shares - 
+                              max_positive_polarity - min_negative_polarity - weekday_is_sunday
+                            - is_weekend)^2, data = news_articles)
+news_articles$yhat = predict(model_chosen, news_articles)
+news_articles = news_articles %>%
+  mutate(viral = ifelse(shares>log(1400),1,0)) %>%
+  mutate(viral_hat = ifelse(yhat>log(1400),1,0))
+xtabs(~viral + viral_hat, data=news_articles)
+```
+
+The model is clearly predicting too many false positives. However, to assess its performance we need to compare this results to a "null" model, which would be to always predict the outcome that is most common in the data. Since 20082 out of 39644 articles didn't go viral, if we predicted all the articles not to go viral our accuracy rate would be of 50.66% (20082/39644). Hence, our model improved the accuracy rate from 50.66% to 61.50%. 
+
+Another approach would be to  analyze this question from a classification perspective. We created a dummy variable viral, defined as as having over 1,400 shares or not. By having the response variable as a binomial, we were able to utilize the logit models which are listed below.
+
+In the first logit model we included as explanatory variables all the available features. In the second, we excluded those that showed multicollinearity or too high p-values. In the third model, we used the explanatory variables that were included the linear model that yielded the highest accuracy rate. 
+
+```{r 2.3.8, echo=TRUE}
+glm1 = viral ~ n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs + num_imgs +               num_videos + average_token_length + num_keywords + data_channel_is_lifestyle +                 data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_max_shares + self_reference_avg_sharess + weekday_is_monday +                   weekday_is_tuesday + weekday_is_wednesday + weekday_is_thursday +                              weekday_is_friday + weekday_is_saturday + weekday_is_sunday + is_weekend +                     global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +               min_positive_polarity + max_positive_polarity + avg_negative_polarity +                        min_negative_polarity + max_negative_polarity + title_subjectivity +                           title_sentiment_polarity + abs_title_sentiment_polarity
+
+glm2 = viral ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +                   average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity
+
+glm3 = viral ~ (n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +                  average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity)^2
+```
+
+As with we did with the linear models, we used a bootstrap to randomly split the dataset into training and testing datasets containing 80% of observations and 20% of observations respectively. This process was repeated 50 times. For each repetition, we estimated three logit models using the train dataset and used each model's prediction on the test set to compare the accuracy rate when predicting which articles go viral.
+
+The table shown below summarizes the average error rate for each of the three models. The results were averaged over 50 random train/test split samples in order to mollify the irregularities that could arise from randomization of samples. We can infer from the results that, on average, the third linear model yields the most accurate predictions.
+
+```{r 2.3.9, echo=FALSE, warning=FALSE}
+glm_loop = subset(dataset, select = -c(url))
+glm_loop$viral = ifelse(glm_loop$shares > 1400, 1, 0)
+
+prob_viral = sum(glm_loop$viral)/nrow(glm_loop)
+
+n = nrow(glm_loop)
+n_train = round(0.8*n)
+n_test = n - n_train
+
+err_vals_glm = do(50)*{
+  train_cases = sample.int(n, n_train, replace=FALSE)
+  test_cases = setdiff(1:n, train_cases)
+  glm_loop_train = glm_loop[train_cases,]
+  glm_loop_test = glm_loop[test_cases,]
+  
+glm1 = glm(viral ~ . - shares, data=glm_loop_train, family = 'binomial')
+glm2 = glm(viral ~ . - n_tokens_content - self_reference_max_shares - max_positive_polarity -
+           min_negative_polarity - weekday_is_sunday - is_weekend - shares,
+           data = glm_loop_train, family = 'binomial')
+glm3 = glm(viral ~ (. - n_tokens_content - self_reference_max_shares - max_positive_polarity -
+           min_negative_polarity - weekday_is_sunday - is_weekend - shares)^2,
+           data = glm_loop_train, family = 'binomial')
+  
+glm_loop_test$yhat1 = predict(glm1, glm_loop_test, type='response')
+glm_loop_test$yhat2 = predict(glm2, glm_loop_test, type='response')
+glm_loop_test$yhat3 = predict(glm3, glm_loop_test, type='response')
+
+glm_loop_test = glm_loop_test %>%
+  mutate(viral_hat1 = ifelse(yhat1 >= prob_viral,1,0)) %>%
+  mutate(viral_hat2 = ifelse(yhat2 >= prob_viral,1,0)) %>%
+  mutate(viral_hat3 = ifelse(yhat3 >= prob_viral,1,0))
+  
+c(sum(glm_loop_test$viral != glm_loop_test$viral_hat1)/nrow(glm_loop_test),
+  sum(glm_loop_test$viral != glm_loop_test$viral_hat2)/nrow(glm_loop_test),
+  sum(glm_loop_test$viral != glm_loop_test$viral_hat3)/nrow(glm_loop_test)) %>% round(3)
+}
+
+error_result_glm = data.frame("glm1"= colMeans(err_vals_glm[1]), "glm2"=colMeans(err_vals_glm[2]), "glm3"=colMeans(err_vals_glm[3]), row.names="AVG Error Rate")
+
+kable(error_result_glm) %>% kable_styling("striped")
+```
+
+The table below reports the confusion matrix yielded by glm3 when using this model on the entire dataset. The model yielded an accuracy rate of 65.02% ((12963+12813)/39644) and an error rate of 34.98% ((7119+6749)/39644). Meanwhile, the true positive rate was 65.5% (12813/(6749+12813)), and the false positive rate was 35.45% (7119/(12963+7119)).
+
+```{r 2.3.10, echo=FALSE, warning = FALSE}
+glm_chosen = glm(viral ~ (. - n_tokens_content - self_reference_max_shares -
+                            max_positive_polarity - min_negative_polarity - weekday_is_sunday -
+                            is_weekend - shares)^2, data = glm_loop)
+glm_loop$yhat = predict(glm_chosen, glm_loop, type='response')
+glm_loop = glm_loop %>%
+    mutate(viral_hat = ifelse(yhat>=prob_viral,1,0))
+xtabs(~viral + viral_hat, data=glm_loop)
+```
+
+Having assessed the accuracy rates of the best models from the first and the second the approach, the logit model turned out to perform slightly better, gaving a higher in-sample accuracy rate when trying to predict which article went viral.
+
+```{r 2.3.11, echo=FALSE, warning = FALSE}
+
+acc_summ = data.frame("lm"= sum(news_articles$viral == news_articles$viral_hat) / nrow(news_articles),"glm"= sum(glm_loop$viral == glm_loop$viral_hat)/nrow(glm_loop), row.names="Accuracy Rate")
+                     
+acc_summ = as.data.frame(t(acc_summ))
+
+kable(acc_summ) %>% kable_styling("striped")
+
+```
+
+Finally, we used the K-nearest neighbors methodology to build a nonparametric predictive model and compare its results to those we found using linear and logistic models. As we did with the other models, we used a bootstrap to randomly split the dataset into training and testing datasets containing 80% of observations and 20% of observations respectively. This process was repeated 5 times. For each repetition, we estimated 15 possible Ks (from 5 to 75, by 5)and compared its predictions accuracy in the test dataset.
+
+```{r 2.3.12, echo=FALSE, warning = FALSE}
+online_news = dataset
+online_news = mutate(online_news, viral = ifelse(online_news$shares > 1400, 1, 0))
+
+X_all = model.matrix(~n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs +
+                       num_imgs + num_videos + average_token_length + num_keywords +
+                       data_channel_is_lifestyle + data_channel_is_entertainment +
+                       data_channel_is_bus + data_channel_is_socmed + data_channel_is_tech +
+                       data_channel_is_world + self_reference_min_shares + self_reference_max_shares +
+                       self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +
+                       weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +
+                       weekday_is_sunday + is_weekend + global_rate_positive_words + global_rate_negative_words +
+                       avg_positive_polarity + min_positive_polarity + max_positive_polarity + avg_negative_polarity +
+                       min_negative_polarity + max_negative_polarity + title_subjectivity + title_sentiment_polarity +
+                       abs_title_sentiment_polarity - 1, data=online_news)
+
+feature_sd = apply(X_all, 2, sd)
+X_std = scale(X_all, scale=feature_sd)
+k_grid = seq(10, 75, by=5)
+
+n = nrow(X_all)
+n_train = round(0.8*n)  
+n_test = n - n_train
+
+# loop over the individual data points for leave-one-out
+boot1 = do(5)*{
+  train_cases = sample.int(n, n_train, replace=FALSE)
+  test_cases = setdiff(1:n, train_cases)
+  
+  X_train = X_std[train_cases,]
+  X_test = X_std[test_cases,]
+  
+  y_train = online_news$viral[train_cases]
+  y_test = online_news$viral[test_cases]
+  
+  # fit the models: loop over k
+  knn_reg = foreach(k = k_grid, .combine='c') %do% {
+    knn_fit = knn.reg(X_train, X_test, y_train, k)
+    knn_testpred = ifelse(knn_fit$pred >= prob_viral, 1, 0)
+    conf_matrix = table(y = y_test, yhat= knn_testpred)
+    accuracy = sum(diag(conf_matrix))/sum(conf_matrix)
+    accuracy
+  }
+  
+  # return results from the loop over k
+  knn_reg
+}
+
+knn_summ= data.frame("1"= colMeans(boot1[1]), "2"= colMeans(boot1[2]), "3"= colMeans(boot1[3]),
+                     "4"= colMeans(boot1[4]), "5"= colMeans(boot1[5]), "6"= colMeans(boot1[6]),
+                     "7"= colMeans(boot1[7]), "8"= colMeans(boot1[8]), "9"= colMeans(boot1[9]),
+              "10"= colMeans(boot1[10]), "11"= colMeans(boot1[11]), "12"= colMeans(boot1[12]),
+                     "13"= colMeans(boot1[13]), "14"= colMeans(boot1[14]),
+              row.names="Accuracy Rate")
+                     
+knn_summ = as.data.frame(t(knn_summ))
+knn_summ$K = (1:nrow(knn_summ))*5
+
+k_max = with(knn_summ, K[`Accuracy Rate` == max(`Accuracy Rate`)])
+acc_max = with(knn_summ, `Accuracy Rate`[`Accuracy Rate` == max(`Accuracy Rate`)])
+
+ggplot(data = knn_summ) + 
+  theme_bw(base_size=18) +
+  geom_path(aes(x = K, y = `Accuracy Rate`), colour = 'red') +
+  scale_color_discrete(name = "Models") +
+  geom_vline(xintercept = k_max, color = "black")
+```
+
+We found that the optimal K and the average accuracy yielded by it was the following.
+
+```{r 2.3.13, echo=FALSE}
+k_tab = data.frame("K"= k_max,"Accuracy" = acc_max)
+kable(k_tab) %>% kable_styling("striped")
+```
+
+Finally, we can conclude that the logit model (lm3) performed better than the other models we tested. This model yielded a 63.79% out of sample accuracy rate, and a 65.02% in sample accuracy rate. When we compare it to the null-model (50.66%), improvement in the out of sample accuracy rate reaches 28.35% (65.02/50.66 - 1).
+
+As a conjecture, our best judgement is that the difference in the performance between each approach possibly occured due to the fact that, when trying to predict the number of shares, the discrepancy in the frequency distrbution observed in the first histogram ends up affecting the variance of the estimates. The logistic model we used don't have that problem since its outcome is a probability (so bounded between 0 and 1) and the fitted values that overcame the in-sample probability of being viral as the models predictions.

@@ -28,13 +28,19 @@ class.
 
 The main features of our models are:
 
-Model 1 : include all main effects except roooms (exclude rooms because
-of colinearity, rooms = bedrooms + bathrooms) \#\#\#CHECK\#\#\# Model 2:
-simplify model1 by reducing some
-variables(-sewer-waterfront-newConstruction) Model 3: add all the
-interactions on model 2 Model 4: allow only some interactions on model 2
-Model 5: a polynomial model by adding age^2 on model 4 Model\_medium:
-baseline model with 11 main effects
+Model 1 : include all main effects except roooms (excluded due to some
+degree of collinearity with bedrooms and bathrooms)
+
+Model 2: simplify model1 by reducing some
+variables(-sewer-waterfront-newConstruction)
+
+Model 3: add all the interactions on model 2
+
+Model 4: allow only some interactions on model 2
+
+Model 5: a polynomial model by adding age^2 on model 4
+
+Model\_medium: baseline model with 11 main effects
 
 In order to measure performances of each model, we randomly splitted the
 data into training-test sets (with the training set containing 80% of
@@ -74,22 +80,22 @@ model.medium
 AVG RMSE
 </td>
 <td style="text-align:right;">
-59506.35
+58587.42
 </td>
 <td style="text-align:right;">
-61166.14
+60236.08
 </td>
 <td style="text-align:right;">
-66692.43
+64356.3
 </td>
 <td style="text-align:right;">
-60999.85
+60043.56
 </td>
 <td style="text-align:right;">
-61058.63
+60112.06
 </td>
 <td style="text-align:right;">
-66654.87
+66309.64
 </td>
 </tr>
 </tbody>
@@ -134,7 +140,7 @@ OLS linear regression
 F(17,1364)
 </td>
 <td style="text-align:right;">
-163.31
+161.77
 </td>
 </tr>
 <tr>
@@ -150,7 +156,7 @@ R²
 Adj. R²
 </td>
 <td style="text-align:right;">
-0.67
+0.66
 </td>
 </tr>
 </tbody>
@@ -180,13 +186,13 @@ p
 (Intercept)
 </td>
 <td style="text-align:right;">
-112791.20
+94824.80
 </td>
 <td style="text-align:right;">
-21612.74
+22760.78
 </td>
 <td style="text-align:right;">
-5.22
+4.17
 </td>
 <td style="text-align:right;">
 0.00
@@ -197,13 +203,13 @@ p
 lotSize
 </td>
 <td style="text-align:right;">
-8649.45
+8118.77
 </td>
 <td style="text-align:right;">
-2310.89
+2487.63
 </td>
 <td style="text-align:right;">
-3.74
+3.26
 </td>
 <td style="text-align:right;">
 0.00
@@ -214,16 +220,16 @@ lotSize
 age
 </td>
 <td style="text-align:right;">
--113.80
+-136.02
 </td>
 <td style="text-align:right;">
-63.80
+64.71
 </td>
 <td style="text-align:right;">
--1.78
+-2.10
 </td>
 <td style="text-align:right;">
-0.07
+0.04
 </td>
 </tr>
 <tr>
@@ -231,13 +237,13 @@ age
 landValue
 </td>
 <td style="text-align:right;">
-0.95
+0.91
 </td>
 <td style="text-align:right;">
 0.05
 </td>
 <td style="text-align:right;">
-19.10
+17.30
 </td>
 <td style="text-align:right;">
 0.00
@@ -248,13 +254,13 @@ landValue
 livingArea
 </td>
 <td style="text-align:right;">
-75.88
+78.59
 </td>
 <td style="text-align:right;">
-4.59
+4.65
 </td>
 <td style="text-align:right;">
-16.52
+16.91
 </td>
 <td style="text-align:right;">
 0.00
@@ -265,16 +271,16 @@ livingArea
 pctCollege
 </td>
 <td style="text-align:right;">
--311.71
+-175.89
 </td>
 <td style="text-align:right;">
-164.29
+163.58
 </td>
 <td style="text-align:right;">
--1.90
+-1.08
 </td>
 <td style="text-align:right;">
-0.06
+0.28
 </td>
 </tr>
 <tr>
@@ -282,16 +288,16 @@ pctCollege
 bedrooms
 </td>
 <td style="text-align:right;">
--6014.84
+-5425.99
 </td>
 <td style="text-align:right;">
-2569.09
+2628.83
 </td>
 <td style="text-align:right;">
--2.34
+-2.06
 </td>
 <td style="text-align:right;">
-0.02
+0.04
 </td>
 </tr>
 <tr>
@@ -299,16 +305,16 @@ bedrooms
 fireplaces
 </td>
 <td style="text-align:right;">
-3293.09
+760.70
 </td>
 <td style="text-align:right;">
-3241.88
+3217.85
 </td>
 <td style="text-align:right;">
-1.02
+0.24
 </td>
 <td style="text-align:right;">
-0.31
+0.81
 </td>
 </tr>
 <tr>
@@ -316,13 +322,13 @@ fireplaces
 bathrooms
 </td>
 <td style="text-align:right;">
-22446.83
+24085.90
 </td>
 <td style="text-align:right;">
-3715.81
+3631.65
 </td>
 <td style="text-align:right;">
-6.04
+6.63
 </td>
 <td style="text-align:right;">
 0.00
@@ -333,16 +339,16 @@ bathrooms
 heatinghot water/steam
 </td>
 <td style="text-align:right;">
--9405.34
+-11147.42
 </td>
 <td style="text-align:right;">
-4526.60
+4506.30
 </td>
 <td style="text-align:right;">
--2.08
+-2.47
 </td>
 <td style="text-align:right;">
-0.04
+0.01
 </td>
 </tr>
 <tr>
@@ -350,16 +356,16 @@ heatinghot water/steam
 heatingelectric
 </td>
 <td style="text-align:right;">
--2659.63
+947.03
 </td>
 <td style="text-align:right;">
-14950.56
+14224.68
 </td>
 <td style="text-align:right;">
--0.18
+0.07
 </td>
 <td style="text-align:right;">
-0.86
+0.95
 </td>
 </tr>
 <tr>
@@ -367,16 +373,16 @@ heatingelectric
 fuelelectric
 </td>
 <td style="text-align:right;">
--8646.94
+-12774.33
 </td>
 <td style="text-align:right;">
-14741.20
+14008.29
 </td>
 <td style="text-align:right;">
--0.59
+-0.91
 </td>
 <td style="text-align:right;">
-0.56
+0.36
 </td>
 </tr>
 <tr>
@@ -384,16 +390,16 @@ fuelelectric
 fueloil
 </td>
 <td style="text-align:right;">
--5893.64
+-175.28
 </td>
 <td style="text-align:right;">
-5387.55
+5523.78
 </td>
 <td style="text-align:right;">
--1.09
+-0.03
 </td>
 <td style="text-align:right;">
-0.27
+0.97
 </td>
 </tr>
 <tr>
@@ -401,16 +407,16 @@ fueloil
 sewerpublic/commercial
 </td>
 <td style="text-align:right;">
--2391.18
+-875.52
 </td>
 <td style="text-align:right;">
-3935.76
+4035.24
 </td>
 <td style="text-align:right;">
--0.61
+-0.22
 </td>
 <td style="text-align:right;">
-0.54
+0.83
 </td>
 </tr>
 <tr>
@@ -418,16 +424,16 @@ sewerpublic/commercial
 sewernone
 </td>
 <td style="text-align:right;">
-15068.27
+-22383.11
 </td>
 <td style="text-align:right;">
-20163.35
+18277.95
 </td>
 <td style="text-align:right;">
-0.75
+-1.22
 </td>
 <td style="text-align:right;">
-0.46
+0.22
 </td>
 </tr>
 <tr>
@@ -435,13 +441,13 @@ sewernone
 waterfrontNo
 </td>
 <td style="text-align:right;">
--108505.43
+-107964.58
 </td>
 <td style="text-align:right;">
-17417.38
+18290.96
 </td>
 <td style="text-align:right;">
--6.23
+-5.90
 </td>
 <td style="text-align:right;">
 0.00
@@ -452,13 +458,13 @@ waterfrontNo
 newConstructionNo
 </td>
 <td style="text-align:right;">
-46224.74
+47284.64
 </td>
 <td style="text-align:right;">
-7841.10
+7872.19
 </td>
 <td style="text-align:right;">
-5.90
+6.01
 </td>
 <td style="text-align:right;">
 0.00
@@ -469,16 +475,16 @@ newConstructionNo
 centralAirNo
 </td>
 <td style="text-align:right;">
--9850.78
+-8956.62
 </td>
 <td style="text-align:right;">
-3747.04
+3807.17
 </td>
 <td style="text-align:right;">
--2.63
+-2.35
 </td>
 <td style="text-align:right;">
-0.01
+0.02
 </td>
 </tr>
 </tbody>
@@ -521,7 +527,7 @@ AVG RMSE
 model.wo.lotSize
 </td>
 <td style="text-align:right;">
-66538.59
+64715.14
 </td>
 </tr>
 <tr>
@@ -529,7 +535,7 @@ model.wo.lotSize
 model.wo.age
 </td>
 <td style="text-align:right;">
-66748.89
+64645.43
 </td>
 </tr>
 <tr>
@@ -537,7 +543,7 @@ model.wo.age
 model.wo.landValue
 </td>
 <td style="text-align:right;">
-69398.07
+71317.68
 </td>
 </tr>
 <tr>
@@ -545,7 +551,7 @@ model.wo.landValue
 model.wo.livingArea
 </td>
 <td style="text-align:right;">
-71473.02
+68372.29
 </td>
 </tr>
 <tr>
@@ -553,7 +559,7 @@ model.wo.livingArea
 model.wo.pctCollege
 </td>
 <td style="text-align:right;">
-66492.18
+64554.25
 </td>
 </tr>
 <tr>
@@ -561,7 +567,7 @@ model.wo.pctCollege
 model.wo.bedrooms
 </td>
 <td style="text-align:right;">
-66536.07
+64607.59
 </td>
 </tr>
 <tr>
@@ -569,7 +575,7 @@ model.wo.bedrooms
 model.wo.fireplaces
 </td>
 <td style="text-align:right;">
-66565.08
+64583.41
 </td>
 </tr>
 <tr>
@@ -577,7 +583,7 @@ model.wo.fireplaces
 model.wo.bathrooms
 </td>
 <td style="text-align:right;">
-67531.09
+64990.64
 </td>
 </tr>
 <tr>
@@ -585,7 +591,7 @@ model.wo.bathrooms
 model.wo.heating
 </td>
 <td style="text-align:right;">
-66788.96
+64646.29
 </td>
 </tr>
 <tr>
@@ -593,7 +599,7 @@ model.wo.heating
 model.wo.fuel
 </td>
 <td style="text-align:right;">
-66616.82
+64683.39
 </td>
 </tr>
 <tr>
@@ -601,7 +607,7 @@ model.wo.fuel
 model.wo.sewer
 </td>
 <td style="text-align:right;">
-66588.23
+64561.71
 </td>
 </tr>
 <tr>
@@ -609,7 +615,7 @@ model.wo.sewer
 model.wo.waterfront
 </td>
 <td style="text-align:right;">
-68245.85
+66512.86
 </td>
 </tr>
 <tr>
@@ -617,7 +623,7 @@ model.wo.waterfront
 model.wo.newConstruction
 </td>
 <td style="text-align:right;">
-67025.71
+64911.24
 </td>
 </tr>
 <tr>
@@ -625,7 +631,7 @@ model.wo.newConstruction
 model.wo.centralAir
 </td>
 <td style="text-align:right;">
-66715.59
+64799.66
 </td>
 </tr>
 </tbody>
@@ -660,13 +666,13 @@ linear.model.RMSE
 <tbody>
 <tr>
 <td style="text-align:right;">
-5
+6
 </td>
 <td style="text-align:right;">
-74003.49
+73278.13
 </td>
 <td style="text-align:right;">
-67199.81
+65044.53
 </td>
 </tr>
 </tbody>
@@ -697,10 +703,10 @@ linear.model
 Average RMSE
 </td>
 <td style="text-align:right;">
-62098.79
+61917.14
 </td>
 <td style="text-align:right;">
-59506.35
+58587.42
 </td>
 </tr>
 </tbody>
@@ -788,13 +794,13 @@ radiologist.34
 -0.0642539
 </td>
 <td style="text-align:right;">
-0.0366124
+0.0425504
 </td>
 <td style="text-align:right;">
 -0.0367519
 </td>
 <td style="text-align:right;">
-0.2287037
+0.2538091
 </td>
 </tr>
 <tr>
@@ -805,13 +811,13 @@ radiologist.66
 0.0436803
 </td>
 <td style="text-align:right;">
-0.0377086
+0.0293660
 </td>
 <td style="text-align:right;">
 0.0395334
 </td>
 <td style="text-align:right;">
-0.1118306
+0.1367941
 </td>
 </tr>
 <tr>
@@ -822,13 +828,13 @@ radiologist.89
 0.0571172
 </td>
 <td style="text-align:right;">
-0.0401084
+0.0335460
 </td>
 <td style="text-align:right;">
 0.1748448
 </td>
 <td style="text-align:right;">
-0.1364717
+0.1577133
 </td>
 </tr>
 <tr>
@@ -839,13 +845,13 @@ radiologist.95
 -0.0064281
 </td>
 <td style="text-align:right;">
-0.0403017
+0.0374188
 </td>
 <td style="text-align:right;">
 -0.2994109
 </td>
 <td style="text-align:right;">
-0.1798595
+0.1480645
 </td>
 </tr>
 </tbody>
@@ -854,7 +860,7 @@ Finally, in order to estimate how each radiologist would perform when
 facing the same set of patients, we used a bootstrap to randomly split
 the original dataset in a training dataset containing 80% of the
 observations and a testing a dataset containing 20% of the observations,
-repeating the proccess 100 times. In each repetition, we fitted both
+repeating the proccess 100 times. In each repetition, we estimated both
 models using the train dataset, and compared each model's predictions
 when all radiologists, in a hypothetical scenario, analyze the entire
 test dataset.
@@ -880,10 +886,10 @@ followed by radiologist66, radiologist13, radiologist95 and radiologist
 radiologist
 </th>
 <th style="text-align:right;">
-Model\_1
+Model1
 </th>
 <th style="text-align:right;">
-Model\_2
+Model2
 </th>
 </tr>
 </thead>
@@ -893,10 +899,10 @@ Model\_2
 radiologist.13
 </td>
 <td style="text-align:right;">
-0.1383089
+0.1409582
 </td>
 <td style="text-align:right;">
-0.1374405
+0.1406501
 </td>
 </tr>
 <tr>
@@ -904,10 +910,10 @@ radiologist.13
 radiologist.34
 </td>
 <td style="text-align:right;">
-0.0884653
+0.0896362
 </td>
 <td style="text-align:right;">
-0.0897776
+0.0898066
 </td>
 </tr>
 <tr>
@@ -915,10 +921,10 @@ radiologist.34
 radiologist.66
 </td>
 <td style="text-align:right;">
-0.1860244
+0.1883756
 </td>
 <td style="text-align:right;">
-0.1943894
+0.1944242
 </td>
 </tr>
 <tr>
@@ -926,10 +932,10 @@ radiologist.66
 radiologist.89
 </td>
 <td style="text-align:right;">
-0.2053038
+0.2056666
 </td>
 <td style="text-align:right;">
-0.2355296
+0.2349635
 </td>
 </tr>
 <tr>
@@ -937,10 +943,10 @@ radiologist.89
 radiologist.95
 </td>
 <td style="text-align:right;">
-0.1321578
+0.1358878
 </td>
 <td style="text-align:right;">
-0.1215129
+0.1263368
 </td>
 </tr>
 </tbody>
@@ -1548,11 +1554,1035 @@ slightly decreased to 84.60% ((811+24)/987).
     ##   0 811 139
     ##   1  13  24
 
-Since a cancer that is diagnosed at an early stage is more likely to be
-treated successfully, it is reasonable to argue that the increase in
-sensitivity overcomes the decrease in the accuracy rates caused by a
-higher amount of false positive predictions. Hence, our best judgement
-is that the radiologists should be weighting more heavily patients with
-70 years old and above, density 4 (extremely dense) and
-post-menopausal/unknown hormone-therapy status when deciding whether to
-recall patients.
+Since the medical literature suggests that a cancer that is diagnosed at
+an early stage is more likely to be treated successfully, it is
+reasonable to argue that the increase in sensitivity overcomes the
+decrease in the accuracy rates caused by a higher amount of false
+positive predictions. Hence, our best judgement is that the radiologists
+should be weighting more heavily patients with 70 years old and above,
+density 4 (extremely dense) and post-menopausal/unknown hormone-therapy
+status when deciding whether to recall patients.
+
+Exercise 2.3
+============
+
+In this exercise, we analyzed data from 39,797 online articles published
+by Mashable during 2013 and 2014, in order to build a model to predict
+which article goes viral. The criteria used for defining an article as
+viral is if it surpasses the threshold of 1,400 shares. For each online
+article, we have 36 variables that can be included in the model
+(excluding URL since it is redundant for this analysis).
+
+We started by plotting a histogram to visualize the frequency
+distribution of the shares per article.
+
+![](HW2_files/figure-markdown_strict/2.3.1-1.png)
+
+If we observe the histogram of the number of shares, we can see that the
+data is skewed towards the lower end. It shows that although there are a
+broad range of articles that have well exceded 7,000 shares, a large
+portion of Mashable's articles are in the 800-1,200 shares range. A
+majority being slightly below our 1,400 shares threshold.
+
+As the variation of the shared articles is very broad, ranging from
+almost 0 shares to close to 10,000 shares, it made sense to log scale
+the response variable shares in order to compress down our data for
+uniformity.
+
+![](HW2_files/figure-markdown_strict/2.3.2-1.png)
+
+Since the data is more uniformly distributed in the log scale, we
+decided to use the transformed variable log(shares) in our predictive
+models.
+
+We started the model selection by building a baseline model including
+all the available features as explanatory variables. So for our first
+linear model, we fitted all 36 available variables (except for URL) to
+make further assessments.
+
+    lm1 = log(shares) ~ n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs + num_imgs +               num_videos + average_token_length + num_keywords + data_channel_is_lifestyle +                 data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_max_shares + self_reference_avg_sharess + weekday_is_monday +                   weekday_is_tuesday + weekday_is_wednesday + weekday_is_thursday +                              weekday_is_friday + weekday_is_saturday + weekday_is_sunday + is_weekend +                     global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +               min_positive_polarity + max_positive_polarity + avg_negative_polarity +                        min_negative_polarity + max_negative_polarity + title_subjectivity +                           title_sentiment_polarity + abs_title_sentiment_polarity
+
+The table below summarizes the coefficients associated with each
+variable from this model.
+
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Observations
+</td>
+<td style="text-align:right;">
+39644
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Dependent variable
+</td>
+<td style="text-align:right;">
+log(shares)
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Type
+</td>
+<td style="text-align:right;">
+OLS linear regression
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+F(34,39609)
+</td>
+<td style="text-align:right;">
+110.85
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+R²
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+Adj. R²
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+</tr>
+</tbody>
+</table>
+<table class="table table-striped table-hover table-condensed table-responsive" style="width: auto !important; margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Est.
+</th>
+<th style="text-align:right;">
+S.E.
+</th>
+<th style="text-align:right;">
+t val.
+</th>
+<th style="text-align:right;">
+p
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+(Intercept)
+</td>
+<td style="text-align:right;">
+7.90
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+181.13
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+n\_tokens\_title
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.53
+</td>
+<td style="text-align:right;">
+0.13
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+n\_tokens\_content
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.97
+</td>
+<td style="text-align:right;">
+0.33
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+num\_hrefs
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+12.37
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+num\_self\_hrefs
+</td>
+<td style="text-align:right;">
+-0.01
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+-7.88
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+num\_imgs
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+7.11
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+num\_videos
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.76
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+average\_token\_length
+</td>
+<td style="text-align:right;">
+-0.06
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+-8.67
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+num\_keywords
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+6.73
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+data\_channel\_is\_lifestyle
+</td>
+<td style="text-align:right;">
+-0.19
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-7.99
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+data\_channel\_is\_entertainment
+</td>
+<td style="text-align:right;">
+-0.44
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-26.92
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+data\_channel\_is\_bus
+</td>
+<td style="text-align:right;">
+-0.27
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-14.84
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+data\_channel\_is\_socmed
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+2.30
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+data\_channel\_is\_tech
+</td>
+<td style="text-align:right;">
+-0.12
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-7.08
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+data\_channel\_is\_world
+</td>
+<td style="text-align:right;">
+-0.50
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-28.65
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+self\_reference\_min\_shares
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+1.30
+</td>
+<td style="text-align:right;">
+0.19
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+self\_reference\_max\_shares
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.80
+</td>
+<td style="text-align:right;">
+0.42
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+self\_reference\_avg\_sharess
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+<td style="text-align:right;">
+2.25
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+weekday\_is\_monday
+</td>
+<td style="text-align:right;">
+-0.23
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-11.57
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+weekday\_is\_tuesday
+</td>
+<td style="text-align:right;">
+-0.29
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-14.65
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+weekday\_is\_wednesday
+</td>
+<td style="text-align:right;">
+-0.29
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-14.74
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+weekday\_is\_thursday
+</td>
+<td style="text-align:right;">
+-0.28
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-14.20
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+weekday\_is\_friday
+</td>
+<td style="text-align:right;">
+-0.22
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+-10.66
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+weekday\_is\_saturday
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.41
+</td>
+<td style="text-align:right;">
+0.69
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+weekday\_is\_sunday
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+is\_weekend
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+<td style="text-align:right;">
+NA
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+global\_rate\_positive\_words
+</td>
+<td style="text-align:right;">
+0.25
+</td>
+<td style="text-align:right;">
+0.32
+</td>
+<td style="text-align:right;">
+0.77
+</td>
+<td style="text-align:right;">
+0.44
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+global\_rate\_negative\_words
+</td>
+<td style="text-align:right;">
+-0.64
+</td>
+<td style="text-align:right;">
+0.51
+</td>
+<td style="text-align:right;">
+-1.26
+</td>
+<td style="text-align:right;">
+0.21
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+avg\_positive\_polarity
+</td>
+<td style="text-align:right;">
+0.23
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+2.76
+</td>
+<td style="text-align:right;">
+0.01
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+min\_positive\_polarity
+</td>
+<td style="text-align:right;">
+-0.28
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+-3.23
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+max\_positive\_polarity
+</td>
+<td style="text-align:right;">
+-0.03
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+-0.89
+</td>
+<td style="text-align:right;">
+0.38
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+avg\_negative\_polarity
+</td>
+<td style="text-align:right;">
+-0.36
+</td>
+<td style="text-align:right;">
+0.09
+</td>
+<td style="text-align:right;">
+-4.00
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+min\_negative\_polarity
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.69
+</td>
+<td style="text-align:right;">
+0.49
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+max\_negative\_polarity
+</td>
+<td style="text-align:right;">
+0.14
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+<td style="text-align:right;">
+1.73
+</td>
+<td style="text-align:right;">
+0.08
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+title\_subjectivity
+</td>
+<td style="text-align:right;">
+0.04
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+1.97
+</td>
+<td style="text-align:right;">
+0.05
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+title\_sentiment\_polarity
+</td>
+<td style="text-align:right;">
+0.07
+</td>
+<td style="text-align:right;">
+0.02
+</td>
+<td style="text-align:right;">
+3.64
+</td>
+<td style="text-align:right;">
+0.00
+</td>
+</tr>
+<tr>
+<td style="text-align:left;font-weight: bold;">
+abs\_title\_sentiment\_polarity
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+0.03
+</td>
+<td style="text-align:right;">
+1.07
+</td>
+<td style="text-align:right;">
+0.28
+</td>
+</tr>
+</tbody>
+<tfoot>
+<tr>
+<td style="padding: 0; border: 0;" colspan="100%">
+<sup></sup> Standard errors: OLS
+</td>
+</tr>
+</tfoot>
+</table>
+For our linear models 2 and 3, we removed the variables that were
+droppef from lm1 due to multicollinearity or that yielded a high p-value
+such as the number of words in the content (n\_tokens\_content), maximum
+share of referenced articles (self\_reference\_max\_shares), maximum
+polarity of positive words (max\_positive\_polarity), minimum polarity
+of negative words (min\_negative\_polarity), and the dummy variables
+indicating if the article was posted in a sunday (weekday\_is\_sunday)
+or in the weekend (is\_weekend).
+
+Finally, for our linear model 4 we used a stepwise selection (starting
+from lm2 - with up to 10 steps) and, in order to determine the subset of
+variables to include, we chose the one that yields the minimum Akaike
+Information Criteria (AIC).
+
+    lm2 = log(shares) ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +            average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity
+
+    lm3 = log(shares) ~ (n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +            average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity)^2
+
+    lm4 = log(shares) ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + 
+          num_videos + average_token_length + num_keywords + data_channel_is_lifestyle + 
+          data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed + 
+          data_channel_is_tech + data_channel_is_world + self_reference_min_shares + 
+          self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday + 
+          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + 
+          weekday_is_saturday + global_rate_positive_words + global_rate_negative_words + 
+          avg_positive_polarity + min_positive_polarity + avg_negative_polarity + 
+          max_negative_polarity + title_subjectivity + title_sentiment_polarity + 
+          abs_title_sentiment_polarity + self_reference_min_shares:self_reference_avg_sharess + 
+          num_self_hrefs:num_imgs + num_hrefs:data_channel_is_bus + 
+          data_channel_is_socmed:avg_positive_polarity + num_keywords:global_rate_negative_words + 
+          n_tokens_title:num_self_hrefs + num_self_hrefs:global_rate_positive_words + 
+          num_imgs:data_channel_is_world + data_channel_is_entertainment:min_positive_polarity + 
+          num_hrefs:data_channel_is_tech
+
+In order to determine the most accurate model which accounts the
+relevant variables to predict how articles reach the 1,400 shares
+threshold, we utilized a bootstrap to randomly split the original
+dataset in a training dataset containing 80% of the observations and a
+testing a dataset containing the remaining 20%. We then repeated this
+proccess 100 times and, for each repetition, we estimated our four
+linear models using the train dataset, and fitted the values in the test
+dataset to compare each model's prediction error rate.
+
+The table shown below summarizes the average error rate for each of the
+four models. The results were averaged over 100 random train/test split
+samples in order to mollify the irregularities that could arise from
+randomization of samples. We can infer from the results that, on
+average, the third linear model yields the most accurate predictions.
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+lm1
+</th>
+<th style="text-align:right;">
+lm2
+</th>
+<th style="text-align:right;">
+lm3
+</th>
+<th style="text-align:right;">
+lm4
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+AVG Error Rate
+</td>
+<td style="text-align:right;">
+0.41378
+</td>
+<td style="text-align:right;">
+0.41349
+</td>
+<td style="text-align:right;">
+0.39079
+</td>
+<td style="text-align:right;">
+0.40215
+</td>
+</tr>
+</tbody>
+</table>
+The table below reports the confusion matrix yielded by lm3 when using
+this model on the entire dataset. The model yielded an accuracy rate of
+61.50% ((8051+16332)/39644) and an error rate of 38.50%
+((12031+3230)/39644). Meanwhile, the true positive rate was 83.49%
+(16332/(3230+16332)), and the false positive rate was 59.91%
+(12031/(8051+12031)).
+
+    ##      viral_hat
+    ## viral     0     1
+    ##     0  8051 12031
+    ##     1  3230 16332
+
+The model is clearly predicting too many false positives. However, to
+assess its performance we need to compare this results to a "null"
+model, which would be to always predict the outcome that is most common
+in the data. Since 20082 out of 39644 articles didn't go viral, if we
+predicted all the articles not to go viral our accuracy rate would be of
+50.66% (20082/39644). Hence, our model improved the accuracy rate from
+50.66% to 61.50%.
+
+Another approach would be to analyze this question from a classification
+perspective. We created a dummy variable viral, defined as as having
+over 1,400 shares or not. By having the response variable as a binomial,
+we were able to utilize the logit models which are listed below.
+
+In the first logit model we included as explanatory variables all the
+available features. In the second, we excluded those that showed
+multicollinearity or too high p-values. In the third model, we used the
+explanatory variables that were included the linear model that yielded
+the highest accuracy rate.
+
+    glm1 = viral ~ n_tokens_title + n_tokens_content + num_hrefs + num_self_hrefs + num_imgs +               num_videos + average_token_length + num_keywords + data_channel_is_lifestyle +                 data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_max_shares + self_reference_avg_sharess + weekday_is_monday +                   weekday_is_tuesday + weekday_is_wednesday + weekday_is_thursday +                              weekday_is_friday + weekday_is_saturday + weekday_is_sunday + is_weekend +                     global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +               min_positive_polarity + max_positive_polarity + avg_negative_polarity +                        min_negative_polarity + max_negative_polarity + title_subjectivity +                           title_sentiment_polarity + abs_title_sentiment_polarity
+
+    glm2 = viral ~ n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +                   average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity
+
+    glm3 = viral ~ (n_tokens_title + num_hrefs + num_self_hrefs + num_imgs + num_videos +                  average_token_length + num_keywords + data_channel_is_lifestyle +                              data_channel_is_entertainment + data_channel_is_bus + data_channel_is_socmed +                 data_channel_is_tech + data_channel_is_world + self_reference_min_shares +                     self_reference_avg_sharess + weekday_is_monday + weekday_is_tuesday +                          weekday_is_wednesday + weekday_is_thursday + weekday_is_friday + weekday_is_saturday +         global_rate_positive_words + global_rate_negative_words + avg_positive_polarity +              min_positive_polarity + avg_negative_polarity + max_negative_polarity +                        title_subjectivity + title_sentiment_polarity + abs_title_sentiment_polarity)^2
+
+As with we did with the linear models, we used a bootstrap to randomly
+split the dataset into training and testing datasets containing 80% of
+observations and 20% of observations respectively. This process was
+repeated 50 times. For each repetition, we estimated three logit models
+using the train dataset and used each model's prediction on the test set
+to compare the accuracy rate when predicting which articles go viral.
+
+The table shown below summarizes the average error rate for each of the
+three models. The results were averaged over 50 random train/test split
+samples in order to mollify the irregularities that could arise from
+randomization of samples. We can infer from the results that, on
+average, the third linear model yields the most accurate predictions.
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+glm1
+</th>
+<th style="text-align:right;">
+glm2
+</th>
+<th style="text-align:right;">
+glm3
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+AVG Error Rate
+</td>
+<td style="text-align:right;">
+0.3701
+</td>
+<td style="text-align:right;">
+0.3703
+</td>
+<td style="text-align:right;">
+0.3618
+</td>
+</tr>
+</tbody>
+</table>
+The table below reports the confusion matrix yielded by glm3 when using
+this model on the entire dataset. The model yielded an accuracy rate of
+65.02% ((12963+12813)/39644) and an error rate of 34.98%
+((7119+6749)/39644). Meanwhile, the true positive rate was 65.5%
+(12813/(6749+12813)), and the false positive rate was 35.45%
+(7119/(12963+7119)).
+
+    ##      viral_hat
+    ## viral     0     1
+    ##     0 13062  7020
+    ##     1  6911 12651
+
+Having assessed the accuracy rates of the best models from the first and
+the second the approach, the logit model turned out to perform slightly
+better, gaving a higher in-sample accuracy rate when trying to predict
+which article went viral.
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:left;">
+</th>
+<th style="text-align:right;">
+Accuracy Rate
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:left;">
+lm
+</td>
+<td style="text-align:right;">
+0.6150489
+</td>
+</tr>
+<tr>
+<td style="text-align:left;">
+glm
+</td>
+<td style="text-align:right;">
+0.6485975
+</td>
+</tr>
+</tbody>
+</table>
+Finally, we used the K-nearest neighbors methodology to build a
+nonparametric predictive model and compare its results to those we found
+using linear and logistic models. As we did with the other models, we
+used a bootstrap to randomly split the dataset into training and testing
+datasets containing 80% of observations and 20% of observations
+respectively. This process was repeated 5 times. For each repetition, we
+estimated 15 possible Ks (from 5 to 75, by 5)and compared its
+predictions accuracy in the test dataset.
+
+![](HW2_files/figure-markdown_strict/2.3.12-1.png)
+
+We found that the optimal K and the average accuracy yielded by it was
+the following.
+
+<table class="table table-striped" style="margin-left: auto; margin-right: auto;">
+<thead>
+<tr>
+<th style="text-align:right;">
+K
+</th>
+<th style="text-align:right;">
+Accuracy
+</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align:right;">
+45
+</td>
+<td style="text-align:right;">
+0.6261319
+</td>
+</tr>
+</tbody>
+</table>
+Finally, we can conclude that the logit model (lm3) performed better
+than the other models we tested. This model yielded a 63.79% out of
+sample accuracy rate, and a 65.02% in sample accuracy rate. When we
+compare it to the null-model (50.66%), improvement in the out of sample
+accuracy rate reaches 28.35% (65.02/50.66 - 1).
+
+As a conjecture, our best judgement is that the difference in the
+performance between each approach possibly occured due to the fact that,
+when trying to predict the number of shares, the discrepancy in the
+frequency distrbution observed in the first histogram ends up affecting
+the variance of the estimates. The logistic model we used don't have
+that problem since its outcome is a probability (so bounded between 0
+and 1) and the fitted values that overcame the in-sample probability of
+being viral as the models predictions.
